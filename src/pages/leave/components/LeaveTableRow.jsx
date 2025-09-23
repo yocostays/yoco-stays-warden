@@ -91,15 +91,15 @@ const LeaveTableRow = ({
               </Box>
             </TableCell>
             <TableCell sx={{ minWidth: "200px" }}>
-              {moment.utc(row?.createdAt).format("Do MMM YYYY | hh:mm A") ||
+              {moment(row?.createdAt).format("Do MMM YYYY | hh:mm A") ||
                 "-"}
             </TableCell>
             <TableCell sx={{ minWidth: "200px" }}>
-              {moment.utc(row?.startDate).format("Do MMM YYYY | hh:mm A") ||
+              {moment(row?.startDate).format("Do MMM YYYY | hh:mm A") ||
                 "-"}
             </TableCell>
             <TableCell sx={{ minWidth: "200px" }}>
-              {moment.utc(row?.endDate).format("Do MMM YYYY | hh:mm A") || "-"}
+              {moment(row?.endDate).format("Do MMM YYYY | hh:mm A") || "-"}
             </TableCell>
             <TableCell align="left">{row.days} D</TableCell>
             <TableCell>

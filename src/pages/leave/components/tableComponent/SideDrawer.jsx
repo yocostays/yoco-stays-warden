@@ -34,7 +34,7 @@ import SideDrawerTable from "./SideDrawerTable";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { toast } from "react-toastify";
-import { changeLeaveStatusById, getPassInfo } from "@features/leave/leaveSlice";
+import { changeLeaveStatusById, getPassInfo, getLeaveManagementList } from "@features/leave/leaveSlice";
 import moment from "moment";
 import { useNavigate } from "react-router-dom";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
@@ -49,6 +49,18 @@ const SideDrawer = ({
   isSmallScreen,
   leaveDataById,
   handleRowDetailsPage,
+  // Current filter parameters for API refresh
+  currentPage,
+  currentRowsPerPage,
+  currentSelectedOption,
+  currentSelectedTab,
+  currentSearchText,
+  currentSortOption,
+  currentSelectedFloor,
+  currentSelectedRoom,
+  currentCustomStartDate,
+  currentCustomEndDate,
+  onClearSelection,
 }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -78,12 +90,8 @@ const SideDrawer = ({
     previousLeaveId,
   } = leaveDataById;
 
-  const formattedDate = `${moment
-    .utc(startDate)
-    .format("Do MMM, YYYY")} - ${moment.utc(endDate).format("Do MMM, YYYY")}`;
-  const formattedTime = `${moment.utc(startDate).format("hh:mm A")} - ${moment
-    .utc(endDate)
-    .format("hh:mm A")}`;
+  const formattedDate = `${moment(startDate).format("Do MMM, YYYY")} - ${moment(endDate).format("Do MMM, YYYY")}`;
+  const formattedTime = `${moment(startDate).format("hh:mm A")} - ${moment(endDate).format("hh:mm A")}`;
 
   if (isGatePassVisible && !drawerOpen) {
     setIsGatePassVisible((prevState) => !prevState);
@@ -130,6 +138,41 @@ const SideDrawer = ({
       (response) => {
         if (response?.meta?.requestStatus === "fulfilled") {
           toast.success(response.payload.message);
+          // Clear the selection if provided
+          if (onClearSelection) {
+            onClearSelection();
+          }
+          // Call the leave-management API to refresh the data
+          const refreshPayload = {
+            page: currentPage + 1,
+            limit: currentRowsPerPage,
+            status: currentSelectedOption === "Leave Request" ? "leave" : currentSelectedOption,
+            leaveStatus: currentSelectedTab.toLowerCase(),
+            search: currentSearchText,
+          };
+
+          // Add optional parameters if they exist
+          if (currentSortOption && currentSortOption !== "custom") {
+            refreshPayload.sort = currentSortOption;
+          }
+          if (currentSortOption === "custom") {
+            refreshPayload.sort = "custom";
+            if (currentCustomStartDate) {
+              refreshPayload.startDate = dayjs(currentCustomStartDate).utc(true).startOf("day").toISOString();
+            }
+            if (currentCustomEndDate) {
+              refreshPayload.endDate = dayjs(currentCustomEndDate).utc(true).startOf("day").toISOString();
+            }
+          }
+          if (currentSelectedFloor) {
+            refreshPayload.floorNumber = currentSelectedFloor;
+          }
+          if (currentSelectedRoom) {
+            refreshPayload.roomNumber = currentSelectedRoom.roomNumber;
+          }
+
+          console.log("Calling leave-management API with payload:", refreshPayload);
+          dispatch(getLeaveManagementList(refreshPayload));
         } else if (response?.meta?.requestStatus === "rejected") {
           toast.error("Failed to update leave status.");
         }

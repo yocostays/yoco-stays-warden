@@ -7,11 +7,23 @@ import {
   getLeaveManagementList,
 } from "@features/leave/leaveSlice";
 import { toast } from "react-toastify";
+import dayjs from "dayjs";
 
 const LeaveActionSection = ({
   selectedCount,
   remarkPlaceholder = "Add Remark",
   selectedRows,
+  onClearSelection,
+  currentPage,
+  currentRowsPerPage,
+  currentSelectedOption,
+  currentSelectedTab,
+  currentSearchText,
+  currentSortOption,
+  currentSelectedFloor,
+  currentSelectedRoom,
+  currentCustomStartDate,
+  currentCustomEndDate,
 }) => {
   const dispatch = useDispatch();
   const [remark, setRemark] = useState("");
@@ -39,7 +51,41 @@ const LeaveActionSection = ({
     dispatch(bulkUpdateStatus({ data: payload })).then((response) => {
       if (response?.meta?.requestStatus === "fulfilled") {
         toast.success(response.payload.message);
-        getLeaveManagementList();
+        // Clear the selection
+        if (onClearSelection) {
+          onClearSelection();
+        }
+        // Call the leave-management API to refresh the data
+        console.log("Calling leave-management API for bulk update");
+        const refreshPayload = {
+          page: currentPage + 1,
+          limit: currentRowsPerPage,
+          status: currentSelectedOption === "Leave Request" ? "leave" : currentSelectedOption,
+          leaveStatus: currentSelectedTab.toLowerCase(),
+          search: currentSearchText,
+        };
+
+        // Add optional parameters if they exist
+        if (currentSortOption && currentSortOption !== "custom") {
+          refreshPayload.sort = currentSortOption;
+        }
+        if (currentSortOption === "custom") {
+          refreshPayload.sort = "custom";
+          if (currentCustomStartDate) {
+            refreshPayload.startDate = dayjs(currentCustomStartDate).utc(true).startOf("day").toISOString();
+          }
+          if (currentCustomEndDate) {
+            refreshPayload.endDate = dayjs(currentCustomEndDate).utc(true).startOf("day").toISOString();
+          }
+        }
+        if (currentSelectedFloor) {
+          refreshPayload.floorNumber = currentSelectedFloor;
+        }
+        if (currentSelectedRoom) {
+          refreshPayload.roomNumber = currentSelectedRoom.roomNumber;
+        }
+
+        dispatch(getLeaveManagementList(refreshPayload));
       } else if (response?.meta?.requestStatus === "rejected") {
         console.error(
           "Failed to update leave status:",

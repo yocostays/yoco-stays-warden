@@ -392,12 +392,12 @@ function LeaveTable({ type, onTypeChange }) {
     { label: "Leave ID", value: ticketId, icon: <AssignmentOutlined /> },
     {
       label: "Check-Out",
-      value: moment.utc(startDate).format("DD MMM YYYY | hh:mm A") || "-",
+      value: moment(startDate).format("DD MMM YYYY | hh:mm A") || "-",
       icon: <EventOutlined />,
     },
     {
       label: "Check-In",
-      value: moment.utc(endDate).format("DD MMM YYYY | hh:mm A") || "-",
+      value: moment(endDate).format("DD MMM YYYY | hh:mm A") || "-",
       icon: <EventOutlined />,
     },
     {
@@ -431,6 +431,11 @@ function LeaveTable({ type, onTypeChange }) {
   };
 
   const isRowSelected = (id) => selectedRows.includes(id);
+
+  // Clear selection function
+  const handleClearSelection = () => {
+    setSelectedRows([]);
+  };
 
   const handlegetLeaveManagementList = () => {
     if (
@@ -1124,6 +1129,17 @@ function LeaveTable({ type, onTypeChange }) {
                   <LeaveActionSection
                     selectedCount={selectedCount}
                     selectedRows={selectedRows}
+                    onClearSelection={handleClearSelection}
+                    currentPage={page}
+                    currentRowsPerPage={rowsPerPage}
+                    currentSelectedOption={selectedOption}
+                    currentSelectedTab={selectedTab}
+                    currentSearchText={searchText}
+                    currentSortOption={sortOption}
+                    currentSelectedFloor={selectedFloor}
+                    currentSelectedRoom={selectedRoom}
+                    currentCustomStartDate={customStartDate}
+                    currentCustomEndDate={customEndDate}
                   />
                 )}
             </Box>
@@ -1143,6 +1159,18 @@ function LeaveTable({ type, onTypeChange }) {
         userData={userData}
         updateLogs={updateLogs}
         handleRowDetailsPage={handleRowDetailsPage}
+        // Pass current filter parameters for API refresh
+        currentPage={page}
+        currentRowsPerPage={rowsPerPage}
+        currentSelectedOption={selectedOption}
+        currentSelectedTab={selectedTab}
+        currentSearchText={searchText}
+        currentSortOption={sortOption}
+        currentSelectedFloor={selectedFloor}
+        currentSelectedRoom={selectedRoom}
+        currentCustomStartDate={customStartDate}
+        currentCustomEndDate={customEndDate}
+        onClearSelection={handleClearSelection}
       />
     </Box>
   );
