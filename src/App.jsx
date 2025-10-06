@@ -66,20 +66,29 @@ function App() {
   // console.log('API Base URL:', import.meta.env.VITE_API_BASE_URL);
 
   const RemoveTrailingSlash = () => {
-  const location = useLocation();
-  const { pathname, search } = location;
+    const location = useLocation();
+    const { pathname, search } = location;
 
-  if (pathname !== '/' && pathname.endsWith('/')) {
-    const newPath = pathname.replace(/\/+$/, '');
-    return <Navigate to={`${newPath}${search}`} replace />;
+    if (pathname !== '/' && pathname.endsWith('/')) {
+      const newPath = pathname.replace(/\/+$/, '');
+      return <Navigate to={`${newPath}${search}`} replace />;
+    }
+
+    return null;
+  };
+
+  const LoginPrivate = ({ children }) => {
+    const token = localStorage.getItem('authToken');
+
+    if (token) {
+      return <Navigate to="/user" replace />;
+    }
+    return children;
   }
-
-  return null;
-};
 
   return (
     <>
-       <RemoveTrailingSlash />
+      <RemoveTrailingSlash />
       {!noLayoutRoutes.includes(location.pathname) && (
         <Layout>
           <Routes>
@@ -255,7 +264,7 @@ function App() {
               path="newmessmanagement"
               element={
                 <AuthGuard>
-                  <NewMessManagementIndex/>
+                  <NewMessManagementIndex />
                 </AuthGuard>
               }
             />
@@ -263,7 +272,7 @@ function App() {
               path="newmessmanagement/addmenu"
               element={
                 <AuthGuard>
-                  <MessManagementAddMenu/>
+                  <MessManagementAddMenu />
                 </AuthGuard>
               }
             />
@@ -271,7 +280,7 @@ function App() {
               path="newmessmanagement/addWastage"
               element={
                 <AuthGuard>
-                  <MessManagementAddWastage/>
+                  <MessManagementAddWastage />
                 </AuthGuard>
               }
             />
@@ -279,7 +288,7 @@ function App() {
               path="newmessmanagement/addmissedbooking"
               element={
                 <AuthGuard>
-                  <AddMissedBookingPage/>
+                  <AddMissedBookingPage />
                 </AuthGuard>
               }
             />
@@ -529,8 +538,16 @@ function App() {
         </Layout>
       )}
       <Routes>
-        <Route path="/" element={<LoginIndex />} />
-        <Route path="forgot-password" element={<ForgotPassword />} />
+        <Route path="/" element={
+          <LoginPrivate>
+            <LoginIndex />
+          </LoginPrivate>
+        } />
+        <Route path="forgot-password" element={
+          <LoginPrivate>
+            <ForgotPassword />
+          </LoginPrivate>
+        } />
         <Route path="page-not-found" element={<Page404 />} />
         {/* <Route path="chart-test" element={<ChartTest />} /> */}
       </Routes>

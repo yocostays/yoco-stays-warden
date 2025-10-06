@@ -29,6 +29,7 @@ import {
   exportUserReport,
   checkUserName,
 } from "./userApi";
+import { StaffSelection, StudentStatusEnum } from "@components/enums/usersListEnums";
 
 // Define the initial state
 const initialState = {
@@ -63,6 +64,12 @@ const initialState = {
   isReportLoading: false,
   isUserLoading: false,
   error: null,
+  staffSelection: StaffSelection?.HOSTEL_STUDENT,
+  selectedTab: StudentStatusEnum[0]?.value,
+  selectedAcademicOption: "",
+  searchUser: "",
+  sortUserFilter: "",
+  studentPagination : 0
 };
 
 // Thunk for fetching users
@@ -353,6 +360,24 @@ const usersSlice = createSlice({
     clearUserName: (state) => {
       state.verifyUserName = false;
     },
+    setStaffSelection: (state, action) => {
+      state.staffSelection = action?.payload
+    },
+    setSelectedTab: (state, action) => {
+      state.selectedTab = action?.payload
+    },
+    setSelectedAcademicOption: (state, action) => {
+      state.selectedAcademicOption = action?.payload
+    },
+    setSearch: (state, action) => {
+      state.searchUser = action?.payload
+    },
+    setSortUserFilter: (state, action) => {
+      state.sortUserFilter = action?.payload
+    },
+    setStudentPagination :(state,action)=>{
+      state.studentPagination = action?.payload
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -781,6 +806,6 @@ export const selectLoading = (state) => state.users.loading;
 export const selectStaffByIdLoading = (state) => state.users.staffByIdLoading;
 export const selectError = (state) => state.users.error;
 
-export const { clearUserName } = usersSlice.actions;
+export const { clearUserName, setStaffSelection, setSelectedTab, setSelectedAcademicOption, setSearch, setSortUserFilter ,setStudentPagination} = usersSlice.actions;
 // Export the reducer
 export default usersSlice.reducer;

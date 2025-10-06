@@ -21,7 +21,6 @@ const CustomPaginationActions = ({
     onPageChange(null, Math.max(0, Math.ceil(count / rowsPerPage) - 1));
   const handleBackPage = () => onPageChange(null, page - 1);
   const handleNextPage = () => onPageChange(null, page + 1);
-
   return (
     <Box display="flex" alignItems="center">
       <IconButton
@@ -77,7 +76,7 @@ const CustomPagination = ({
       // display="flex"
       // alignItems="center"
       // justifyContent="space-between"
-      sx={{ border: "2px solid #674D9F", padding: 1, mb: 10 }}
+      sx={{ border: "2px solid #674D9F", padding:"5px 16px", mb: 10 }}
       boxShadow="0px 10px 9px rgba(103, 77, 159, 0.2)"
       {...props}
     >
