@@ -44,6 +44,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 export default function StudentIndex() {
   const theme = useTheme();
@@ -386,15 +387,24 @@ export default function StudentIndex() {
               <ArrowBackIcon />
               <Typography>Back</Typography>
             </Box>
-            <Box sx={{ display: "flex" }}>
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>
               <Box>
-                <a href={'/public/bulk_upload.csv'} download>
+                <a sx={{ height: "100%" }} href={'/public/bulk_upload.csv'} download>
                   <Button
                     size="small"
-                    sx={{ borderRadius: "50px", border: "1px solid #674D9F", margin: "0px 7px" }}
-                    type="button"
+
+                    sx={{
+                      boxShadow: 1, borderRadius: 1, backgroundColor: '#fff',
+                      paddingX: "0.5rem", borderRadius: "50px",
+                      border: "0.2px solid #674D9F", height: "1.9rem",
+                      fontWeight:"bold"
+                    }}
+                  type="button"
                   >
-                    Sample File
+                    <Box sx={{ display: "flex", gap: 0.5 }}>
+                      Sample File
+                      <ArrowDownwardIcon sx={{ width: "1rem" }} />
+                    </Box>
                   </Button>
                 </a>
               </Box>

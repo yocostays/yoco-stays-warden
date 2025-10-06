@@ -36,6 +36,11 @@ import CustomPagination from "@pages/leave/components/table/customPagination/Cus
 import { downloadCSV } from "@utils/downloadCSV";
 import { toast } from "react-toastify";
 import moment from "moment";
+import PersonIcon from '@mui/icons-material/Person';
+import studentGray from "../../assets/images/studentGray.svg"
+import studentBlue from "../../assets/images/studentBlue.svg"
+import adminGray from "../../assets/images/adminGray.svg"
+import adminBlue from "../../assets/images/adminBlue.svg"
 
 function UserTable() {
   const theme = useTheme();
@@ -103,7 +108,6 @@ function UserTable() {
   const handleSelectOption = (option) => {
     dispatch(setStaffSelection(option))
     dispatch(setSelectedTab("all"))
-    // setSelectedTab("all");
     handleCloseMenu();
   };
 
@@ -295,8 +299,17 @@ function UserTable() {
 
   useEffect(() => {
     handleToGetStaffDetails();
-  }, [staffSelection, studentPagination, page, rowsPerPage, selectedTab, searchUser, sortUserFilter, selectedAcademicOption]);
+  }, [staffSelection, studentPagination, page, rowsPerPage, sortUserFilter, selectedAcademicOption]);
 
+  useEffect(() => {
+    dispatch(setStudentPagination(0))
+    handleToGetStaffDetails();
+  }, [selectedTab])
+
+  useEffect(() => {
+    dispatch(setStudentPagination(0))
+    handleToGetStaffDetails();
+  }, [searchUser])
 
   useEffect(() => {
     if (permittedRoutes) {
@@ -316,17 +329,99 @@ function UserTable() {
       <Box
         display="flex"
         justifyContent="space-between"
-        // alignItems="center"
-        // p={2}
         sx={{
-          padding:"5px 16px",
+          padding: "5px 16px",
           border: "2px solid #674D9F",
           flexWrap: "wrap",
           borderRadius: "20px 20px 0px 0px",
           marginTop: "20px",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Box sx={{ display: "flex", gap: 2, justifyContent: "center", alignItems: "center" }}>
+          <Box>
+            <Box
+              onClick={() => handleSelectOption(StaffSelection?.HOSTEL_ADMINS)}
+              sx={{
+                cursor: "pointer",
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                border: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? '2px solid #ACB5BD' : '2px solid #674D9F',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? "#ACB5BD" : "#674D9F",
+              }}
+            >
+              {/* <PersonIcon width="20" /> */}
+              <img src={StaffSelection?.HOSTEL_ADMINS !== staffSelection ? adminGray : adminBlue} alt="admin" width={25} />
+            </Box>
+            <Box sx={{
+              textAlign: "center",
+              fontSize: "14.22px",
+              fontWeight: "700",
+              color: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? "#ACB5BD" : "#674D9F"
+            }}>
+              Admin
+            </Box>
+          </Box>
+          <Box>
+            <Box
+              onClick={() => handleSelectOption(StaffSelection?.HOSTEL_STAFF)}
+              sx={{
+                cursor: "pointer",
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                border: StaffSelection?.HOSTEL_STAFF !== staffSelection ? '2px solid #ACB5BD' : '2px solid #674D9F',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: StaffSelection?.HOSTEL_STAFF !== staffSelection ? "#ACB5BD" : "#674D9F",
+              }}
+            >
+              <PersonIcon width={50} />
+
+            </Box>
+            <Box sx={{
+              textAlign: "center",
+              fontSize: "14.22px",
+              fontWeight: "700",
+              color: StaffSelection?.HOSTEL_STAFF !== staffSelection ? "#ACB5BD" : "#674D9F"
+            }}>
+              Staff
+            </Box>
+          </Box>
+          <Box>
+            <Box
+              onClick={() => handleSelectOption(StaffSelection?.HOSTEL_STUDENT)}
+              sx={{
+                cursor: "pointer",
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                border: StaffSelection?.HOSTEL_STUDENT !== staffSelection ? '2px solid #ACB5BD' : '2px solid #674D9F',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: StaffSelection?.HOSTEL_STUDENT !== staffSelection ? "#ACB5BD" : "#674D9F"
+              }}
+            >
+
+              <img src={StaffSelection?.HOSTEL_STUDENT !== staffSelection ? studentGray : studentBlue} alt="admin" width={25} />
+            </Box>
+            <Box sx={{
+              textAlign: "center",
+              fontSize: "14.22px",
+              fontWeight: "700",
+              color: StaffSelection?.HOSTEL_STUDENT !== staffSelection ? "#ACB5BD" : "#674D9F"
+            }}>
+
+              Student
+            </Box>
+          </Box>
+        </Box>
+        {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
           <Typography
             sx={{
               fontSize: "16px",
@@ -362,7 +457,7 @@ function UserTable() {
               {StaffSelection?.HOSTEL_STUDENT}
             </MenuItem>
           </Menu>
-        </Box>
+        </Box> */}
 
         <Box
           display="flex"
@@ -725,10 +820,9 @@ function UserTable() {
           <CustomTableContainer>
             <Box
               sx={{
-                height:"45vh",
+                maxHeight: "45vh",
+                height: "100%",
                 position: "relative",
-                //borderLeft: "2px solid #674D9F",
-                // borderRight: "2px solid #674D9F",
                 overflow: "auto", // Allow scrolling if needed
                 // height: "400px",
                 scrollbarWidth: "thin",
