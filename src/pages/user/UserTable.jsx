@@ -337,7 +337,7 @@ function UserTable() {
           marginTop: "20px",
         }}
       >
-        <Box sx={{ display: "flex", gap: 2, justifyContent: "center", alignItems: "center" }}>
+        <Box sx={{ display: "flex",marginX:{xs:"auto",lg:"0"}, gap: 2, justifyContent: "center", alignItems: "center" }}>
           <Box>
             <Box
               onClick={() => handleSelectOption(StaffSelection?.HOSTEL_ADMINS)}
@@ -346,14 +346,12 @@ function UserTable() {
                 width: 40,
                 height: 40,
                 borderRadius: '50%',
-                border: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? '2px solid #ACB5BD' : '2px solid #674D9F',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 color: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? "#ACB5BD" : "#674D9F",
               }}
             >
-              {/* <PersonIcon width="20" /> */}
               <img src={StaffSelection?.HOSTEL_ADMINS !== staffSelection ? adminGray : adminBlue} alt="admin" width={25} />
             </Box>
             <Box sx={{
@@ -373,7 +371,6 @@ function UserTable() {
                 width: 40,
                 height: 40,
                 borderRadius: '50%',
-                border: StaffSelection?.HOSTEL_STAFF !== staffSelection ? '2px solid #ACB5BD' : '2px solid #674D9F',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -400,7 +397,6 @@ function UserTable() {
                 width: 40,
                 height: 40,
                 borderRadius: '50%',
-                border: StaffSelection?.HOSTEL_STUDENT !== staffSelection ? '2px solid #ACB5BD' : '2px solid #674D9F',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
@@ -421,44 +417,6 @@ function UserTable() {
             </Box>
           </Box>
         </Box>
-        {/* <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography
-            sx={{
-              fontSize: "16px",
-              fontWeight: "700",
-              display: "flex",
-              alignItems: "center",
-              textTransform: "capitalize",
-              cursor: "pointer",
-            }}
-            onClick={handleOpenMenu}
-          >
-            {staffSelection}
-            <KeyboardArrowDownIcon
-              sx={{
-                fontSize: "24px",
-                marginLeft: "6px",
-                color: "#0E0031",
-              }}
-            />
-          </Typography>
-          <Menu
-            anchorEl={dropdownAnchor}
-            open={Boolean(dropdownAnchor)}
-            onClose={handleCloseMenu}
-          >
-            <MenuItem onClick={() => handleSelectOption(StaffSelection?.HOSTEL_ADMINS)}>
-              {StaffSelection?.HOSTEL_ADMINS}
-            </MenuItem>
-            <MenuItem onClick={() => handleSelectOption(StaffSelection?.HOSTEL_STAFF)}>
-              {StaffSelection?.HOSTEL_STAFF}
-            </MenuItem>
-            <MenuItem onClick={() => handleSelectOption(StaffSelection?.HOSTEL_STUDENT)}>
-              {StaffSelection?.HOSTEL_STUDENT}
-            </MenuItem>
-          </Menu>
-        </Box> */}
-
         <Box
           display="flex"
           alignItems="center"

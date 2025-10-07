@@ -394,7 +394,7 @@ export default function StudentIndex() {
                     size="small"
 
                     sx={{
-                      boxShadow: 1, borderRadius: 1, backgroundColor: '#fff',
+                      boxShadow: 1, borderRadius: 50, backgroundColor: '#fff',
                       paddingX: "0.5rem",
                       border: "0.2px solid #674D9F", height: "1.9rem",
                       fontWeight:"bold"
