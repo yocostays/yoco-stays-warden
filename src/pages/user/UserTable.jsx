@@ -325,7 +325,7 @@ function UserTable() {
   }, [permittedRoutes]);
 
   return (
-    <Box m={1} mb={11}>
+    <Box m={1} mb={11} >
       <Box
         display="flex"
         justifyContent="space-between"
@@ -337,7 +337,7 @@ function UserTable() {
           marginTop: "20px",
         }}
       >
-        <Box sx={{ display: "flex",marginX:{xs:"auto",lg:"0"}, gap: 2, justifyContent: "center", alignItems: "center" }}>
+        <Box sx={{ display: "flex", marginX: { xs: "auto", lg: "0" }, gap: 2, justifyContent: "center", alignItems: "center" }}>
           <Box>
             <Box
               onClick={() => handleSelectOption(StaffSelection?.HOSTEL_ADMINS)}

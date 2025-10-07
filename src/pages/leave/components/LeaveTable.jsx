@@ -531,23 +531,28 @@ function LeaveTable({ type, onTypeChange }) {
   }, [dispatch, selectedFloor]);
 
   return (
-    <Box m={1}>
+    <Box m={1} sx={{
+      position: "sticky",
+      top: "0%",
+      marginTop: "20px",
+    }}>
       <Box
         display="flex"
         justifyContent="space-between"
         alignItems="center"
         p={2}
         sx={{
+          padding: "5px 16px",
           border: "2px solid #674D9F",
           borderBottom: "none",
           flexWrap: "wrap",
           borderRadius: "20px 20px 0px 0px",
-          marginTop: "20px",
+          width: "100%",
         }}
       >
-        <Grid container spacing={1} sx={{ alignItems: "center" }}>
-          <Grid item xs={2} sm={2}>
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+        <Grid container spacing={1} sx={{ alignItems: "center", justifyContent: "center" }}>
+          <Grid item xs={10} md={2} lg={2} >
+            <Box sx={{ margin: "auto", display: "flex", alignItems: "center", gap: 1, justifyContent: "center" }}>
               {/* Text and Arrow */}
               <Typography
                 sx={{
@@ -557,6 +562,9 @@ function LeaveTable({ type, onTypeChange }) {
                   alignItems: "center",
                   textTransform: "capitalize",
                   cursor: "pointer",
+                  width: "100%",
+                  margin: "auto",
+                  justifyContent: "center"
                 }}
                 onClick={handleOpenMenu}
               >
@@ -606,13 +614,14 @@ function LeaveTable({ type, onTypeChange }) {
             </Box>
           </Grid>
 
-          <Grid item xs={10} sm={10}>
+          <Grid item xs={10} md={7} sm={10}>
             <Box
               display="flex"
               alignItems="center"
-              justifyContent="flex-end"
+              // justifyContent="flex-end"
               p={1}
               borderRadius={2}
+              justifyContent={{ xs: "center", lg: "flex-end" }}
             >
               {/* Tabs */}
               <Box
@@ -651,6 +660,17 @@ function LeaveTable({ type, onTypeChange }) {
                     {tab}
                   </Button>
                 ))}
+
+
+
+              </Box>
+            </Box>
+          </Grid>
+
+          {/* File Export */}
+          <Grid item xs={10} md={3} >
+            <Box sx={{ px: 1, display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
+              <Box >
 
                 {/* Search Icon */}
                 <IconButton
@@ -1014,47 +1034,47 @@ function LeaveTable({ type, onTypeChange }) {
                     </Box>
                   </Box>
                 </Menu>
-
-                {/* File Export */}
-                <Box sx={{ px: 1 }}>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handleExportOpen}
-                    sx={{
-                      textTransform: "none",
-                      borderRadius: 2,
-                      fontWeight: "bold",
-                    }}
-                    endIcon={
-                      <KeyboardArrowDownRoundedIcon
-                        style={{ color: "white" }}
-                      />
-                    }
+              </Box>
+              <Box>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleExportOpen}
+                  sx={{
+                    fontSize: { sm: "14px", xs: "10px" },
+                    textTransform: "none",
+                    borderRadius: 2,
+                    fontWeight: "bold",
+                  }}
+                  endIcon={
+                    <KeyboardArrowDownRoundedIcon
+                      style={{ color: "white" }}
+                    />
+                  }
+                >
+                  Export
+                </Button>
+                <Menu
+                  anchorEl={exportAnchorEl}
+                  open={Boolean(openExport)}
+                  onClose={handleExportClose}
+                >
+                  <MenuItem
+                    // disabled={!isAllSelected}
+                    onClick={() => onExportExcel("all")}
                   >
-                    Export
-                  </Button>
-                  <Menu
-                    anchorEl={exportAnchorEl}
-                    open={Boolean(openExport)}
-                    onClose={handleExportClose}
+                    All Export
+                  </MenuItem>
+                  <MenuItem
+                    disabled={!selectedRows.length}
+                    onClick={() => onExportExcel("individual")}
                   >
-                    <MenuItem
-                      // disabled={!isAllSelected}
-                      onClick={() => onExportExcel("all")}
-                    >
-                      All Export
-                    </MenuItem>
-                    <MenuItem
-                      disabled={!selectedRows.length}
-                      onClick={() => onExportExcel("individual")}
-                    >
-                      Export ({selectedRows.length})
-                    </MenuItem>
-                  </Menu>
-                </Box>
+                    Export ({selectedRows.length})
+                  </MenuItem>
+                </Menu>
               </Box>
             </Box>
+
           </Grid>
         </Grid>
       </Box>
@@ -1066,12 +1086,23 @@ function LeaveTable({ type, onTypeChange }) {
           <CustomTableContainer>
             <Box
               sx={{
+                maxHeight: "45vh",
+                height: "100%",
                 position: "relative",
                 overflow: "auto", // Allow scrolling if needed
-                scrollbaridth: "none",
+                scrollbaridth: "thin",
                 msOverflowStyle: "none",
+
                 "&::-webkit-scrollbar": {
-                  display: "none", // Hide scrollbar in WebKit browsers (Chrome, Safari, Edge)
+                  width: "8px",
+                  height: "8px",
+                },
+                "&::-webkit-scrollbar-thumb": {
+                  backgroundColor: "rgba(0, 0, 0, 0.3)",
+                  borderRadius: "10px",
+                },
+                "&::-webkit-scrollbar-track": {
+                  backgroundColor: "rgba(0, 0, 0, 0.1)",
                 },
               }}
             >
