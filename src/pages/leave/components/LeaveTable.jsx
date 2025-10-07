@@ -596,25 +596,25 @@ function LeaveTable({ type, onTypeChange }) {
                   onClick={() => handleSelectOption("leave")}
                   sx={{ fontSize: "14px", fontWeight: "600" }}
                 >
-                  Leave Requests
+                  Requests
                 </MenuItem>
                 <MenuItem
                   onClick={() => handleSelectOption("late coming")}
                   sx={{ fontSize: "14px", fontWeight: "600" }}
                 >
-                  Late Coming
+                  Late
                 </MenuItem>
                 <MenuItem
                   onClick={() => handleSelectOption("day out")}
                   sx={{ fontSize: "14px", fontWeight: "600" }}
                 >
-                  Day/Night Out
+                  Day Out
                 </MenuItem>
               </Menu>
             </Box>
           </Grid>
 
-          <Grid item xs={10} md={7} sm={10}>
+          <Grid item xs={10} md={6} sm={10}>
             <Box
               display="flex"
               alignItems="center"
@@ -668,10 +668,9 @@ function LeaveTable({ type, onTypeChange }) {
           </Grid>
 
           {/* File Export */}
-          <Grid item xs={10} md={3} >
+          <Grid item xs={10} md={4} >
             <Box sx={{ px: 1, display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
-              <Box >
-
+              <Box display={"flex"}>
                 {/* Search Icon */}
                 <IconButton
                   sx={{ color: "#6B52AE", p: 0 }}
@@ -1080,7 +1079,36 @@ function LeaveTable({ type, onTypeChange }) {
       </Box>
 
       {isLeaveLoading ? (
-        <TableLoader />
+        <>
+          <CustomTableContainer>
+            <Box
+              sx={{
+                maxHeight: "45vh",
+                height: "100%",
+                scrollbarColor: "transparent transparent",
+                scrollbaridth: "none",
+                overflow: "hidden"
+              }}>
+              <TableLoader />
+            </Box>
+          </CustomTableContainer>
+          <CustomPagination
+            rowsPerPage={rowsPerPage}
+            page={1}
+            count={0}
+            display="flex"
+            justifyContent="space-between"
+          >
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "center",
+              }}
+            />
+
+          </CustomPagination>
+        </>
       ) : (
         <>
           <CustomTableContainer>

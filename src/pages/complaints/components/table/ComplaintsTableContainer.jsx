@@ -71,7 +71,6 @@ const ComplaintsTableContainer = ({
   floorNumber,
   roomNumber,
 }) => {
-  console.log("isSelectedAll :>> ", isSelectedAll);
   const getTableHead = (selectedTab) => {
     return selectedTab === "resolved"
       ? [

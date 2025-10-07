@@ -397,7 +397,7 @@ const MessManagementTable = () => {
     if (selectedFloor) payload.floorNumber = selectedFloor;
     if (selectedRoom) payload.roomNumber = selectedRoom.roomNumber;
     if (filter !== "custom" && filter && !IsoEndDateForExport) payload.sort = filter;
-    if ((filter === "custom" && filter) || (filter === "custom" && filter && selectedMeal) ) payload.sort = filter;
+    if ((filter === "custom" && filter) || (filter === "custom" && filter && selectedMeal)) payload.sort = filter;
     if (filter === "custom" && IsoStartDateForExport) payload.startDate = IsoStartDateForExport;
     if (filter === "custom" && IsoEndDateForExport) payload.endDate = IsoEndDateForExport;
     handleGetAllMessList(payload);
@@ -439,7 +439,7 @@ const MessManagementTable = () => {
             borderRadius: "20px 20px 0px 0px",
           }}
         >
-          <Box sx={{ display: "flex", alignItems: "center" }}>
+          <Box sx={{ padding: "2px 6px", position: "sticky", top: "0%", background: "white", display: "flex", alignItems: "center" }}>
             <Typography
               sx={{
                 fontSize: "16px",
@@ -590,7 +590,7 @@ const MessManagementTable = () => {
                   </MenuItem>
                   <MenuItem
                     onClick={() => handleSelectSortOptions("custom")}
-                    // onClick={() => setOpenDialog(true)}
+                  // onClick={() => setOpenDialog(true)}
                   >
                     Custom
                   </MenuItem>
@@ -884,6 +884,9 @@ const MessManagementTable = () => {
         {/* Table container */}
         <TableContainer
           sx={{
+            position: "relative",
+            height: "100%",
+            maxHeight: "56vh",
             width: "100%",
             borderWidth: "2px",
             borderStyle: "solid",
@@ -894,7 +897,7 @@ const MessManagementTable = () => {
           }}
         >
           <Table aria-label="simple table">
-            <TableHead>
+            <TableHead sx={{ position: "sticky", top: "0%", zIndex: "999", background: "white", padding: "4px 5px" }}>
               <TableRow sx={{ borderBottom: "2px solid #947dc6" }}>
                 <TableCell padding="checkbox">
                   <Checkbox
@@ -908,11 +911,12 @@ const MessManagementTable = () => {
                   <TableCell
                     sx={{
                       fontWeight: "500",
-                      fontSize: "16px",
+                      fontSize: "14px",
                       color: "#0E0031",
+                      padding: "5px 5px"
                     }}
                     key={index}
-                    align="left"
+                    align="center"
                   >
                     {item.value}
                   </TableCell>
@@ -922,7 +926,7 @@ const MessManagementTable = () => {
             <TableBody>
               {isMessLoading ? (
                 // Loading State
-                <TableRow>
+                <TableRow sx={{ maxHeight:"56vh", height: "100%" , overflow:"auto" }}>
                   <TableCell colSpan={TABLE_HEAD.length + 1}>
                     <Box
                       sx={{
@@ -975,7 +979,11 @@ const MessManagementTable = () => {
                         onChange={(event) => handleSelectRow(event, item._id)}
                       />
                     </TableCell>
-                    <TableCell>{index + 1 + page * rowsPerPage}</TableCell>
+                    <TableCell sx={{
+                      width: "fit-content",
+                      whiteSpace: "nowrap", // Optional: prevents text wrapping
+                      padding: "8px" // Optional: adjust padding as needed
+                    }}>{index + 1 + page * rowsPerPage}</TableCell>
                     <TableCell sx={{ minWidth: 120 }}>
                       {item.uniqueId || "--"}
                     </TableCell>
@@ -1020,8 +1028,8 @@ const MessManagementTable = () => {
                         `${dayjs(item.bookedOn)
                           .utc()
                           .format("Do MMM, YYYY")} | ${dayjs(item.bookedOn)
-                          .utc()
-                          .format("hh:mm A")}`) ||
+                            .utc()
+                            .format("hh:mm A")}`) ||
                         "--"}
                     </TableCell>
                     <TableCell sx={{ minWidth: { sm: 190, xs: 150 } }}>
@@ -1029,17 +1037,16 @@ const MessManagementTable = () => {
                         `${dayjs(item.date)
                           .utc()
                           .format("Do MMM, YYYY")} | ${dayjs(item.date)
-                          .utc()
-                          .format("hh:mm A")}`) ||
+                            .utc()
+                            .format("hh:mm A")}`) ||
                         "--"}
                     </TableCell>
                     {/* <TableCell>{item.roomNumber || "--"}</TableCell> */}
                     <TableCell sx={{ minWidth: 150 }}>
                       {item.mealType || "--"}
                     </TableCell>
-                    <TableCell sx={{ minWidth: 80 }}>{`${
-                      item.floorNumber || "--"
-                    } / ${item.roomNumber || "--"}`}</TableCell>
+                    <TableCell sx={{ minWidth: 80 }}>{`${item.floorNumber || "--"
+                      } / ${item.roomNumber || "--"}`}</TableCell>
                     <TableCell>
                       <IconButton onClick={() => handleRowDetailsPage(item)}>
                         <Box
@@ -1059,66 +1066,68 @@ const MessManagementTable = () => {
               )}
             </TableBody>
           </Table>
-
-          <CustomPagination
-            rowsPerPage={rowsPerPage}
-            page={page}
-            count={totalDataCount}
-            handleChangePage={handleChangePage}
-            handleChangeRowsPerPage={handleChangeRowsPerPage}
-            display="flex"
-            alignItems="center"
-            justifyContent="space-between"
-            minWidth="100%"
-          >
-            <Box
+            <CustomPagination
+              rowsPerPage={rowsPerPage}
+              page={page}
+              count={totalDataCount}
+              handleChangePage={handleChangePage}
+              handleChangeRowsPerPage={handleChangeRowsPerPage}
               display="flex"
-              justifyContent="space-between"
               alignItems="center"
+              justifyContent="space-between"
+              minWidth="100%"
+            sx={{border:"2px solid #674D9F", position: "sticky", bottom: "0%", background: "white" }}
             >
-              {/* Display selected rows count */}
-              <Typography variant="body1" mr={3} ml={1}>
-                <span style={{ color: "#674D9F" }}>Action: </span>
-                {selectedRows.length} Selected
-              </Typography>
+              <Box
+                display="flex"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                {/* Display selected rows count */}
+                <Typography variant="body1" mr={3} ml={1}>
+                  <span style={{ color: "#674D9F" }}>Action: </span>
+                  {selectedRows.length} Selected
+                </Typography>
 
-              {/* Center: Export dropdown */}
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleExportOpen}
-                sx={{
-                  textTransform: "none",
-                  borderRadius: 2,
-                  fontWeight: "bold",
-                }}
-                endIcon={
-                  <KeyboardArrowDownRoundedIcon style={{ color: "white" }} />
-                }
-              >
-                Export
-              </Button>
-              <Menu
-                anchorEl={exportAnchorEl}
-                open={Boolean(openExport)}
-                onClose={handleExportClose}
-              >
-                <MenuItem
-                  disabled={!isAllSelected || getAllMessList.length === 0}
-                  onClick={() => onExportExcel("all")}
+                {/* Center: Export dropdown */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleExportOpen}
+                  sx={{
+                    textTransform: "none",
+                    borderRadius: 2,
+                    fontWeight: "bold",
+                  }}
+                  endIcon={
+                    <KeyboardArrowDownRoundedIcon style={{ color: "white" }} />
+                  }
                 >
-                  All Export
-                </MenuItem>
-                <MenuItem
-                  disabled={!selectedRows.length}
-                  onClick={() => onExportExcel("individual")}
+                  Export
+                </Button>
+                <Menu
+                  anchorEl={exportAnchorEl}
+                  open={Boolean(openExport)}
+                  onClose={handleExportClose}
                 >
-                  Export ({selectedRows.length})
-                </MenuItem>
-              </Menu>
-            </Box>
-          </CustomPagination>
+                  <MenuItem
+                    disabled={!isAllSelected || getAllMessList.length === 0}
+                    onClick={() => onExportExcel("all")}
+                  >
+                    All Export
+                  </MenuItem>
+                  <MenuItem
+                    disabled={!selectedRows.length}
+                    onClick={() => onExportExcel("individual")}
+                  >
+                    Export ({selectedRows.length})
+                  </MenuItem>
+                </Menu>
+              </Box>
+            </CustomPagination>
+
         </TableContainer>
+
         <MessSideDrawer
           drawerOpen={drawerOpen}
           handleCloseDrawer={handleCloseDrawer}
