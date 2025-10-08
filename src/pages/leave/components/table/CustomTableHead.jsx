@@ -2,7 +2,7 @@ import { TableHead, TableRow, TableCell, Checkbox } from "@mui/material";
 import PropTypes from "prop-types";
 
 const CustomTableHead = ({ isAllSelected, isIndeterminate, handleSelectAll, columns }) => (
-  <TableHead sx={{ fontWeight: 500 }}>
+  <TableHead sx={{ fontWeight: 500, position: "sticky", top: "0%", background: "white", zIndex: 99 }}>
     <TableRow sx={{ borderBottom: "1px solid #674D9F" }}>
       <TableCell padding="checkbox">
         <Checkbox

@@ -34,7 +34,6 @@ export default function ComplaintsTableTabs() {
   });
   const openExport = Boolean(exportAnchorEl);
 
-  console.log('filterValues', filterValues)
 
   const onExportExcel = async () => {
     try {
@@ -55,7 +54,6 @@ export default function ComplaintsTableTabs() {
         payload.compaintIds = selectedRows.length > 0 ? selectedRows : [""];
       }
   
-      console.log("Export Payload:", payload);
   
       // Dispatch the export action with the correct payload
       const response = await dispatch(exportComplaintReportAsync(payload));

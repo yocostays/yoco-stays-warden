@@ -24,10 +24,11 @@ import TableCards from "./TableCards";
 import UserTableRow from "./UserTableRow";
 import { Icon } from "@iconify/react";
 import { useNavigate } from "react-router-dom";
-import { exportUserReportAsync, getUsers } from "@features/users/userSlice";
+import { exportUserReportAsync, getUsers, setStaffSelection, setSelectedTab, setSelectedAcademicOption, setSearch, setSortUserFilter, setStudentPagination } from "@features/users/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { getStaffAsync } from "@features/staff/staffService";
 import {
+  StaffSelection,
   StaffStatusEnum,
   StudentStatusEnum,
 } from "@components/enums/usersListEnums";
@@ -35,6 +36,11 @@ import CustomPagination from "@pages/leave/components/table/customPagination/Cus
 import { downloadCSV } from "@utils/downloadCSV";
 import { toast } from "react-toastify";
 import moment from "moment";
+import PersonIcon from '@mui/icons-material/Person';
+import studentGray from "../../assets/images/studentGray.svg"
+import studentBlue from "../../assets/images/studentBlue.svg"
+import adminGray from "../../assets/images/adminGray.svg"
+import adminBlue from "../../assets/images/adminBlue.svg"
 
 function UserTable() {
   const theme = useTheme();
@@ -42,7 +48,10 @@ function UserTable() {
   const navigate = useNavigate();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const { users, loading, totalCount } = useSelector((state) => state.users);
+  const { studentPagination, users, loading, totalCount, staffSelection,
+    selectedTab, selectedAcademicOption, sortUserFilter,
+    searchUser } = useSelector((state) => state.users);
+
   const { permittedRoutes } = useSelector((state) => state?.permission);
   const { staffList, isLoading, totalStaffCount } = useSelector(
     (state) => state.staff
@@ -64,13 +73,7 @@ function UserTable() {
   const [anchorEl, setAnchorEl] = useState(null);
   const [page, setPage] = useState(0); // State for pagination page
   const [rowsPerPage, setRowsPerPage] = useState(10); // State for rows per page
-  const [filter, setFilter] = useState("");
-  const [selectedOption, setSelectedOption] = useState("Hostel Admins"); // Default option
-  const [selectedAcademicOption, setSelectedAcademicOption] = useState(''); // Default option
-
-
-  const [selectedTab, setSelectedTab] = useState("all"); // Default tab
-  const [search, setSearch] = useState("");
+  // const [filter, setFilter] = useState("");
   const [showSearch, setShowSearch] = useState(false);
   const [floor, setFloor] = useState("G"); // Default floor
   const [roomSearch, setRoomSearch] = useState(""); // Search text for rooms
@@ -88,7 +91,7 @@ function UserTable() {
   const open = Boolean(anchorEl);
   const isRowSelected = (id) => selectedRows.includes(id);
   const totalDataCount =
-    selectedOption === "Hostel Student" ? totalCount : totalStaffCount;
+    staffSelection === StaffSelection?.HOSTEL_STUDENT ? totalCount : totalStaffCount;
 
   const handleSearchClick = () => {
     setShowSearch((prev) => !prev);
@@ -103,8 +106,8 @@ function UserTable() {
   };
 
   const handleSelectOption = (option) => {
-    setSelectedOption(option);
-    setSelectedTab("all");
+    dispatch(setStaffSelection(option))
+    dispatch(setSelectedTab("all"))
     handleCloseMenu();
   };
 
@@ -116,7 +119,7 @@ function UserTable() {
     setAcademicAnchorE1(null);
   };
   const handleSelectAcademic = (option) => {
-    setSelectedAcademicOption(option);
+    dispatch(setSelectedAcademicOption(option));
     handleCloseAcademicMenu()
   }
   const handleFilterMenuOpen = (event) => {
@@ -182,17 +185,19 @@ function UserTable() {
 
   // Update the tabs based on the selected option
   const tabs =
-    selectedOption === "Hostel Admins" || selectedOption === "Hostel Staff"
+    staffSelection === StaffSelection?.HOSTEL_ADMINS || staffSelection === StaffSelection?.HOSTEL_STAFF
       ? StaffStatusEnum
       : StudentStatusEnum;
 
   const handleChangePage = (event, newPage) => {
+    dispatch(setStudentPagination(newPage))
     setPage(newPage);
   };
 
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
+    dispatch(setStudentPagination(0))
   };
 
   const [setDrawerOpen] = useState(false); // State to control drawer
@@ -261,32 +266,32 @@ function UserTable() {
 
   const customColumns = [
     { label: "YOCO ID", align: "left" },
-    { label: "Name", align: "left" },
-    { label: "Email", align: "left" },
+    { label: "Name", align: "center" },
+    // { label: "Email", align: "left" },
     { label: "Contact No. ", align: "left" },
-    { label: "Floor & Room", align: "left" },
-    { label: "Joining Date", align: "left" },
-    { label: "Status", align: "left" },
-    { label: "Action", align: "left" },
+    { label: "Floor/Room", align: "left" },
+    { label: "Joining", align: "center" },
+    { label: "Status", align: "center" },
+    { label: "Action", align: "center" },
   ];
 
   const handleToGetStaffDetails = () => {
     const payload = {
-      page: page + 1,
+      page: studentPagination + 1,
       limit: rowsPerPage,
-      search,
-      sort: filter,
+      search: searchUser,
+      sort: sortUserFilter,
       status: selectedTab,
       academicYear: selectedAcademicOption
     };
 
 
-    if (selectedOption === "Hostel Student") dispatch(getUsers({ ...payload }));
+    if (staffSelection === StaffSelection?.HOSTEL_STUDENT) dispatch(getUsers({ ...payload }));
     else {
       dispatch(
         getStaffAsync({
           ...payload,
-          role: selectedOption === "Hostel Admins" ? "admin" : "staff",
+          role: staffSelection === StaffSelection?.HOSTEL_ADMINS ? "admin" : "staff",
         })
       );
     }
@@ -294,7 +299,17 @@ function UserTable() {
 
   useEffect(() => {
     handleToGetStaffDetails();
-  }, [selectedOption, page, rowsPerPage, selectedTab, search, filter, selectedAcademicOption]);
+  }, [staffSelection, studentPagination, page, rowsPerPage, sortUserFilter, selectedAcademicOption]);
+
+  useEffect(() => {
+    dispatch(setStudentPagination(0))
+    handleToGetStaffDetails();
+  }, [selectedTab])
+
+  useEffect(() => {
+    dispatch(setStudentPagination(0))
+    handleToGetStaffDetails();
+  }, [searchUser])
 
   useEffect(() => {
     if (permittedRoutes) {
@@ -314,52 +329,93 @@ function UserTable() {
       <Box
         display="flex"
         justifyContent="space-between"
-        alignItems="center"
-        p={2}
         sx={{
+          padding: "5px 16px",
           border: "2px solid #674D9F",
           flexWrap: "wrap",
           borderRadius: "20px 20px 0px 0px",
           marginTop: "20px",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <Typography
-            sx={{
-              fontSize: "16px",
-              fontWeight: "700",
-              display: "flex",
-              alignItems: "center",
-              textTransform: "capitalize",
-              cursor: "pointer",
-            }}
-            onClick={handleOpenMenu}
-          >
-            {selectedOption}
-            <KeyboardArrowDownIcon
+        <Box sx={{ display: "flex",marginX:{xs:"auto",lg:"0"}, gap: 2, justifyContent: "center", alignItems: "center" }}>
+          <Box>
+            <Box
+              onClick={() => handleSelectOption(StaffSelection?.HOSTEL_ADMINS)}
               sx={{
-                fontSize: "24px",
-                marginLeft: "6px",
-                color: "#0E0031",
+                cursor: "pointer",
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? "#ACB5BD" : "#674D9F",
               }}
-            />
-          </Typography>
-          <Menu
-            anchorEl={dropdownAnchor}
-            open={Boolean(dropdownAnchor)}
-            onClose={handleCloseMenu}
-          >
-            <MenuItem onClick={() => handleSelectOption("Hostel Admins")}>
-              Hostel Admins
-            </MenuItem>
-            <MenuItem onClick={() => handleSelectOption("Hostel Staff")}>
-              Hostel Staff
-            </MenuItem>
-            <MenuItem onClick={() => handleSelectOption("Hostel Student")}>
-              Hostel Student
-            </MenuItem>
-          </Menu>
+            >
+              <img src={StaffSelection?.HOSTEL_ADMINS !== staffSelection ? adminGray : adminBlue} alt="admin" width={25} />
+            </Box>
+            <Box sx={{
+              textAlign: "center",
+              fontSize: "14.22px",
+              fontWeight: "700",
+              color: StaffSelection?.HOSTEL_ADMINS !== staffSelection ? "#ACB5BD" : "#674D9F"
+            }}>
+              Admin
+            </Box>
+          </Box>
+          <Box>
+            <Box
+              onClick={() => handleSelectOption(StaffSelection?.HOSTEL_STAFF)}
+              sx={{
+                cursor: "pointer",
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: StaffSelection?.HOSTEL_STAFF !== staffSelection ? "#ACB5BD" : "#674D9F",
+              }}
+            >
+              <PersonIcon width={50} />
 
+            </Box>
+            <Box sx={{
+              textAlign: "center",
+              fontSize: "14.22px",
+              fontWeight: "700",
+              color: StaffSelection?.HOSTEL_STAFF !== staffSelection ? "#ACB5BD" : "#674D9F"
+            }}>
+              Staff
+            </Box>
+          </Box>
+          <Box>
+            <Box
+              onClick={() => handleSelectOption(StaffSelection?.HOSTEL_STUDENT)}
+              sx={{
+                cursor: "pointer",
+                width: 40,
+                height: 40,
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: StaffSelection?.HOSTEL_STUDENT !== staffSelection ? "#ACB5BD" : "#674D9F"
+              }}
+            >
+
+              <img src={StaffSelection?.HOSTEL_STUDENT !== staffSelection ? studentGray : studentBlue} alt="admin" width={25} />
+            </Box>
+            <Box sx={{
+              textAlign: "center",
+              fontSize: "14.22px",
+              fontWeight: "700",
+              color: StaffSelection?.HOSTEL_STUDENT !== staffSelection ? "#ACB5BD" : "#674D9F"
+            }}>
+
+              Student
+            </Box>
+          </Box>
         </Box>
         <Box
           display="flex"
@@ -381,7 +437,7 @@ function UserTable() {
               <Button
                 key={tab?.value}
                 variant="outlined"
-                onClick={() => setSelectedTab(tab?.value)}
+                onClick={() => dispatch(setSelectedTab(tab?.value))}
                 sx={{
                   textTransform: "none",
                   fontWeight: 500,
@@ -400,15 +456,14 @@ function UserTable() {
                   width: isSmallScreen ? "100%" : "auto", // Full width for small screens
                 }}
               >
+
                 {tab?.label}
               </Button>
 
             ))}
-            {selectedOption === 'Hostel Student' && (
+            {staffSelection === StaffSelection?.HOSTEL_STUDENT && (
               <Box
-
               >
-
                 <Button
                   variant="outlined"
                   size="small"
@@ -423,7 +478,7 @@ function UserTable() {
                   onClick={handleOpeAcademicnMenu}
                 >
                   {selectedAcademicOption ? selectedAcademicOption : 'Academic Year'}
-           
+
                   <KeyboardArrowDownOutlinedIcon />
                 </Button>
 
@@ -459,6 +514,7 @@ function UserTable() {
                     placeholder="Type Search.."
                     variant="standard"
                     autoFocus
+                    value={searchUser}
                     sx={{
                       width: 100,
                       transition: "width 0.3s ease-in-out",
@@ -466,11 +522,11 @@ function UserTable() {
                       "& .MuiInput-underline:after": { borderBottom: "none" },
                     }}
                     // onBlur={() => setShowSearch(false)}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => dispatch(setSearch(e.target.value))}
                   />
                 )}
               </Box>
-              {selectedOption === "Hostel Student" && (
+              {staffSelection === StaffSelection?.HOSTEL_STUDENT && (
                 <>
                   <IconButton
                     sx={{ color: open ? "#6B52AE" : "#A9A9A9", p: 0 }} // Purple when open, grey otherwise
@@ -497,16 +553,24 @@ function UserTable() {
                     transformOrigin={{ vertical: "top", horizontal: "center" }}
                     anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
                   >
-                    <MenuItem onClick={() => setFilter("ascending")}>
+                    <MenuItem
+                      selected={sortUserFilter === "ascending"}
+                      onClick={() => dispatch(setSortUserFilter("ascending"))}>
                       By Alphabet A-Z
                     </MenuItem>
-                    <MenuItem onClick={() => setFilter("descending")}>
+                    <MenuItem
+                      selected={sortUserFilter === "descending"}
+                      onClick={() => dispatch(setSortUserFilter("descending"))}>
                       By Alphabet Z-A
                     </MenuItem>
-                    <MenuItem onClick={() => setFilter("recent")}>
+                    <MenuItem
+                      selected={sortUserFilter === "recent"}
+                      onClick={() => dispatch(setSortUserFilter("recent"))}>
                       By Date (Recent)
                     </MenuItem>
-                    <MenuItem onClick={() => setFilter("oldest")}>
+                    <MenuItem
+                      selected={sortUserFilter === "oldest"}
+                      onClick={() => dispatch(setSortUserFilter("oldest"))}>
                       By Date (Oldest)
                     </MenuItem>
                   </Menu>
@@ -700,8 +764,8 @@ function UserTable() {
 
       {isLoading || loading ? (
         <TableLoader />
-      ) : selectedOption === "Hostel Admins" ||
-        selectedOption === "Hostel Staff" ? (
+      ) : staffSelection === StaffSelection?.HOSTEL_ADMINS ||
+        staffSelection === StaffSelection?.HOSTEL_STAFF ? (
         <TableCards
           staffList={staffList}
           selectedRows={selectedRows}
@@ -709,18 +773,18 @@ function UserTable() {
           handleRowDetailsPage={handleRowDetailsPage}
           handleToGetStaffDetails={handleToGetStaffDetails}
         />
-      ) : selectedOption === "Hostel Student" ? (
+      ) : staffSelection === StaffSelection?.HOSTEL_STUDENT ? (
         <>
           <CustomTableContainer>
             <Box
               sx={{
+                maxHeight: "45vh",
+                height: "100%",
                 position: "relative",
-                //borderLeft: "2px solid #674D9F",
-                // borderRight: "2px solid #674D9F",
                 overflow: "auto", // Allow scrolling if needed
                 // height: "400px",
                 scrollbarWidth: "thin",
-                scrollbarColor: "transparent transparent",
+                // scrollbarColor: "transparent transparent",
                 msOverflowStyle: "none",
                 "&::-webkit-scrollbar": {
                   width: "8px",
@@ -772,16 +836,16 @@ function UserTable() {
 
       <CustomPagination
         rowsPerPage={rowsPerPage}
-        page={page}
+        page={studentPagination}
         // count={users?.count?.allUserCount ?? staffList.length}
         count={totalDataCount}
         handleChangePage={handleChangePage}
         handleChangeRowsPerPage={handleChangeRowsPerPage}
-        display={selectedOption === "Hostel Student" && "flex"}
+        display={staffSelection === StaffSelection?.HOSTEL_STUDENT && "flex"}
         alignItems="center"
         justifyContent="space-between"
       >
-        {selectedOption === "Hostel Student" && (
+        {staffSelection === StaffSelection?.HOSTEL_STUDENT && (
           <Box
             display="flex"
             justifyContent="space-between"

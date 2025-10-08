@@ -63,7 +63,7 @@ const LoginIndex = () => {
           toast.success(response.payload.message || "Login Success!");
           dispatch(getPermittedRoutesAsync({})).then((response) => {
             // Handle any logic after successful dispatch
-            const route = response?.payload?.data[0]?.link;
+            const route = response?.payload?.data.find((item)=> item?.link ==="user")?.link
             navigate(`${route}`, {
               state: { successMessage: response },
             });

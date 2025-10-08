@@ -305,7 +305,7 @@ const MessTable2 = ({ reload }) => {
                 <EnhancedTableToolbar numSelected={selectedUsers.length} />
               ) : null}
               <Table aria-label="simple table">
-                <TableHead>
+                <TableHead sx={{ fontWeight: 500, position: "sticky", top: "0%", background: "white", zIndex: 99 }}>
                   <TableRow sx={{ borderBottom: "2px solid #674D9F" }}>
                     <TableCell padding="checkbox">
                       <Checkbox

@@ -195,7 +195,7 @@ const ComplaintsTableHead = ({
         flexWrap="wrap"
         sx={{ marginBottom: { xs: 2, sm: 2, md: 0 } }}
       >
-        <Box width="100%">
+        <Box width="100%" >
           <Box
             display="flex"
             justifyContent="space-between"
@@ -207,6 +207,7 @@ const ComplaintsTableHead = ({
               borderBottom: "none",
               flexWrap: "wrap",
               borderRadius: "20px 20px 0px 0px",
+              background: "white"
             }}
           >
             <Box>

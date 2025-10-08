@@ -44,6 +44,7 @@ import { useDispatch, useSelector } from "react-redux";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 
 export default function StudentIndex() {
   const theme = useTheme();
@@ -153,9 +154,9 @@ export default function StudentIndex() {
         course: currentData?.academicDetails?.courseId || null,
         semester: currentData?.academicDetails?.semester
           ? {
-              label: String(currentData?.academicDetails?.semester),
-              value: String(currentData?.academicDetails?.semester),
-            }
+            label: String(currentData?.academicDetails?.semester),
+            value: String(currentData?.academicDetails?.semester),
+          }
           : null,
 
         // KYC Update
@@ -253,32 +254,32 @@ export default function StudentIndex() {
 
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
-            if (res?.payload?.statusCode === 200) {
-              toast.success(res?.payload?.message);
-              navigate("/user");
-            } else {
-              toast.error(res?.payload);
-            }
-          })
+          if (res?.payload?.statusCode === 200) {
+            toast.success(res?.payload?.message);
+            navigate("/user");
+          } else {
+            toast.error(res?.payload);
+          }
+        })
         : dispatch(
-            createResidentAsync({
-              ...payload,
-              hostelId: values?.hostel?._id,
-              bedType: values?.bedType?.bedType,
-              buildingNumber: values?.selectWing,
-              floorNumber: selectedFloor?.floorNumber,
-              roomNumber: selectedRoom?.roomNumber || values?.roomNumber,
-              bedNumber: values?.bedNumber?._id,
-              billingCycle: values?.billingCycle?.value,
-            })
-          ).then((res) => {
-            if (res?.payload?.statusCode === 200) {
-              toast.success(res?.payload?.message);
-              navigate("/user");
-            } else {
-              toast.error(res?.payload);
-            }
-          });
+          createResidentAsync({
+            ...payload,
+            hostelId: values?.hostel?._id,
+            bedType: values?.bedType?.bedType,
+            buildingNumber: values?.selectWing,
+            floorNumber: selectedFloor?.floorNumber,
+            roomNumber: selectedRoom?.roomNumber || values?.roomNumber,
+            bedNumber: values?.bedNumber?._id,
+            billingCycle: values?.billingCycle?.value,
+          })
+        ).then((res) => {
+          if (res?.payload?.statusCode === 200) {
+            toast.success(res?.payload?.message);
+            navigate("/user");
+          } else {
+            toast.error(res?.payload);
+          }
+        });
     }
   };
 
@@ -338,7 +339,7 @@ export default function StudentIndex() {
         cityId: currentData?.city?.cityId,
         name: currentData?.city?.name,
       });
-  
+
     }
   }, [id, currentData]);
 
@@ -386,19 +387,41 @@ export default function StudentIndex() {
               <ArrowBackIcon />
               <Typography>Back</Typography>
             </Box>
-            {!id && (
+            <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>
               <Box>
-                <Button
-                  variant="contained"
-                  size="small"
-                  sx={{ borderRadius: "50px" }}
+                <a sx={{ height: "100%" }} href={'/public/bulk_upload.csv'} download>
+                  <Button
+                    size="small"
+
+                    sx={{
+                      boxShadow: 1, borderRadius: 50, backgroundColor: '#fff',
+                      paddingX: "0.5rem",
+                      border: "0.2px solid #674D9F", height: "1.9rem",
+                      fontWeight:"bold"
+                    }}
                   type="button"
-                  onClick={() => setOpen(true)}
-                >
-                  Bulk upload
-                </Button>
+                  >
+                    <Box sx={{ display: "flex", gap: 0.5 }}>
+                      Sample File
+                      <ArrowDownwardIcon sx={{ width: "1rem" }} />
+                    </Box>
+                  </Button>
+                </a>
               </Box>
-            )}
+              {!id && (
+                <Box>
+                  <Button
+                    variant="contained"
+                    size="small"
+                    sx={{ borderRadius: "50px" }}
+                    type="button"
+                    onClick={() => setOpen(true)}
+                  >
+                    Bulk upload
+                  </Button>
+                </Box>
+              )}
+            </Box>
           </Box>
 
           {/**step section */}

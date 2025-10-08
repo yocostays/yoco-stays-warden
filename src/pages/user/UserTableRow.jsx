@@ -49,8 +49,19 @@ const UserTableRow = ({
                 onChange={(event) => handleRowSelect(event, row._id)} // Trigger row select/deselect
               />
             </TableCell>
-            <TableCell>{row.uniqueId || "-"}</TableCell>
-            <TableCell>
+            <TableCell
+              sx={{
+                width: "fit-content",
+                whiteSpace: "nowrap", // Optional: prevents text wrapping
+                padding: "8px" // Optional: adjust padding as needed
+              }}
+            >{row.uniqueId || "-"}</TableCell>
+            <TableCell
+              sx={{
+                alignContent: "center",
+                width:"12rem",
+              }}
+            >
               <Box
                 display="flex"
                 alignItems="center"
@@ -67,15 +78,25 @@ const UserTableRow = ({
                 </Typography>
               </Box>
             </TableCell>
-            <TableCell>{row.email || "-"}</TableCell>
-            <TableCell>{row.phone || "-"}</TableCell>
-            <TableCell>{ `${row.floorNumber || 0}/${row.roomNumber || 0}`}</TableCell>
-            <TableCell>
+            {/* <TableCell>{row.email || "-"}</TableCell> */}
+            <TableCell
+              align="center"
+            >{row.phone || "-"}</TableCell>
+            <TableCell
+              sx={{
+                textAlign: "center"
+              }}
+            >{`${row.floorNumber || 0}/${row.roomNumber || 0}`}</TableCell>
+            <TableCell 
+           align="center"
+            >
               {row.joiningDate
                 ? moment.utc(row.joiningDate).format("DD MMM, YYYY")
                 : "-"}
             </TableCell>
-            <TableCell>
+            <TableCell 
+            align="center"
+            >
               <Button
                 variant="outlined"
                 size="small"
@@ -83,31 +104,30 @@ const UserTableRow = ({
                   padding: "2",
                   textTransform: "capitalize",
                   borderRadius: 20,
-                  border: `1px solid ${
-                    row.userStatus === "active"
-                      ? "#008000"
-                      : row.userStatus === "inactive"
+                  border: `1px solid ${row.userStatus === "active"
+                    ? "#008000"
+                    : row.userStatus === "inactive"
                       ? "#D2C43B"
                       : "#9A2500"
-                  }`,
+                    }`,
                   color:
                     row.userStatus === "active"
                       ? "#008000"
                       : row.userStatus === "inactive"
-                      ? "#D2C43B"
-                      : "#9A2500",
+                        ? "#D2C43B"
+                        : "#9A2500",
                   bgcolor:
                     row.userStatus === "active"
                       ? "#AECAAA"
                       : row.userStatus === "inactive"
-                      ? "#FDFAE1"
-                      : "#FC8D62",
+                        ? "#FDFAE1"
+                        : "#FC8D62",
                 }}
               >
                 {row.userStatus}
               </Button>
             </TableCell>
-            <TableCell align="right">
+            <TableCell align="center">
               <IconButton onClick={() => handleRowDetailsPage(row?._id)}>
                 <Box
                   component="img"
