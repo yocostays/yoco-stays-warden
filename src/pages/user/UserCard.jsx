@@ -22,7 +22,7 @@ useEffect(()=>{
   return (
     <Grid item xs={12} sm={12} md={12} lg={7}>
       <Grid container spacing={3}
-        sx={{ paddingLeft: 1, paddingRight: 1, marginTop: { md: "-30px", sm: "60px", xs: "150px" }}} // Adds gap on left and right
+        sx={{ paddingLeft: 1, paddingRight: 1 }} // Adds gap on left and right
 >
         <Grid item xs={12} sm={6} lg={4}>
           <CustomCard

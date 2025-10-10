@@ -385,11 +385,17 @@ function LeaveTable({ type, onTypeChange }) {
     }
   };
 
-  const { ticketId, description, categoryName, startDate, endDate, leaveType } =
+  const { ticketId, description, categoryName, startDate, endDate, leaveType, days, createdAt, floorNumber, roomNumber } =
     leaveDataById;
+
 
   const userData = [
     { label: "Leave ID", value: ticketId, icon: <AssignmentOutlined /> },
+    {
+      label: "Applied On", value: moment(createdAt).format("DD MMM YYYY | hh:mm A") || "-",
+      icon: <EventOutlined />,
+    },
+
     {
       label: "Check-Out",
       value: moment(startDate).format("DD MMM YYYY | hh:mm A") || "-",
@@ -401,11 +407,17 @@ function LeaveTable({ type, onTypeChange }) {
       icon: <EventOutlined />,
     },
     {
+      label: "Duration",
+      value: `${days} D`,
+      icon: <EventOutlined />,
+    },
+    {
       label: "Reason",
       value: (leaveType === "late coming" && description) || categoryName,
       icon: <ExtensionOutlinedIcon />,
     },
     { label: "Description", value: description, icon: <ArticleOutlined /> },
+    { label: "Floor/Room", value: `${floorNumber}/${roomNumber}`, icon: <ArticleOutlined /> },
   ];
 
   // Handle "Select All" checkbox toggle
@@ -501,16 +513,16 @@ function LeaveTable({ type, onTypeChange }) {
   }, [type, onTypeChange]);
 
   const customColumns = [
-    { label: "YocoId", align: "left" },
-    { label: "Name", align: "left" },
-    { label: "Created On", align: "left" },
-    { label: "Check-Out", align: "left" },
-    { label: "Check-In", align: "left" },
-    { label: "Duration", align: "left" },
-    { label: "Reason", align: "left" },
-    { label: "Floor & Room", align: "left" },
-    { label: "Status", align: "left" },
-    { label: "Action", align: "left" },
+    { label: "YOCO ID", align: "center" },
+    { label: "Name", align: "center" },
+    // { label: "Created On", align: "center" },
+    { label: "Check-Out", align: "center" },
+    { label: "Check-In", align: "center" },
+    // { label: "Duration", align: "left" },
+    { label: "Reason", align: "center" },
+    // { label: "Floor/Room", align: "center" },
+    { label: "Status", align: "center" },
+    { label: "Action", align: "center" },
   ];
 
   // Step 2: Filter the leaveManagementList to find matching entries
@@ -534,7 +546,7 @@ function LeaveTable({ type, onTypeChange }) {
     <Box m={1} sx={{
       position: "sticky",
       top: "0%",
-      marginTop: "20px",
+      // marginTop: "20px",
     }}>
       <Box
         display="flex"
@@ -669,7 +681,7 @@ function LeaveTable({ type, onTypeChange }) {
 
           {/* File Export */}
           <Grid item xs={10} md={4} >
-            <Box sx={{ px: 1, display: "flex", justifyContent: "center", alignItems: "center", gap: 2 }}>
+            <Box sx={{ px: 1, display: "flex", justifyContent: { xs: "center", md: "end" }, alignItems: "center", gap: 2 }}>
               <Box display={"flex"}>
                 {/* Search Icon */}
                 <IconButton

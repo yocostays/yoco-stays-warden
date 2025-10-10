@@ -1,0 +1,9 @@
+.Mui-TableHead-root th:first-of-type,
+.Mui-TableBody-root td:first-of-type {
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+}
+
+.MuiCheckbox-root {
+  margin-left: 0 !important;
+}

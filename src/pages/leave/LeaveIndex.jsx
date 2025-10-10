@@ -15,7 +15,7 @@ const LeaveIndex = () => {
       sx={{
         width: { md: `calc(100% - 270px)` },
         ml: { md: "270px", sm: 0 },
-        marginBottom: "30px",
+        // marginBottom: "30px",
       }}
     >
       <LeaveCharts onTypeChange={onTypeChange} />

@@ -64,7 +64,7 @@ const LeaveCharts = () => {
       <Grid
         container
         spacing={2}
-        sx={{ marginTop: { md: "-30px", sm: "60px", xs: "150px" } }}
+        // sx={{ marginTop: { md: "-30px", sm: "60px", xs: "150px" } }}
       >
         <Grid item xs={12} sm={12} md={12} lg={8}>
           <Grid container spacing={2}>

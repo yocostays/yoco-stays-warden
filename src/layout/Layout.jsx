@@ -60,15 +60,16 @@ const Layout = ({ children }) => {
           display: "flex",
           flexDirection: "column",
           height: "100vh",
+          overflow:"hidden"
         }}
       >
         {/* Fixed Header */}
         <Box
           component="header"
           sx={{
-            position: "fixed",
+            position: "sticky",
             top: 0,
-            left: 0,
+            // left: 0,
             width: "100%",
             //zIndex: 1000,
             //backgroundColor: "rgba(255, 255, 255, 0.5)",
@@ -86,7 +87,7 @@ const Layout = ({ children }) => {
           sx={{
             display: "flex",
             flexGrow: 1,
-            marginTop: "150px", // Adjust based on the Header height (default MUI AppBar height is 64px)
+            // marginTop: "150px", // Adjust based on the Header height (default MUI AppBar height is 64px)
             overflow: "hidden",
           }}
         >
@@ -101,6 +102,7 @@ const Layout = ({ children }) => {
               height: "calc(100vh - 64px)", // Full height minus header height
               overflowY: "auto", // Add vertical scrolling for long content
               padding: 2,
+              backgroundColor:"#fdfaff"
             }}
           >
             {children}

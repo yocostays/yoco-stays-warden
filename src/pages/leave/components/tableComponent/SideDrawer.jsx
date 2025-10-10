@@ -90,6 +90,7 @@ const SideDrawer = ({
     previousLeaveId,
   } = leaveDataById;
 
+  console.log(userData,"userData")
   const formattedDate = `${moment(startDate).format("Do MMM, YYYY")} - ${moment(endDate).format("Do MMM, YYYY")}`;
   const formattedTime = `${moment(startDate).format("hh:mm A")} - ${moment(endDate).format("hh:mm A")}`;
 

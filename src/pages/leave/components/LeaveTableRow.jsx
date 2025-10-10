@@ -60,10 +60,10 @@ const LeaveTableRow = ({
               />
             </TableCell>
 
-            <TableCell sx={{ minWidth: "110px" }}>
+            <TableCell sx={{ minWidth: "110px",textAlign:"center" }}>
               {row?.uniqueId || "-"}
             </TableCell>
-            <TableCell sx={{ minWidth: "180px" }}>
+            <TableCell sx={{ minWidth: "180px" ,textAlign:"center"}}>
               <Box
                 display="flex"
                 alignItems="center"
@@ -90,19 +90,19 @@ const LeaveTableRow = ({
                 />
               </Box>
             </TableCell>
-            <TableCell sx={{ minWidth: "200px" }}>
-              {moment(row?.createdAt).format("Do MMM YYYY | hh:mm A") ||
+            {/* <TableCell sx={{ minWidth: "120px",textAlign:"center" }}>
+              {moment(row?.createdAt).format("Do MMM YYYY  hh:mm A") ||
+                "-"}
+            </TableCell> */}
+            <TableCell sx={{ minWidth: "120px",textAlign:"center" }}>
+              {moment(row?.startDate).format("Do MMM YYYY  hh:mm A") ||
                 "-"}
             </TableCell>
-            <TableCell sx={{ minWidth: "200px" }}>
-              {moment(row?.startDate).format("Do MMM YYYY | hh:mm A") ||
-                "-"}
+            <TableCell sx={{ minWidth: "150px",textAlign:"center" }}>
+              {moment(row?.endDate).format("Do MMM YYYY  hh:mm A") || "-"}
             </TableCell>
-            <TableCell sx={{ minWidth: "200px" }}>
-              {moment(row?.endDate).format("Do MMM YYYY | hh:mm A") || "-"}
-            </TableCell>
-            <TableCell align="left">{row.days} D</TableCell>
-            <TableCell>
+            {/* <TableCell align="left">{row.days} D</TableCell> */}
+            <TableCell sx={{textAlign:"center"}}>
               <Tooltip title={row.categoryName} arrow>
                 <Typography
                   variant="body2"
@@ -118,12 +118,12 @@ const LeaveTableRow = ({
                 </Typography>
               </Tooltip>
             </TableCell>
-            <TableCell sx={{ minWidth: 130 }}>
+            {/* <TableCell sx={{ minWidth: 130,textAlign:"center" }}>
               {row?.floorNumber && row?.roomNumber
                 ? `${row.floorNumber}/${row.roomNumber}`
                 : "-"}
-            </TableCell>
-            <TableCell>
+            </TableCell> */}
+            <TableCell sx={{textAlign:"center"}}>
               <Button
                 variant="outlined"
                 size="small"
@@ -155,7 +155,7 @@ const LeaveTableRow = ({
                 {row.leaveStatus}
               </Button>
             </TableCell>
-            <TableCell align="right">
+            <TableCell align="right" sx={{textAlign:"center"}}>
               <IconButton onClick={() => handleRowDetailsPage(row?._id)}>
                 <Box
                   component="img"

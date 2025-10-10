@@ -35,19 +35,19 @@ const PermittedSidebar = () => {
   // Memoized permitted routes menu
   const permittedRoutesMenu = permissionRoute?.length
     ? dummyRoutes
-        .map((dummyRoute) => {
-          const matchedRoute = permissionRoute.find(
-            (permRoute) => permRoute.title === dummyRoute.title
-          );
-          if (matchedRoute) {
-            return {
-              ...dummyRoute,
-              link: matchedRoute.link || dummyRoute.link,
-            };
-          }
-          return null;
-        })
-        .filter(Boolean)
+      .map((dummyRoute) => {
+        const matchedRoute = permissionRoute.find(
+          (permRoute) => permRoute.title === dummyRoute.title
+        );
+        if (matchedRoute) {
+          return {
+            ...dummyRoute,
+            link: matchedRoute.link || dummyRoute.link,
+          };
+        }
+        return null;
+      })
+      .filter(Boolean)
     : [];
 
   useEffect(() => {
@@ -160,7 +160,7 @@ const PermittedSidebar = () => {
               onClick={toggleDrawer(true)}
               sx={{
                 position: "fixed",
-                top: {sm:"30px", xs:"10px"},
+                top: { sm: "30px", xs: "10px" },
                 right: "10px",
                 backgroundColor: theme.palette.primary.main,
                 "&:hover": {
@@ -197,6 +197,10 @@ const PermittedSidebar = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                position: "sticky",
+                top: "0%",
+                background: "white",
+                zIndex: "9999"
               }}
             >
               <img src={Logo} alt="Yoco Stays" className="logo-image" />
@@ -238,6 +242,10 @@ const PermittedSidebar = () => {
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
+              position: "sticky",
+              top: "0%",
+              background: "white",
+              zIndex: "9999"
             }}
           >
             <img src={Logo} alt="Yoco Stays" className="logo-image" />

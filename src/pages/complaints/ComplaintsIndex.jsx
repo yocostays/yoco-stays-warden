@@ -16,7 +16,7 @@ const ComplaintsIndex = () => {
         flexDirection: "column",
         gap: 2,
         backgroundColor: "#664DA033",
-        marginTop:{xs:12,sm:0,md:0}
+        // marginTop:{xs:12,sm:0,md:0}
         
       }}
     >
