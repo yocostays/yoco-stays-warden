@@ -270,7 +270,7 @@ function UserTable() {
     // { label: "Email", align: "left" },
     { label: "Contact No. ", align: "left" },
     { label: "Floor/Room", align: "left" },
-    { label: "Joining", align: "center" },
+    { label: "Created On", align: "center" },
     { label: "Status", align: "center" },
     { label: "Action", align: "center" },
   ];

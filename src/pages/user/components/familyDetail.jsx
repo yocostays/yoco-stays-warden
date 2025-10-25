@@ -11,6 +11,7 @@ import { Icon } from "@iconify/react";
 import { generateOtp, verifyOtp } from "@features/auth/authSlice";
 import { toast } from "react-toastify";
 import FormLabel from "@utils/FormLabel";
+import Input from "@components/customComponents/InputFields";
 
 FamilyDetailsForm.propTypes = {
   methods: PropTypes.object.isRequired,
@@ -33,6 +34,8 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
     formState: { errors },
     watch,
     reset,
+    register,
+    resetField
   } = methods;
 
   const dispatch = useDispatch();
@@ -125,15 +128,45 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
               <FormLabel label="Father Name" required />
             </Grid>
             <Grid item xs={12} sm={9}>
-              <RHFTextField
+              <Input error={errors?.fatherName?.message}
+                value={watch('fatherName')}
+                placeholder="Father Name" register={register}
+                name="fatherName"
+                onChange={(e) => setValue('fatherName', e?.target?.value, { shouldValidate: true })}
+              // disabled={!id && !verified} />
+              />
+            </Grid>
+          
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Mother Name" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              {/* <RHFTextField
                 placeholder="Type Here"
                 size="small"
-                name="fatherName"
-                disabled={!id && !verified} />
+                name="motherName"
+                disabled={!id && !isFathersNoVerified} /> */}
+              <Input error={errors?.motherName?.message}
+                value={watch('motherName')}
+                placeholder="Mother Name" register={register}
+                name="motherName"
+                onChange={(e) => setValue('motherName', e?.target?.value, { shouldValidate: true })}
+              />
             </Grid>
-
-            {/* Father Mobile No. Section */}
             <Grid item xs={12} sm={3}>
+              <FormLabel label="Parent's Mobile No."  />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input error={errors?.parentMobileNumber?.message}
+                value={watch('parentMobileNumber')}
+                placeholder="Parent's Mobile No." register={register}
+                name="parentMobileNumber"
+                onChange={(e) => setValue('parentMobileNumber', e?.target?.value, { shouldValidate: true })}
+              // disabled={!id && !verified} />
+              />
+            </Grid>
+            {/* Father Mobile No. Section */}
+            {/* <Grid item xs={12} sm={3}>
               <FormLabel label="Father Mobile No." required />
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -148,33 +181,39 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                   setIsFathersNoVerified(false)
                 }}
                 disabled={!id && !verified} />
-            </Grid>
-            <Grid item xs={12} sm={3}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={3}>
               <LoadingButton variant="contained"
                 sx={{ borderRadius: "50px" }} onClick={handleVerifyClick} loading={isSubmitting} disabled={!phone} endIcon={(id ? id && isFathersNoVerified : isFathersNoVerified) ? <Icon icon="hugeicons:tick-01" /> : <Icon icon="bitcoin-icons:cross-filled" />}>
                 {(id ? id && isFathersNoVerified : isFathersNoVerified) ? 'Verified' : 'Send OTP'}
               </LoadingButton>
-            </Grid>
-            {!isFathersNoVerified && !id && (
+            </Grid> */}
+            {/* {!isFathersNoVerified && !id && (
               <Grid item xs={12} display='flex' justifyContent='center'>
                 <Typography fontSize={14} color="red">Please fill above details to proceed</Typography>
               </Grid>
-            )}
+            )} */}
 
             {/* Father Email ID Section */}
             <Grid item xs={12} sm={3}>
-                <FormLabel label="Father's Email ID" required/>
+              <FormLabel label="Parent's Email ID"  />
             </Grid>
             <Grid item xs={12} sm={9}>
-              <RHFTextField
+              {/* <RHFTextField
                 placeholder="abc@gmail.com"
                 size="small"
                 name="fatherEmail"
-                disabled={!id && !isFathersNoVerified} />
+                disabled={!id && !isFathersNoVerified} /> */}
+              <Input error={errors?.parentEmail?.message}
+                value={watch('parentEmail')}
+                placeholder="Parent's Email ID" register={register}
+                name="parentEmail"
+                onChange={(e) => setValue('parentEmail', e?.target?.value, { shouldValidate: true })}
+              />
             </Grid>
 
             {/* Father Occupation Section */}
-            <Grid item xs={12} sm={3}>
+            {/* <Grid item xs={12} sm={3}>
               <FormLabel label="Father Occupation" required />
             </Grid>
             <Grid item xs={12} sm={9}>
@@ -183,10 +222,10 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 size="small"
                 name="fatherOccupation"
                 disabled={!id && !isFathersNoVerified} />
-            </Grid>
+            </Grid> */}
 
             {/* Mother Name Section */}
-            <Grid item xs={12} sm={3}>
+            {/* <Grid item xs={12} sm={3}>
               <FormLabel label="Mother Name" required />
             </Grid>
             <Grid item xs={12} sm={9}>
@@ -195,10 +234,10 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 size="small"
                 name="motherName"
                 disabled={!id && !isFathersNoVerified} />
-            </Grid>
+            </Grid> */}
 
             {/* Mother Mobile No. Section */}
-            <Grid item xs={12} sm={3}>
+            {/* <Grid item xs={12} sm={3}>
               <FormLabel label="Mother Mobile No." required />
             </Grid>
             <Grid item xs={12} sm={9}>
@@ -211,10 +250,10 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                   setValue("motherphoneNumber", value.slice(0, 10)); // Restrict to 10 digits
                 }}
                 disabled={!id && !isFathersNoVerified} />
-            </Grid>
+            </Grid> */}
 
             {/* Mother Email ID Section */}
-            <Grid item xs={12} sm={3}>
+            {/* <Grid item xs={12} sm={3}>
               <FormLabel label="Mother Email ID" required />
             </Grid>
             <Grid item xs={12} sm={9}>
@@ -223,82 +262,109 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 size="small"
                 name="motherEmail"
                 disabled={!id && !isFathersNoVerified} />
-            </Grid>
+            </Grid> */}
 
             {/* Guardian Name Section */}
             <Grid item xs={12} sm={3}>
-              <FormLabel label="Guardian Name" required />
+              <FormLabel label="Guardian Name"  />
             </Grid>
             <Grid item xs={12} sm={9}>
-              <RHFTextField
+              {/* <RHFTextField
                 placeholder="Type Here"
                 size="small"
                 name="guardianName"
-                disabled={!id && !isFathersNoVerified} />
+                // disabled={!id && !isFathersNoVerified} 
+                /> */}
+              <Input error={errors?.guardianName?.message}
+                value={watch('guardianName')}
+                placeholder="Guardian Name" register={register}
+                name="guardianName"
+                onChange={(e) => setValue('guardianName', e?.target?.value, { shouldValidate: true })}
+              />
             </Grid>
 
             {/* Relationship Section */}
             <Grid item xs={12} sm={3}>
-                <FormLabel label="Relationship" required />
+              <FormLabel label="Relationship"  />
             </Grid>
             <Grid item xs={12} sm={4}>
-              <RHFTextField
+              {/* <RHFTextField
                 placeholder="Type Here"
                 size="small"
                 name="relationship"
-                disabled={!id && !isFathersNoVerified} />
+                // disabled={!id && !isFathersNoVerified}
+                 /> */}
+              <Input error={errors?.relationship?.message}
+                value={watch('relationship')}
+                placeholder="Guardian Relationship" register={register}
+                name="relationship"
+                onChange={(e) => setValue('relationship', e?.target?.value, { shouldValidate: true })}
+              />
             </Grid>
 
             <Grid item xs={12} sm={2}>
-                <FormLabel label="Occupation" required />
+              <FormLabel label="Occupation"  />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <RHFTextField
+              {/* <RHFTextField
                 placeholder="Type Here"
                 size="small"
                 name="occupation"
-                disabled={!id && !isFathersNoVerified} />
+                disabled={!id && !isFathersNoVerified} /> */}
+              <Input error={errors?.occupation?.message}
+                value={watch('occupation')}
+                placeholder="Occupation" register={register}
+                name="occupation"
+                onChange={(e) => setValue('occupation', e?.target?.value, { shouldValidate: true })}
+              />
             </Grid>
 
             {/* Guardian Mobile No. Section */}
-            <Grid item xs={12} sm={3}>
-                <FormLabel label="Guardian Mobile No." required />
+            {/* <Grid item xs={12} sm={3}>
+              <FormLabel label="Guardian Mobile No."  />
             </Grid>
             <Grid item xs={12} sm={9}>
-              <RHFTextField
-                placeholder="+91"
-                size="small"
+       
+              <Input
+                phoneCode={"+91"}
+                error={errors?.guardianMobileNumber?.message}
+                value={watch('guardianMobileNumber')}
+                placeholder="Guardian Mobile No." register={register}
                 name="guardianMobileNumber"
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-                  setValue("guardianMobileNumber", value.slice(0, 10)); // Restrict to 10 digits
-                }}
-                disabled={!id && !isFathersNoVerified} />
-            </Grid>
+                onChange={(e) => setValue('guardianMobileNumber', e?.target?.value, { shouldValidate: true })}
+              />
+            </Grid> */}
 
             {/* Email ID Section */}
-            <Grid item xs={12} sm={3}>
-              <FormLabel label="Email ID" required />
+            {/* <Grid item xs={12} sm={3}>
+              <FormLabel label="Guardian Email ID"  />
 
             </Grid>
             <Grid item xs={12} sm={9}>
-              <RHFTextField
-                placeholder="abc@gmail.com"
-                size="small"
+              <Input
+                error={errors?.emailId?.message}
+                value={watch('emailId')}
+                placeholder="Guardian Email ID" register={register}
                 name="emailId"
-                disabled={!id && !isFathersNoVerified} />
-            </Grid>
+                onChange={(e) => setValue('emailId', e?.target?.value, { shouldValidate: true })}
+              />
+            </Grid> */}
             <Grid item xs={12} sm={3}>
-                            <FormLabel label="Address" required />
+              <FormLabel label="Guardian Address"  />
 
             </Grid>
             <Grid item xs={12} sm={9}>
               <RHFTextField
+                value={watch('familyAddress')}
+                errors={errors?.familyAddress?.message}
                 fullWidth
-                placeholder="Type Here"
+                placeholder="Gurdian Address"
                 size="small"
                 name="familyAddress"
-                disabled={!id && !isFathersNoVerified} />
+                rows={2}
+                multiline
+              // disabled={!id && !isFathersNoVerified} 
+              />
             </Grid>
           </Grid>
         </form>
@@ -313,37 +379,37 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
         aria-describedby="alert-dialog-slide-description"
       >
         <Stack spacing={5}>
-              <Stack>
-                <RHFCodes
-                  keyName="fNumberOtp"
-                  inputs={inputs}
-                  values={values}
-                  setValues={setValues} />
-                {(!!errors.code1 ||
-                  !!errors.code2 ||
-                  !!errors.code3 ||
-                  !!errors.code4) && (
-                    <FormHelperText error sx={{ px: 2, ml: 6 }}>
-                      Code is required
-                    </FormHelperText>
-                  )}
-              </Stack>
-              <Stack sx={{ alignItems: 'center' }}>
-                <Typography variant="body1" sx={{ alignItems: 'center', m2: 3 }}>
-                  OTP not received? <Button onClick={handleResendOtp}>Resend OTP</Button>
-                </Typography>
+          <Stack>
+            <RHFCodes
+              keyName="fNumberOtp"
+              inputs={inputs}
+              values={values}
+              setValues={setValues} />
+            {(!!errors.code1 ||
+              !!errors.code2 ||
+              !!errors.code3 ||
+              !!errors.code4) && (
+                <FormHelperText error sx={{ px: 2, ml: 6 }}>
+                  Code is required
+                </FormHelperText>
+              )}
+          </Stack>
+          <Stack sx={{ alignItems: 'center' }}>
+            <Typography variant="body1" sx={{ alignItems: 'center', m2: 3 }}>
+              OTP not received? <Button onClick={handleResendOtp}>Resend OTP</Button>
+            </Typography>
 
-                <LoadingButton
-                  variant="contained"
-                  sx={{ mb: '5px', borderRadius: "50px" }}
-                  loading={isVerifying}
-                  onClick={handleOtpSubmit}
-                >
-                  Verify Otp
-                </LoadingButton>
-              </Stack>
-            </Stack>
-         
+            <LoadingButton
+              variant="contained"
+              sx={{ mb: '5px', borderRadius: "50px" }}
+              loading={isVerifying}
+              onClick={handleOtpSubmit}
+            >
+              Verify Otp
+            </LoadingButton>
+          </Stack>
+        </Stack>
+
       </DialogBox>
     </>
   );

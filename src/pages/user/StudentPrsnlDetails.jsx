@@ -171,6 +171,11 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   value: studentDetail.phone,
                 },
                 {
+                  icon:<PhoneIcon/>,
+                  label: "Aadhar Number",
+                  value : studentDetail?.documents?.aadhaarNumber
+                },
+                {
                   icon: <EmailIcon />,
                   label: "Email ID",
                   value: studentDetail.email,
