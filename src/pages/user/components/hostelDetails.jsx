@@ -109,9 +109,9 @@ export default function HostelDetailsForm({
   }, [hostelId]);
 
   useEffect(() => {
-    if(hostelList){
+    if (hostelList) {
       setValue("hostel", hostelList[0], { shouldValidate: true });
-      setValue('hostelName',hostelList[0]?.name,{shouldValidate:true})
+      setValue('hostelName', hostelList[0]?.name, { shouldValidate: true })
       setHostelId(hostelList[0]?._id);
     }
   }, [hostelList])
@@ -175,7 +175,7 @@ export default function HostelDetailsForm({
   }, [selectedRoom]);
 
 
-  const floorNo = [1, 2, 3, 4, 5, 6, 7, 8,9, 10]
+  const floorNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
 
   const singlebedNo = [
     { label: "1", value: 1 },
@@ -261,6 +261,11 @@ export default function HostelDetailsForm({
                 disabled={true}
                 placeholder="Hostel" register={register}
                 name="hostelName"
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('hostelName', value, { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 
@@ -276,6 +281,11 @@ export default function HostelDetailsForm({
                 value={watch("selectWing")}
                 placeholder="Building/Wing" register={register}
                 name="selectWing"
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('selectWing', value, { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 
@@ -345,6 +355,7 @@ export default function HostelDetailsForm({
                       <Button
                         key={floor}
                         onClick={() => {
+                          setValue('floor',floor)
                           setSelectedFloor(floor);
                           setIsVacant(false);
                           setRoom(true);
@@ -393,8 +404,12 @@ export default function HostelDetailsForm({
                       placeholder="Room No." register={register}
                       name={"roomNumber"}
                       type={"text"}
-                      onChange={(e) => setValue('roomNumber', e?.target?.value, { shouldValidate: true })}
-                    // onChange={(e) => setValue('room', e?.target?.value)}
+                      onChange={(e) => {
+                        const value = e?.target?.value.replace(/^\s+/, "");
+                         const onlyDigits = value.replace(/\D/g, '');
+                        setValue('roomNumber', onlyDigits, { shouldValidate: true })
+                      }
+                      }
                     />
                     {/* {roomList?.map((room) => ( */}
 

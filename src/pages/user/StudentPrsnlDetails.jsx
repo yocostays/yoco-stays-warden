@@ -265,11 +265,11 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   label: "Permanent Address",
                   value: studentDetail.permanentAddress,
                 },
-                {
-                  icon: <HomeWorkIcon />,
-                  label: "Current Address",
-                  value: studentDetail.currentAddress,
-                },
+                // {
+                //   icon: <HomeWorkIcon />,
+                //   label: "Current Address",
+                //   value: studentDetail.currentAddress,
+                // },
               ].map((item, index) => (
                 <Box
                   key={index}

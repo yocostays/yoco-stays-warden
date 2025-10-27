@@ -10,7 +10,7 @@ const Input = ({
     register,
     name,
     error,
-    ...rest 
+    ...rest
 }) => {
 
     return (
@@ -18,10 +18,15 @@ const Input = ({
             <TextField
                 placeholder={placeholder}
                 type={type}
-                onChange={onChange}
+                // onChange={onChange}
                 variant="outlined"
                 size="small"
-                {...register?.(name)}
+                // {...register?.(name)}
+                {...register?.(name, {
+                    onChange: (e) => {
+                        onChange?.(e); // <-- call your custom one
+                    },
+                })}
                 {...rest}
                 InputProps={
                     phoneCode

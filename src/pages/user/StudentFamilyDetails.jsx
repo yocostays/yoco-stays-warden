@@ -124,6 +124,7 @@ export default function StudentFamilyDetails({ studentDetail }) {
             </Box>
           </Box> */}
           {/* <Box> */}
+          {console.log(studentDetail,"student")}
             <Box
               sx={{
                 borderRadius: 1,
@@ -148,41 +149,42 @@ export default function StudentFamilyDetails({ studentDetail }) {
                   //   label: "Email ID",
                   //   value: studentDetail.email,
                   // },
+                  
                   {
                     icon: <Icon icon="weui:contacts-filled" width="24" height="24" />,
                     label: "Father Name",
                     value: studentDetail?.fatherName,
                   },
-                  {
-                    icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
-                    label: "Father Mobile No.",
-                    value: studentDetail?.fatherNumber,
-                  },
-                  {
-                    icon: <EmailIcon />,
-                    label: "Father Email Id",
-                    value: studentDetail?.fatherEmail,
-                  },
-                  {
-                    icon: <BusinessCenterRoundedIcon />,
-                    label: "Father Occupation",
-                    value: studentDetail?.fatherEmail,
-                  },
+                  // {
+                  //   icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
+                  //   label: "Father Mobile No.",
+                  //   value: studentDetail?.fatherNumber,
+                  // },
+                  // {
+                  //   icon: <EmailIcon />,
+                  //   label: "Father Email Id",
+                  //   value: studentDetail?.fatherEmail,
+                  // },
+                  // {
+                  //   icon: <BusinessCenterRoundedIcon />,
+                  //   label: "Father Occupation",
+                  //   value: studentDetail?.fatherEmail,
+                  // },
                   {
                     icon: <Icon icon="mdi:mother-nurse" width="24" height="24" />,
                     label: "Mother Name",
                     value: studentDetail?.motherName,
                   },
-                  {
-                    icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
-                    label: "Mother Mobile No.",
-                    value: studentDetail?.motherNumber,
-                  },
-                  {
-                    icon: <EmailIcon />,
-                    label: "Mother Email Id",
-                    value: studentDetail?.motherEmail,
-                  },
+                  // {
+                  //   icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
+                  //   label: "Mother Mobile No.",
+                  //   value: studentDetail?.motherNumber,
+                  // },
+                  // {
+                  //   icon: <EmailIcon />,
+                  //   label: "Mother Email Id",
+                  //   value: studentDetail?.motherEmail,
+                  // },
                   {
                     icon: <Icon icon="garden:tray-user-group-26" width="24" height="24" />,
                     label: "Guardian Name",
@@ -191,27 +193,27 @@ export default function StudentFamilyDetails({ studentDetail }) {
                   {
                     icon: <Icon icon="mdi:human-male-child" width="26" height="26" />,
                     label: "Relationship",
-                    value: studentDetail.relationship,
+                    value: studentDetail?.relationship,
                   },
                   {
                     icon: <BusinessCenterRoundedIcon />,
                     label: "Occupation",
-                    value: studentDetail.occuption,
+                    value: studentDetail?.occuption,
                   },
                   {
                     icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
                     label: "Guardian Mobile No.",
-                    value: studentDetail.guardianContactNo,
+                    value: studentDetail?.guardianContactNo || studentDetail?.parentsContactNo,
                   },
-                  {
-                    icon: <EmailIcon />,
-                    label: "Guardian Email Id",
-                    value: studentDetail.guardianEmail,
-                  },
+                  // {
+                  //   icon: <EmailIcon />,
+                  //   label: "Guardian Email Id",
+                  //   value: studentDetail.guardianEmail,
+                  // },
                   {
                     icon: <HomeWorkIcon />,
                     label: "Address",
-                    value: studentDetail.address,
+                    value: studentDetail?.address,
                   },
                 ].map((item, index) => (
                   <Box
@@ -253,7 +255,7 @@ export default function StudentFamilyDetails({ studentDetail }) {
                           overflowWrap: "break-word",
                         }}
                       >
-                        {item.value}
+                        {item?.value}
                       </Typography>
                     </Box>
                   </Box>

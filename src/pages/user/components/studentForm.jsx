@@ -46,6 +46,7 @@ import Input from "@components/customComponents/InputFields";
 import SelectBox from "@components/customComponents/CustomSelectBox";
 import RadioButton from "@components/customComponents/CustomRadio";
 import TextArea from "@components/customComponents/customTextarea";
+import moment from "moment";
 
 CreateStudentForm.propTypes = {
   methods: PropTypes.object.isRequired,
@@ -409,7 +410,12 @@ export default function CreateStudentForm({
                 value={watch('studentName')}
                 placeholder="Student Name" register={register}
                 name="studentName"
-                onChange={(e) => setValue('studentName', e?.target?.value)}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('studentName', value.toUpperCase(), { shouldValidate: true })
+
+                }
+                }
               />
             </Grid>
 
@@ -434,11 +440,17 @@ export default function CreateStudentForm({
                 placeholder="Phone Number" register={register}
                 name="phoneNumber"
                 phoneCode={"+91"}
-                // onChange={(e) => setValue('phoneNumber', e.target.value.replace(/^[0-9]+([,.][0-9]+)?$/g, ''), { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  const onlyDigits = value.replace(/\D/g, '');
+                  setValue('phoneNumber', onlyDigits,
+                    { shouldValidate: true })
+                }
+                }
               />
             </Grid>
             <Grid item xs={12} sm={3} >
-              <FormLabel label="Aadhar Number" />
+              <FormLabel label="Aadhar Number" required/>
             </Grid>
             <Grid item xs={12} sm={9}>
               <Input
@@ -447,7 +459,11 @@ export default function CreateStudentForm({
                 placeholder="Aadhar Number"
                 register={register}
                 name={"aadharNumber"}
-
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  const onlyDigits = value.replace(/\D/g, '');
+                  setValue('aadharNumber', onlyDigits, { shouldValidate: true })
+                }}
               />
             </Grid>
 
@@ -466,6 +482,10 @@ export default function CreateStudentForm({
                 value={watch('studentEmail')}
                 placeholder="E-mail" register={register}
                 name="studentEmail"
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('studentEmail', value)
+                }}
               />
             </Grid>
 
@@ -483,7 +503,7 @@ export default function CreateStudentForm({
                 disabled={!id && !verified}
               /> */}
               <Input error={errors?.studentDob?.message}
-                value={watch('studentDob')}
+                value={moment(watch('studentDob')).format("YYYY-MM-DD")}
                 placeholder="dob" register={register}
                 name="studentDob"
                 type={"date"}
@@ -501,6 +521,10 @@ export default function CreateStudentForm({
                 placeholder="Enroll. No" register={register}
                 name="enrollNo"
                 type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('enrollNo', value)
+                }}
               />
             </Grid>
 
@@ -510,14 +534,24 @@ export default function CreateStudentForm({
 
             </Grid>
             <Grid item xs={12} sm={3}>
-              <SelectBox
-                onChange={(e) => setValue('bloodGroup', e?.target?.value, { shouldValidate: true })}
+              {/* <SelectBox
+                onChange={(e) => {
+                  setValue('bloodGroup', e?.target?.value, { shouldValidate: true })
+                }}
                 value={watch('bloodGroup')}
                 register={register}
                 name={"bloodGroup"}
                 placeholder="Select"
                 select={bloodGroupOptions}
-                error={errors?.bloodGroup?.message} />
+                error={errors?.bloodGroup?.message} /> */}
+              <SelectBox
+                name="bloodGroup"
+                placeholder="Select Blood Group"
+                value={watch("bloodGroup")}
+                setValue={setValue}
+                select={bloodGroupOptions}
+                error={errors?.bloodGroup?.message}
+              />
             </Grid>
 
             <Grid item xs={12} sm={3} textAlign="end">
@@ -571,6 +605,10 @@ export default function CreateStudentForm({
                 placeholder="Identification Mark" register={register}
                 name="identificationMark"
                 type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('identificationMark', value)
+                }}
               />
             </Grid>
 
@@ -585,6 +623,10 @@ export default function CreateStudentForm({
                 placeholder="Mention any current medical issues" register={register}
                 name="medicalIssue"
                 type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('medicalIssue', value)
+                }}
               />
             </Grid>
 
@@ -633,6 +675,10 @@ export default function CreateStudentForm({
                 placeholder="Caste" register={register}
                 name="caste"
                 type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('caste', value)
+                }}
               />
             </Grid>
 
@@ -677,7 +723,6 @@ export default function CreateStudentForm({
                 options={allStateData || []} // Ensure options is always an array
                 getOptionLabel={(option) => option.name || ""} // Handle cases where option may not have a name
                 onChange={(_, newValue) => {
-                  console.log(newValue, "state")
                   setValue('state', newValue)
                   resetField('city')
                   setSelectedState(newValue);
@@ -688,7 +733,7 @@ export default function CreateStudentForm({
                 disabled={(!watch('country'))} // Disable if no country selected
               />
             </Grid>
-            {console.log(errors, "error")}
+
             <Grid item xs={12} sm={3}>
               {/* <Typography variant="body1">City</Typography> */}
               <FormLabel label="City" required />
@@ -727,6 +772,7 @@ export default function CreateStudentForm({
                 // disabled={!id && !verified}
                 multiline
                 rows={2}
+
               />
             </Grid>
 

@@ -99,7 +99,6 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const onSubmit = async (values) => {
-    console.log(values)
 
     const isDuplicate = vehicleData?.some((vehicle) => {
       const existingNumber = String(vehicle?.vechicleNumber || "").trim().toLowerCase();
@@ -158,6 +157,14 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
       setValue('vechicleNumber', "")
     }
   }, [watch('vehicleType')])
+  console.log(vehicleDetails, "vehicle")
+  useEffect(() => {
+    if (id) {
+      vehicleDetails.map((item) => {
+        dispatch(setVehicleData(item))
+      })
+    }
+  }, [id])
 
   return (
     <Stack spacing={2} my={2}>
@@ -250,7 +257,13 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
                   <Box>
                     <Input error={errors?.vechicleNumber?.message}
                       placeholder="Vehicle Number"
-                      register={register} name={"vechicleNumber"} />
+                      register={register} name={"vechicleNumber"}
+                      onChange={(e) => {
+                        const value = e?.target?.value.replace(/^\s+/, "");
+                        setValue('vechicleNumber', value.toUpperCase(), { shouldValidate: true })
+                      }
+                      }
+                    />
                   </Box>
                 </>
               )}
@@ -270,7 +283,13 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
                 <Input
                   error={errors?.modelNumber?.message}
                   placeholder="Model/Company"
-                  register={register} name={"modelNumber"} />
+                  register={register} name={"modelNumber"}
+                  onChange={(e) => {
+                    const value = e?.target?.value.replace(/^\s+/, "");
+                    setValue('modelNumber', value.toUpperCase(), { shouldValidate: true })
+                  }
+                  }
+                />
               </Box>
 
             </Stack>
@@ -336,7 +355,7 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
                               ? "Car"
                               : vehicle.vechicleType) || "--"}
                           </TableCell>
-                          <TableCell>{vehicle.engineType || "--"}</TableCell>
+                          <TableCell>{vehicle.engineType==="not required" ? "--" : vehicle.engineType || "--"}</TableCell>
                           <TableCell>
                             {vehicle.vechicleNumber || "--"}
                           </TableCell>

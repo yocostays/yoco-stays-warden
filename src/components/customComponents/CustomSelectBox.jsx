@@ -6,25 +6,31 @@ import MenuItem from '@mui/material/MenuItem';
 const SelectBox = ({
     placeholder = "Select...",
     onChange,
-    value = "",
+    value,
     error,
     select = [],
     name,
     register,
+    setValue,
     ...rest
 }) => {
+    const selectedValue =
+        typeof value === "object" ? value?.value?.replace(/"/g, "") : value ?? "";
+
     return (
         <>
             <TextField
                 select
                 name={name}
-                value={value ?? ""} // prevent undefined
+                value={selectedValue}
                 onChange={(e) => {
-                    onChange(e.target.value); // lift value up
+                    const val = e.target.value;
+                    if (setValue) setValue(name, val); // set only string
+                    if (onChange) onChange(val);
                 }}
                 variant="outlined"
                 size="small"
-                {...register?.(name)}
+                {...(register ? register(name) : {})}
                 {...rest}
                 sx={{
                     width: "100%",
@@ -49,7 +55,7 @@ const SelectBox = ({
                     },
                 }}
             >
-                <MenuItem value="Select" disabled>
+                <MenuItem value="" disabled>
                     {placeholder || "Select"}
                 </MenuItem>
                 {select.map((option) => (

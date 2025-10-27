@@ -13,7 +13,7 @@ StudentHostelDetails.propTypes = {
 export default function StudentHostelDetails({ studentDetail }) {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-
+console.log(studentDetail,"hostle")
   return (
     <Box>
       <Box
@@ -72,7 +72,7 @@ export default function StudentHostelDetails({ studentDetail }) {
                 {
                   icon: <BedIcon />,
                   label: "Selected Bed Type",
-                  value: studentDetail?.bedType,
+                  value: studentDetail?.bedType === 1 ? "Single" : "Bunker" ?? "Bunker",
                 },
                 {
                   icon: <HomeWorkIcon />,

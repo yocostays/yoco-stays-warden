@@ -132,11 +132,16 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('fatherName')}
                 placeholder="Father Name" register={register}
                 name="fatherName"
-                onChange={(e) => setValue('fatherName', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('fatherName', value.toUpperCase(), { shouldValidate: true })
+                }
+
+                }
               // disabled={!id && !verified} />
               />
             </Grid>
-          
+
             <Grid item xs={12} sm={3}>
               <FormLabel label="Mother Name" required />
             </Grid>
@@ -150,18 +155,27 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('motherName')}
                 placeholder="Mother Name" register={register}
                 name="motherName"
-                onChange={(e) => setValue('motherName', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('motherName', value.toUpperCase(), { shouldValidate: true })
+                }
+                }
               />
             </Grid>
             <Grid item xs={12} sm={3}>
-              <FormLabel label="Parent's Mobile No."  />
+              <FormLabel label="Parent's Mobile No." />
             </Grid>
             <Grid item xs={12} sm={9}>
               <Input error={errors?.parentMobileNumber?.message}
                 value={watch('parentMobileNumber')}
                 placeholder="Parent's Mobile No." register={register}
                 name="parentMobileNumber"
-                onChange={(e) => setValue('parentMobileNumber', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  const onlyDigits = value.replace(/\D/g, '');
+                  setValue('parentMobileNumber', onlyDigits, { shouldValidate: true })
+                }
+                }
               // disabled={!id && !verified} />
               />
             </Grid>
@@ -196,7 +210,7 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
 
             {/* Father Email ID Section */}
             <Grid item xs={12} sm={3}>
-              <FormLabel label="Parent's Email ID"  />
+              <FormLabel label="Parent's Email ID" />
             </Grid>
             <Grid item xs={12} sm={9}>
               {/* <RHFTextField
@@ -208,7 +222,11 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('parentEmail')}
                 placeholder="Parent's Email ID" register={register}
                 name="parentEmail"
-                onChange={(e) => setValue('parentEmail', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('parentEmail', value, { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 
@@ -266,7 +284,7 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
 
             {/* Guardian Name Section */}
             <Grid item xs={12} sm={3}>
-              <FormLabel label="Guardian Name"  />
+              <FormLabel label="Guardian Name" />
             </Grid>
             <Grid item xs={12} sm={9}>
               {/* <RHFTextField
@@ -277,15 +295,20 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 /> */}
               <Input error={errors?.guardianName?.message}
                 value={watch('guardianName')}
-                placeholder="Guardian Name" register={register}
+                placeholder="Guardian Name"
+                register={register}
                 name="guardianName"
-                onChange={(e) => setValue('guardianName', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('guardianName', value.toUpperCase(), { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 
             {/* Relationship Section */}
             <Grid item xs={12} sm={3}>
-              <FormLabel label="Relationship"  />
+              <FormLabel label="Relationship" />
             </Grid>
             <Grid item xs={12} sm={4}>
               {/* <RHFTextField
@@ -298,12 +321,16 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('relationship')}
                 placeholder="Guardian Relationship" register={register}
                 name="relationship"
-                onChange={(e) => setValue('relationship', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('relationship', value, { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 
             <Grid item xs={12} sm={2}>
-              <FormLabel label="Occupation"  />
+              <FormLabel label="Occupation" />
             </Grid>
             <Grid item xs={12} sm={3}>
               {/* <RHFTextField
@@ -315,7 +342,11 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('occupation')}
                 placeholder="Occupation" register={register}
                 name="occupation"
-                onChange={(e) => setValue('occupation', e?.target?.value, { shouldValidate: true })}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('occupation', value, { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 
@@ -350,7 +381,7 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
               />
             </Grid> */}
             <Grid item xs={12} sm={3}>
-              <FormLabel label="Guardian Address"  />
+              <FormLabel label="Guardian Address" />
 
             </Grid>
             <Grid item xs={12} sm={9}>

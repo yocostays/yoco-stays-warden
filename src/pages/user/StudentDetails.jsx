@@ -67,7 +67,7 @@ export default function StudentDetails() {
     userIndisciplinaryDetail,
   } = useSelector((state) => state?.users);
   const [statusName, setStatusName] = useState("")
-
+console.log(studentDetail,"studentDetail")
 
   const personalDetailsRef = useRef(null);
   const familyDetailsRef = useRef(null);
@@ -575,10 +575,10 @@ export default function StudentDetails() {
           }}
         >
           <Box ref={personalDetailsRef} sx={{ minHeight: "80vh", width: "80%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <StudentPrsnDetails studentDetail={userPersonalDetail} />
+            <StudentPrsnDetails studentDetail={studentDetail} />
           </Box>
           <Box ref={familyDetailsRef} sx={{ minHeight: "80vh", width: "80%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <StudentFamilyDetails studentDetail={userFamilyDetail} />
+            <StudentFamilyDetails studentDetail={studentDetail?.familiyDetails} />
           </Box>
           <Box ref={hostelDetailsRef} sx={{ minHeight: "80vh", width: "80%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <StudentHostelDetails studentDetail={userHostelDetail} />

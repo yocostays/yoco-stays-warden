@@ -18,7 +18,7 @@ AcademicDetailsForm.propTypes = {
 
 export default function AcademicDetailsForm({ methods, verified, id }) {
   const dispatch = useDispatch();
-  const { handleSubmit, setValue } = methods;
+  const { handleSubmit, setValue,register } = methods;
   const [universityId, setUniversityId] = useState("");
   const { universityList } = useSelector((state) => state.university);
   const { courseList } = useSelector((state) => state.course);
@@ -132,10 +132,15 @@ export default function AcademicDetailsForm({ methods, verified, id }) {
               /> */}
               <Input
                 // value={watch('caste')}
-                placeholder="College Name" 
-                name=""
-                register={()=>{}}
+                placeholder="College Name"
+                name="collegeName"
+                register={register}
                 type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('collegeName', value, { shouldValidate: true })
+                }
+                }
               />
             </Grid>
 

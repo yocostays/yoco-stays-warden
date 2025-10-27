@@ -55,7 +55,7 @@ export default function StudentIndex() {
   const location = useLocation();
   const currentData = location?.state?.studentDetail;
   const isLoading = location?.state?.staffByIdLoading;
-
+  console.log(currentData, "currentData")
   const [open, setOpen] = useState(false);
   const [openOtpModal, setOpenOtpModal] = useState(false);
   const [openFatherOtpModal, setOpenFatherOtpModal] = useState(false);
@@ -104,6 +104,7 @@ export default function StudentIndex() {
       mode: "onTouched",           // Show error only after touching & leaving field
       reValidateMode: "onChange",          // 👈 Shows error when field is touched
       defaultValues: {
+        aadharNumber: currentData?.documents?.aadhaarNumber || "",
         studentName: currentData?.name || "",
         userName: currentData?.userName || "",
         phoneNumber: currentData?.phone || "",
@@ -143,7 +144,7 @@ export default function StudentIndex() {
           currentData?.familiyDetails?.guardianContactNo || "",
         emailId: currentData?.familiyDetails?.guardianEmail || "",
         familyAddress: currentData?.familiyDetails?.address || "",
-
+        parentMobileNumber: String(currentData?.familiyDetails?.parentsContactNo) || "",
         // Hostel Details
         hostel: currentData?.hostelId || null,
         selectWing: currentData?.hostelId || null,
@@ -172,10 +173,10 @@ export default function StudentIndex() {
     },
     [currentData]
   );
-
+  console.log(currentData, "current")
   const {
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
   } = methods;
   const handleTabChange = (index) => {
     setSelectedTab(index); // Select the clicked tab
@@ -185,12 +186,12 @@ export default function StudentIndex() {
   const onSubmit = (values) => {
     console.log(values, "valuess")
     if (openOtpModal === false || openFatherOtpModal === false) {
-      const vehicles = vehicleDetails.map((item) => ({
+      const vehicles = vehicleData.map((item) => ({
         vechicleType: item?.vechicleType || null,
-        engineType: item?.engineType ? item.engineType : null,
+        engineType: item?.engineType ? item.engineType : "not required",
         vechicleNumber: item?.vechicleNumber || null,
         modelName: item?.modelName ? item.modelName : null,
-      }));
+      }))
 
       const payload = {
         name: values?.studentName,
@@ -206,37 +207,39 @@ export default function StudentIndex() {
         medicalIssue: values?.medicalIssue,
         allergyProblem: values?.allergyProblem,
         country: {
-          name: selectedCountry?.name,
-          iso2: selectedCountry?.iso2,
-          countryId: selectedCountry?.id,
+          name: values?.country?.name,
+          iso2: values?.country?.iso2,
+          countryId: values?.country?.id,
         },
         state: {
-          stateId: selectedState?.id,
-          name: selectedState?.name,
-          iso2: selectedState?.iso2,
+          stateId: values?.state?.id,
+          name: values?.state?.name,
+          iso2: values?.state?.iso2,
         },
         city: {
-          cityId: selectedCity?.id,
-          name: selectedCity?.name,
+          cityId: values?.city?.id,
+          name: values?.city?.name,
         },
         cast: values?.caste,
         category: values?.category?.value,
         permanentAddress: values?.permanentAddress,
-        currentAddress: values?.currentAddress,
+        // currentAddress: values?.currentAddress,
         familiyDetails: {
           fatherName: values?.fatherName,
-          fatherNumber: Number(values?.fatherphoneNumber),
-          fatherEmail: values?.fatherEmail,
-          fatherOccuption: values?.fatherOccupation,
+          // fatherNumber: Number(values?.fatherphoneNumber),
+          // fatherEmail: values?.fatherEmail,
+          // fatherOccuption: values?.fatherOccupation,
           motherName: values?.motherName,
-          motherNumber: Number(values?.motherphoneNumber),
-          motherEmail: values?.motherEmail,
+          // motherNumber: Number(values?.motherphoneNumber),
+          // motherEmail: values?.motherEmail,
           guardianName: values?.guardianName,
-          guardianContactNo: Number(values?.guardianMobileNumber),
+          // guardianContactNo: Number(values?.guardianMobileNumber),
           relationship: values?.relationship,
           occuption: values?.occupation,
-          guardianEmail: values?.emailId,
+          // guardianEmail: values?.emailId,
           address: values?.familyAddress,
+          parentEmail: values?.parentEmail,
+          parentsContactNo: Number(values?.parentMobileNumber)
         },
         academicDetails: {
           universityId: values?.college?._id,
@@ -245,6 +248,7 @@ export default function StudentIndex() {
           semester: values?.semester?.value,
         },
         documents: {
+          aadharNumber: values?.aadharNumber,
           aadhaarCard: values?.aadhaar,
           drivingLicense: values?.drivingLicense
             ? values?.drivingLicense
@@ -253,40 +257,41 @@ export default function StudentIndex() {
           passport: values?.passport,
           voterCard: values?.voterId ? values?.voterId : null,
         },
-        vechicleDetails: vehicleData,
+        vechicleDetails: vehicles,
+        hostelId: values?.hostel?._id,
+        bedType: values?.bedType?.value === "single" ? 1 : 2,
+        buildingNumber: values?.selectWing,
+        floorNumber: values?.floor,
+        roomNumber: selectedRoom?.roomNumber || values?.roomNumber,
+        bedNumber: values?.bedNumber?._id,
+        billingCycle: values?.billingCycle?.value,
       };
 
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
-            navigate("/user");
+            // navigate("/user");
           } else {
             toast.error(res?.payload);
           }
         })
         : dispatch(
           createResidentAsync({
-            ...payload,
-            hostelId: values?.hostel?._id,
-            bedType: values?.bedType?.bedType,
-            buildingNumber: values?.selectWing,
-            floorNumber: selectedFloor?.floorNumber,
-            roomNumber: selectedRoom?.roomNumber || values?.roomNumber,
-            bedNumber: values?.bedNumber?._id,
-            billingCycle: values?.billingCycle?.value,
+            ...payload
+
           })
         ).then((res) => {
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
-            navigate("/user");
+            // navigate("/user");
           } else {
             toast.error(res?.payload);
           }
         });
     }
   };
-
+  console.log(errors, "errror")
   useEffect(() => {
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
@@ -392,26 +397,29 @@ export default function StudentIndex() {
               <Typography>Back</Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>
-              <Box>
-                <a sx={{ height: "100%" }} href={'/bulk_upload.csv'} download>
-                  <Button
-                    size="small"
+              {!id && (
+                <Box>
+                  <a sx={{ height: "100%" }} href={'/bulk_upload.csv'} download>
+                    <Button
+                      size="small"
 
-                    sx={{
-                      boxShadow: 1, borderRadius: 50, backgroundColor: '#fff',
-                      paddingX: "0.5rem",
-                      border: "0.2px solid #674D9F", height: "1.9rem",
-                      fontWeight: "bold"
-                    }}
-                    type="button"
-                  >
-                    <Box sx={{ display: "flex", gap: 0.5 }}>
-                      Sample File
-                      <ArrowDownwardIcon sx={{ width: "1rem" }} />
-                    </Box>
-                  </Button>
-                </a>
-              </Box>
+                      sx={{
+                        boxShadow: 1, borderRadius: 50, backgroundColor: '#fff',
+                        paddingX: "0.5rem",
+                        border: "0.2px solid #674D9F", height: "1.9rem",
+                        fontWeight: "bold"
+                      }}
+                      type="button"
+                    >
+                      <Box sx={{ display: "flex", gap: 0.5 }}>
+                        Sample File
+                        <ArrowDownwardIcon sx={{ width: "1rem" }} />
+                      </Box>
+                    </Button>
+                  </a>
+                </Box>
+              )}
+
               {!id && (
                 <Box>
                   <Button
@@ -634,7 +642,7 @@ export default function StudentIndex() {
                           setOpen={setOpenFatherOtpModal}
                         />
                       )}
-                      {!id && index === 2 && (
+                      {index === 2 && (
                         <HostelDetailsForm
                           id={currentData?._id || null}
                           methods={methods}
