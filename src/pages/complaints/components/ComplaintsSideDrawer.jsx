@@ -290,21 +290,24 @@ const ComplaintsSideDrawer = ({
       complaintId: selectedRow?._id || "", // Ensure correct complaint ID
       staffId: user, // Selected staff ID
       remark: remark || "", // Include remark
+      userId:id?.userId
     };
 
     const payloadForStatus = {
       complaintId: selectedRow?._id || "",
       remark: remark || "",
-      complainStatus: "escalated",
+      // complainStatus: "escalated",
+      complainStatus:selectedOption,
       attachments: [],
+      userId:id?.userId
     };
-
     dispatch(assignStaffAsync(payload))
       .then(async (res) => {
         if (res?.payload?.statusCode === 200) {
           toast.success("Complaint assigned successfully!");
           await dispatch(updateComplaintStatusThunk(payloadForStatus));
           setIsDialogOpen(false);
+          handleCloseDrawer()
         } else {
           toast.error("Failed to assign complaint.");
         }
@@ -319,7 +322,7 @@ const ComplaintsSideDrawer = ({
       handleSubmit();
     }
   };
-
+console.log(isStaffAssigned,"isSatffAssigned")
   
   const payload = {
     limit: rowsPerPage,
@@ -375,6 +378,7 @@ const ComplaintsSideDrawer = ({
       const payload = {
         categoryType: role,
         compaintId: selectedRow?._id,
+        userId:id?.userId
       };
       dispatch(getStaffListAsync(payload));
     }

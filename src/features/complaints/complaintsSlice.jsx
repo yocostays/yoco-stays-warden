@@ -40,6 +40,7 @@ export const bulkUpdateComplaintAsync = createAsyncThunk(
 export const getStaffListAsync = createAsyncThunk(
   "complaint/getStaffListApi",
   async (newData) => {
+    console.log(newData,"newData")
     const data = await getStaffListApi(newData);
     return data;
   }

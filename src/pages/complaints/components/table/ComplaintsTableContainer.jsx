@@ -88,8 +88,8 @@ const ComplaintsTableContainer = ({
           { id: "ticketid", value: "Ticket ID" },
           { id: "name", value: "Name" },
           { id: "createddate", value: "Created Date" },
-          { id: "department", value: "Department" },
-          { id: "typeofcomplaints", value: "Type" },
+          { id: "department", value: "Role" },
+          { id: "typeofcomplaints", value: "Category" },
           { id: "complaintsreason", value: "Complaints Reason" },
           { id: "floorandroom", value: "Floor & Room" },
           { id: "assignto", value: "Assign To" },
@@ -268,13 +268,16 @@ const ComplaintsTableContainer = ({
   ]);
 
   useEffect(() => {
-    if (isDialogOpen && selectedRows.length > 0) {
+    // if (isDialogOpen && selectedRows.length > 0) {
+    if(isDialogOpen){
       const payload = {
         categoryType: role,
         compaintId: selectedRows[0],
       };
+      console.log(payload,"payload")
       dispatch(getStaffListAsync(payload));
     }
+    // }
   }, [dispatch, role]);
 
   useEffect(() => {
@@ -398,10 +401,11 @@ const ComplaintsTableContainer = ({
     const payloadForStatus = {
       complaintId: selectedComplaint?._id || "",
       remark: remark || "",
-      complainStatus: "escalated",
+      // complainStatus: "escalated",
+      complainStatus:selectedResolveOption,
       attachments: [],
     };
-
+   
     dispatch(assignStaffAsync(payload))
       .then(async (res) => {
         if (res?.payload?.statusCode === 200) {

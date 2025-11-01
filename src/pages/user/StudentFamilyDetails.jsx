@@ -155,11 +155,11 @@ export default function StudentFamilyDetails({ studentDetail }) {
                     label: "Father Name",
                     value: studentDetail?.fatherName,
                   },
-                  // {
-                  //   icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
-                  //   label: "Father Mobile No.",
-                  //   value: studentDetail?.fatherNumber,
-                  // },
+                  {
+                    icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
+                    label: "Father Mobile No.",
+                    value: studentDetail?.fatherNumber,
+                  },
                   // {
                   //   icon: <EmailIcon />,
                   //   label: "Father Email Id",
@@ -175,21 +175,21 @@ export default function StudentFamilyDetails({ studentDetail }) {
                     label: "Mother Name",
                     value: studentDetail?.motherName,
                   },
-                  // {
-                  //   icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
-                  //   label: "Mother Mobile No.",
-                  //   value: studentDetail?.motherNumber,
-                  // },
+                  {
+                    icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
+                    label: "Mother Mobile No.",
+                    value: studentDetail?.motherNumber,
+                  },
                   // {
                   //   icon: <EmailIcon />,
                   //   label: "Mother Email Id",
                   //   value: studentDetail?.motherEmail,
                   // },
-                  {
-                    icon: <Icon icon="garden:tray-user-group-26" width="24" height="24" />,
-                    label: "Guardian Name",
-                    value: studentDetail?.guardianName,
-                  },
+                  // {
+                  //   icon: <Icon icon="garden:tray-user-group-26" width="24" height="24" />,
+                  //   label: "Guardian Name",
+                  //   value: studentDetail?.guardianName,
+                  // },
                   {
                     icon: <Icon icon="mdi:human-male-child" width="26" height="26" />,
                     label: "Relationship",
@@ -200,11 +200,11 @@ export default function StudentFamilyDetails({ studentDetail }) {
                     label: "Occupation",
                     value: studentDetail?.occuption,
                   },
-                  {
-                    icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
-                    label: "Guardian Mobile No.",
-                    value: studentDetail?.guardianContactNo || studentDetail?.parentsContactNo,
-                  },
+                  // {
+                  //   icon: <Icon icon="hugeicons:contact-01" width="24" height="24" />,
+                  //   label: "Guardian Mobile No.",
+                  //   value: studentDetail?.guardianContactNo || studentDetail?.parentsContactNo,
+                  // },
                   // {
                   //   icon: <EmailIcon />,
                   //   label: "Guardian Email Id",

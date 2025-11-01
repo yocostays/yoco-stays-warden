@@ -13,7 +13,7 @@ StudentHostelDetails.propTypes = {
 export default function StudentHostelDetails({ studentDetail }) {
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-console.log(studentDetail,"hostle")
+
   return (
     <Box>
       <Box
@@ -69,10 +69,11 @@ console.log(studentDetail,"hostle")
                   label: "Building/Wing",
                   value: studentDetail?.buildingNumber,
                 },
+                
                 {
                   icon: <BedIcon />,
                   label: "Selected Bed Type",
-                  value: studentDetail?.bedType === 1 ? "Single" : "Bunker" ?? "Bunker",
+                  value: studentDetail?.bedType ,
                 },
                 {
                   icon: <HomeWorkIcon />,
@@ -87,7 +88,7 @@ console.log(studentDetail,"hostle")
                 {
                   icon: <BedIcon />,
                   label: "Bed Number",
-                  value: studentDetail?.bedNumber?.name || "",
+                  value: studentDetail?.bedNumber || "",
                 },
                 {
                   icon: <ReceiptLongIcon />,
