@@ -5,6 +5,7 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import BedIcon from '@mui/icons-material/Bed';
 import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import ReceiptLongIcon from '@mui/icons-material/ReceiptLong';
+import { bedTypeOptions } from "@components/enums/studenEnums";
 
 StudentHostelDetails.propTypes = {
   studentDetail: PropTypes.object,
@@ -69,11 +70,11 @@ export default function StudentHostelDetails({ studentDetail }) {
                   label: "Building/Wing",
                   value: studentDetail?.buildingNumber,
                 },
-                
+
                 {
                   icon: <BedIcon />,
                   label: "Selected Bed Type",
-                  value: studentDetail?.bedType ,
+                  value: bedTypeOptions.find((item) => item.value === studentDetail?.bedType)?.label,
                 },
                 {
                   icon: <HomeWorkIcon />,
@@ -99,35 +100,35 @@ export default function StudentHostelDetails({ studentDetail }) {
                   icon: <ApartmentIcon />,
                   label: "Room Mates",
                   value: studentDetail?.roomMatesData?.length > 0 ? (
-                      studentDetail?.roomMatesData?.map((roommate) => (
-                        <Box
-                          key={roommate?.id}
-                          position="relative"
-                          display="flex"
-                          justifyContent="center"
-                          flexDirection="column"
-                          alignItems="center"
-                        >
-                          <Avatar
-                            src={roommate?.image}
-                            sx={{
-                              width: 40,
-                              height: 40,
-                              border: "2px solid rgb(169, 143, 196)",
-                            }}
-                           
-                          />
-                          
-                          <Typography variant="caption">
-                            {roommate?.name}
-                          </Typography>
-                        </Box>
-                      ))
-                    ) : (
-                      <Box>
-                        <Typography>No Roommates Yet!</Typography>
+                    studentDetail?.roomMatesData?.map((roommate) => (
+                      <Box
+                        key={roommate?.id}
+                        position="relative"
+                        display="flex"
+                        justifyContent="center"
+                        flexDirection="column"
+                        alignItems="center"
+                      >
+                        <Avatar
+                          src={roommate?.image}
+                          sx={{
+                            width: 40,
+                            height: 40,
+                            border: "2px solid rgb(169, 143, 196)",
+                          }}
+
+                        />
+
+                        <Typography variant="caption">
+                          {roommate?.name}
+                        </Typography>
                       </Box>
-                    ),
+                    ))
+                  ) : (
+                    <Box>
+                      <Typography>No Roommates Yet!</Typography>
+                    </Box>
+                  ),
                 },
               ].map((item, index) => (
                 <Box

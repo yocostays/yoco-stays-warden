@@ -67,7 +67,6 @@ export default function StudentDetails() {
     userIndisciplinaryDetail,
   } = useSelector((state) => state?.users);
   const [statusName, setStatusName] = useState("")
-console.log(studentDetail,"studentDetail")
 
   const personalDetailsRef = useRef(null);
   const familyDetailsRef = useRef(null);
@@ -304,21 +303,22 @@ console.log(studentDetail,"studentDetail")
   }, [id, tabValue]);
 
   const handleNavigation = () => {
-    const profileView = localStorage.getItem('profileView');
+    navigate('/user')
+    // const profileView = localStorage.getItem('profileView');
 
-    switch (profileView) {
-      case 'leave':
-        navigate('/leave');
-        break;
-      case 'mess':
-        navigate('/newmessmanagement');
-        break;
-      case 'complaints':
-        navigate('/complaints');
-        break;
-      default:
-        navigate('/user');
-    }
+    // switch (profileView) {
+    //   case 'leave':
+    //     navigate('/leave');
+    //     break;
+    //   case 'mess':
+    //     navigate('/newmessmanagement');
+    //     break;
+    //   case 'complaints':
+    //     navigate('/complaints');
+    //     break;
+    //   default:
+    //     navigate('/user');
+    // }
   };
 
 
