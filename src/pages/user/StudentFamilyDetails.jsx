@@ -184,11 +184,11 @@ export default function StudentFamilyDetails({ studentDetail }) {
                   //   label: "Mother Email Id",
                   //   value: studentDetail?.motherEmail,
                   // },
-                  // {
-                  //   icon: <Icon icon="garden:tray-user-group-26" width="24" height="24" />,
-                  //   label: "Guardian Name",
-                  //   value: studentDetail?.guardianName,
-                  // },
+                  {
+                    icon: <Icon icon="garden:tray-user-group-26" width="24" height="24" />,
+                    label: "Guardian Name",
+                    value: studentDetail?.guardianName,
+                  },
                   {
                     icon: <Icon icon="mdi:human-male-child" width="26" height="26" />,
                     label: "Relationship",
