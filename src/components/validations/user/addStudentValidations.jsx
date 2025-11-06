@@ -6,7 +6,7 @@ export const addStudentValidations = {
     .string()
     .matches(/^\d{10}$/, "Phone number must be up to 10 digits")
     .required("Phone Number is required"),
-  studentEmail: yup.string().email("Invalid email format").optional().notRequired(),
+  studentEmail: yup.string().email("Invalid email format").required('Email is required.'),
   studentDob: yup.date().required("Date of birth is required").typeError('Date of birth is required.'),
   enrollNo: yup.string().nullable(),
   // bloodGroup: yup.string().nullable(),
@@ -29,19 +29,19 @@ export const addStudentValidations = {
   caste: yup.string().nullable(),
   permanentAddress: yup.string().required("Permanent Address is required"),
   // currentAddress: yup.string().required("Current Address is required"),
-  parentEmail: yup.string()
-    .nullable()                // allows null
-    .notRequired()         // field is optional
-    .email('Invalid email'),
-  parentMobileNumber: yup.string()
-    .transform((value, originalValue) => {
-      // Convert empty string to null
-      return originalValue === '' ? null : value;
-    })
-    .matches(/^\d{10}$/, {
-      message: 'Enter a valid 10-digit phone number',
-      excludeEmptyString: true, // ✅ Skip match if empty string (already transformed to null)
-    }).required("Parent's Number is required."),
+  // parentEmail: yup.string()
+  //   .nullable()                // allows null
+  //   .notRequired()         // field is optional
+  //   .email('Invalid email'),
+  // parentMobileNumber: yup.string()
+  //   .transform((value, originalValue) => {
+  //     // Convert empty string to null
+  //     return originalValue === '' ? null : value;
+  //   })
+  //   .matches(/^\d{10}$/, {
+  //     message: 'Enter a valid 10-digit phone number',
+  //     excludeEmptyString: true, // ✅ Skip match if empty string (already transformed to null)
+  //   }).required("Parent's Number is required."),
   // Father's Details Validation
   fatherName: yup.string().required("Father's Name is required"),
   // fatherphoneNumber: yup
@@ -92,16 +92,30 @@ export const addStudentValidations = {
   hostel: yup.object().nullable(),
   // selectWing: yup.string().required("Building/Wing Name is required"),
   bedType: yup.object().nullable().nullable(),
-  roomNumber: yup
-    .string()
-    .nullable() // ✅ allows empty/null
-    .test("valid-number-range", "Enter a valid number between 1 to 50", (value) => {
-      if (!value) return true; // ✅ allow empty
-      const num = Number(value);
-      return Number.isInteger(num) && num >= 1 && num <= 50;
-    })
-  ,
-  bedNumber: yup.object().nullable().nullable(),
+  // roomNumber: yup
+  //   .string()
+  //   .nullable() // ✅ allows empty/null
+  //   .test("valid-number-range", "Enter a valid number between 1 to 50", (value) => {
+  //     if (!value) return true; // ✅ allow empty
+  //     const num = Number(value);
+  //     return Number.isInteger(num) && num >= 1 && num <= 50;
+  //   })
+  floor: yup
+    .array()
+    .min(1, "Please select a floor") // floor array must not be empty
+    .required("Please select a floor"),
+
+  // roomNumber: yup
+  //   .object()
+  //   .nullable()
+  //   .when("floor", {
+  //     is: (floor) => Array.isArray(floor) && floor.length > 0,
+  //     then: (schema) => schema.required("Room number is required when floor is selected"),
+  //     otherwise: (schema) => schema.notRequired(),
+  //   }),
+  roomNumber: yup.object().required('Room Number is required.'),
+
+  bedNumber: yup.object().required('Bed Number is required.'),
 
   // Academic Details
   // academicYear: yup.object().nullable().required("Academic Year is required"),
@@ -111,10 +125,18 @@ export const addStudentValidations = {
 
   // Upload KYC Documents
   aadhaar: yup.string().required("Aadhar Card is required"),
-  aadharNumber: yup.string()
-    .required("Aadhar Number is required")
-    .matches(/^\d{12}$/, "Aadhar number must be exactly 12 digits number.")
-  ,
+ aadharNumber: yup
+  .string()
+  .trim()
+  .nullable()
+  .test(
+    "aadhaar-length",
+    "Aadhaar number must be exactly 12 digits",
+    (value) => {
+      if (!value) return true; // allow empty
+      return /^\d{12}$/.test(value); // must match 12 digits
+    }
+  ),
   // passport: yup.string().required("Passport Card is required"),
   // kyc: yup.string()
   //   .required("Please select document type")
@@ -227,10 +249,9 @@ export const addStudentValidationsUpdate = {
     .string()
     .matches(/^\d{10}$/, "Phone number must be up to 10 digits")
     .required("Phone Number is required"),
-  studentEmail: yup.string().email("Invalid email format").optional().notRequired(),
+  studentEmail: yup.string().email("Invalid email format").required('Email is required.'),
   studentDob: yup.date().required("Date of birth is required").typeError('Date of birth is required.'),
   enrollNo: yup.string().nullable(),
-  // bloodGroup: yup.string().nullable(),
   bloodGroup: yup
     .object({
       label: yup.string().required(),
@@ -250,19 +271,19 @@ export const addStudentValidationsUpdate = {
   caste: yup.string().nullable(),
   permanentAddress: yup.string().required("Permanent Address is required"),
   // currentAddress: yup.string().required("Current Address is required"),
-  parentEmail: yup.string()
-    .nullable()                // allows null
-    .notRequired()         // field is optional
-    .email('Invalid email'),
-  parentMobileNumber: yup.string()
-    .transform((value, originalValue) => {
-      // Convert empty string to null
-      return originalValue === '' ? null : value;
-    })
-    .matches(/^\d{10}$/, {
-      message: 'Enter a valid 10-digit phone number',
-      excludeEmptyString: true, // ✅ Skip match if empty string (already transformed to null)
-    }).required("Parent's Number is required."),
+  // parentEmail: yup.string()
+  //   .nullable()                // allows null
+  //   .notRequired()         // field is optional
+  //   .email('Invalid email'),
+  // parentMobileNumber: yup.string()
+  //   .transform((value, originalValue) => {
+  //     // Convert empty string to null
+  //     return originalValue === '' ? null : value;
+  //   })
+  //   .matches(/^\d{10}$/, {
+  //     message: 'Enter a valid 10-digit phone number',
+  //     excludeEmptyString: true, // ✅ Skip match if empty string (already transformed to null)
+  //   }).required("Parent's Number is required."),
   // Father's Details Validation
   fatherName: yup.string().required("Father's Name is required"),
   // fatherphoneNumber: yup
@@ -277,7 +298,14 @@ export const addStudentValidationsUpdate = {
 
   // fatherOccupation: yup.string().required("Father's Occupation is required"),
   motherName: yup.string().required("Mother's Name is required"),
-
+  // aadharNumber: yup
+  //   .string()
+  //   .trim()
+  //   .matches(/^[0-9]*$/, "Only digits allowed")
+  //   .matches(/^\d{12}$/, {
+  //     message: "Aadhaar number must be exactly 12 digits",
+  //     excludeEmptyString: true,
+  //   }),
   // motherphoneNumber: yup
   //   .string()
   //   .matches(/^\d{10}$/, "Enter a valid 10-digit phone number")
@@ -311,47 +339,39 @@ export const addStudentValidationsUpdate = {
   hostelName: yup.string().required('Hostel Name is required.'),
   // Hostel Details
   hostel: yup.object().nullable(),
-  // selectWing: yup.string().required("Building/Wing Name is required"),
   bedType: yup.object().nullable().nullable(),
-  roomNumber: yup
-    .string()
-    .nullable() // ✅ allows empty/null
-    .test("valid-number-range", "Enter a valid number between 1 to 50", (value) => {
-      if (!value) return true; // ✅ allow empty
-      const num = Number(value);
-      return Number.isInteger(num) && num >= 1 && num <= 50;
-    })
-  ,
-  bedNumber: yup.object().nullable().nullable(),
+  floor: yup
+    .array()
+    .min(1, "Please select a floor") // floor array must not be empty
+    .required("Please select a floor"),
 
-  // Academic Details
-  // academicYear: yup.object().nullable().required("Academic Year is required"),
+  roomNumber: yup.object().required('Room Number is required.'),
+
+  bedNumber: yup.object().required('Bed Number is required.'),
   college: yup.object().nullable().nullable(),
   course: yup.object().nullable().nullable(),
   semester: yup.object().nullable().nullable(),
 
   // Upload KYC Documents
-  aadhaar: yup.string().required("Aadhar Card is required"),
-  aadharNumber: yup.string()
-    .required("Aadhar Number is required")
-    .matches(/^\d{12}$/, "Aadhar number must be exactly 12 digits number.")
+  aadhaar: yup.string().nullable().optional(),
+aadharNumber: yup
+  .string()
+  .trim()
+  .nullable()
+  .test(
+    "aadhaar-length",
+    "Aadhaar number must be exactly 12 digits",
+    (value) => {
+      if (!value) return true; // allow empty
+      return /^\d{12}$/.test(value); // must match 12 digits
+    }
+  )
   ,
-  // passport: yup.string().required("Passport Card is required"),
-  // kyc: yup.string()
-  //   .required("Please select document type")
-  //   .oneOf(['aadhaar', 'voterId', 'passport', 'drivingLicense', 'pancard'], 'Invalid document type'),
 
   aadhaarFile: yup.mixed().when('kyc', {
     is: 'aadhaar',
     then: (schema) => schema.required('Aadhaar file is required'),
     otherwise: (schema) => schema.nullable(),
   }),
-  // panFile: yup.mixed().when('kyc', {
-  //   is: 'pancard',
-  //   then: (schema) => schema.required('PAN file is required'),
-  //   otherwise: (schema) => schema.nullable(),
-  // }),
-  // ✅ Repeat same pattern for other documents
-
 
 }

@@ -21,10 +21,11 @@ import {
   getBedTypeAsync,
   getBillingCycleAsync,
   getFloorByHostelAsync,
+  getFloorsRooms,
   getRoommatesAsync,
   getRoomsByFloorAndHostelAsync,
 } from "@features/hostel/hostelApi";
-import { getVacantRoomDetails } from "@features/users/userSlice";
+import { getUsersHostelDetail, getVacantRoomDetails } from "@features/users/userSlice";
 import { toast } from "react-toastify";
 import { bedTypeOptions } from "@components/enums/studenEnums";
 import FormLabel from "@utils/FormLabel";
@@ -52,16 +53,14 @@ export default function HostelDetailsForm({
   id,
 }) {
   const dispatch = useDispatch();
-
   const { handleSubmit, setValue, watch, register, resetField, formState: { errors }, } = methods;
-  const { bedType, floorList, roomList, roomMates, getBillingCycle } =
+  const { roomMates, getBillingCycle, floorRooms } =
     useSelector((state) => state.hostel);
 
   const billingCycleOptions = getBillingCycle?.map((items) => ({
     label: capitalize(items),
     value: items,
   }));
-
   const [room, setRoom] = useState(false);
   const [floor, setFloor] = useState(false);
   const [hostelId, setHostelId] = useState("");
@@ -70,30 +69,11 @@ export default function HostelDetailsForm({
   const [isVacant, setIsVacant] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [roomNumberInput, setRoomNumberInput] = useState("");
+  const [bedNumber, setBedNumber] = useState({})
+  const [hostelDetails, setHostelDetails] = useState([])
+  const [roomNumber,setRoomNumber] = useState()
 
-  // const [roommates, setRoommates] = useState([
-  //   { id: 1, avatar: null },
-  //   { id: 2, avatar: null },
-  //   { id: 3, avatar: null },
-  // ]); // State for roommates
 
-  // required later
-  // const handleAvatarChange = (event, roommateId) => {
-  //   const file = event.target.files[0];
-  //   if (file) {
-  //     const reader = new FileReader();
-  //     reader.onload = () => {
-  //       setRoommates((prevRoommates) =>
-  //         prevRoommates.map((roommate) =>
-  //           roommate.id === roommateId
-  //             ? { ...roommate, avatar: reader.result }
-  //             : roommate
-  //         )
-  //       );
-  //     };
-  //     reader.readAsDataURL(file);
-  //   }
-  // };
 
   const handleRoomNumberSelect = () => {
     if (roomNumberInput) {
@@ -175,27 +155,42 @@ export default function HostelDetailsForm({
   }, [selectedRoom]);
 
 
-  const floorNo = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+  useEffect(() => {
+    dispatch(getFloorsRooms())
+  }, [])
 
-  const singlebedNo = [
-    { label: "1", value: 1 },
-    { label: "2", value: 2 },
-    { label: "3", value: 3 },
-    { label: "4", value: 4 },
+  useEffect(() => {
+    if (id && floorRooms) {
+      dispatch(getUsersHostelDetail({ studentId: id, type: "hostel" })).then((data) => {
+        const hostel = data?.payload?.data
+        setSelectedFloor(hostel?.floorNumber)
+        const floorList = floorRooms?.floorRooms.filter((item) => item?.floorNumber === hostel?.floorNumber)
 
-  ]
+        const rooms = floorList[0]?.rooms.map((item) => {
+          return {
+            label: String(item?.roomNumber),
+            value: Number(item?.roomNumber),
+            ...item
+          }
+        })
+        setValue('floor', rooms, { shouldValidate: true })
+        const bedList = rooms?.filter((item) => item?.roomNumber === hostel?.roomNumber)
+        const bedOptions = bedList[0]?.bedNumbers?.map(item => ({
+          label: item.bedNumber,
+          value: Number(item.bedNumber),
+        })).concat([
+          { label: hostel?.bedNumber, value: Number(hostel?.bedNumber) }
+        ]) || [];
+        setBedNumber({ label: hostel?.bedNumber, value: hostel?.bedNumber })
+        setRoomNumber(hostel?.roomNumber)
+        setValue("rooms", bedOptions);
+        setValue('roomNumber', { label: hostel?.roomNumber, value: hostel?.roomNumber })
+        setValue('bedNumber', { label: hostel?.bedNumber, value: hostel?.bedNumber })
+        setValue('selectWing',hostel?.buildingNumber)
+      });
 
-  const doublebedNo = [
-    { label: "1", value: 1 },
-    { label: "2", value: 2 },
-    { label: "3", value: 3 },
-    { label: "4", value: 4 },
-    { label: "5", value: 5 },
-    { label: "6", value: 6 },
-    { label: "7", value: 7 },
-    { label: "8", value: 8 },
-
-  ]
+    }
+  }, [id, floorRooms])
 
   return (
     <Box
@@ -227,33 +222,6 @@ export default function HostelDetailsForm({
             </Grid>
 
             <Grid item xs={12} sm={9}>
-              {/* <RHFAutocomplete
-                name="hostel"
-                label="Select Hostel"
-                size="small"
-                options={hostelList || []}
-                // disabled={!id && !verified}
-                onChange={(e, value) => {
-                  setValue("hostel", value, { shouldValidate: true });
-                  setValue("selectWing", value.buildingNumber, {
-                    shouldValidate: true,
-                  });
-                  setHostelId(value?._id);
-                  setValue("bedType", {}, { shouldValidate: true });
-                  setBedTypeValue(null);
-                  setVacantRoom("0/0");
-                  setSelectedFloor(null);
-                  setSelectedRoom(null);
-                  setIsVacant(false);
-                  setFloor(false);
-                  setRoom(false);
-                  // setRoommates([
-                  //   { id: 1, avatar: null },
-                  //   { id: 2, avatar: null },
-                  //   { id: 3, avatar: null },
-                  // ]);
-                }}
-              /> */}
 
               <Input
                 error={errors?.hostelName?.message}
@@ -275,7 +243,6 @@ export default function HostelDetailsForm({
 
             </Grid>
             <Grid item xs={12} sm={9}>
-              {/* <RHFTextField name="selectWing" disabled size="small" /> */}
               <Input
                 error={errors?.bedType?.message}
                 value={watch("selectWing")}
@@ -288,52 +255,6 @@ export default function HostelDetailsForm({
                 }
               />
             </Grid>
-
-            {/* Bed Type */}
-            <Grid item xs={12} sm={3}>
-              <FormLabel label="Select Bed Type" />
-
-            </Grid>
-            <Grid item xs={12} sm={9}>
-              <RHFAutocomplete
-                name="bedType"
-                label="Select Bed Type"
-                size="small"
-                // options={bedType || []}
-                options={[{
-                  label: "Single",
-                  value: "Single"
-                }, {
-                  label: "Bunker",
-                  value: "Bunker"
-                }]}
-                // disabled={!id && !verified}
-                // getOptionLabel={(option) => {
-                //   const matchedOption = bedTypeOptions.find(
-                //     (item) => item.value === option.bedType
-                //   );
-
-                //   return matchedOption ? matchedOption.label : ""; // Return label if found, else empty string
-                // }}
-                onChange={(e, value) => {
-                  setValue("bedType", value, { shouldValidate: true });
-                  resetField('bedNo')
-                  setBedTypeValue(value?.bedType);
-                  setVacantRoom("0/0");
-                  setSelectedFloor(null);
-                  setIsVacant(false);
-                  setRoom(false);
-                  // setRoommates([
-                  //   { id: 1, avatar: null },
-                  //   { id: 2, avatar: null },
-                  //   { id: 3, avatar: null },
-                  // ]);
-                }}
-              />
-            </Grid>
-
-            {/* Floor Selection */}
-            {/* {floor && floorList?.length > 0 && ( */}
 
             <>
               <Grid item xs={12} sm={3}>
@@ -351,21 +272,33 @@ export default function HostelDetailsForm({
                     Floor
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    {floorNo?.map((floor) => (
+
+                    {floorRooms?.floorRooms?.map((floor) => (
                       <Button
                         key={floor}
                         onClick={() => {
-                          setValue('floor',floor)
-                          setSelectedFloor(floor);
+                          setValue('roomNumber', null)
+                          setValue('bedNumber', null)
+                          setValue('rooms',[])
+                          setValue('floor', [])
+                          const rooms = floor?.rooms.map((item) => {
+                            return {
+                              label: String(item?.roomNumber),
+                              value: item?.roomNumber,
+                              ...item
+                            }
+                          })
+                          setValue('floor', rooms, { shouldValidate: true })
+                          setSelectedFloor(floor?.floorNumber);
                           setIsVacant(false);
                           setRoom(true);
                         }} // Set selected floor
                         sx={{
                           textTransform: "none",
                           backgroundColor:
-                            selectedFloor === floor ? "#5E2E8C" : "#674D9F0d",
+                            selectedFloor === floor?.floorNumber ? "#5E2E8C" : "#674D9F0d",
                           color:
-                            selectedFloor === floor ? "white" : "#5E2E8C",
+                            selectedFloor === floor?.floorNumber ? "white" : "#5E2E8C",
                           border: "1px solid #5E2E8C",
                           borderRadius: "50%",
                           height: "40px",
@@ -383,12 +316,19 @@ export default function HostelDetailsForm({
                         }}
                       // disabled={!id && !verified}
                       >
-                        {floor || ""}
+                        {floor?.floorNumber || ""}
                       </Button>
                     ))}
                   </Box>
+                  <Box
+                    sx={{
+                      fontSize: "12px",
+                      color: "red",
+                      margintTop: "7px",
+                      paddingTop: "5px"
+                    }}
+                  >{errors?.floor?.message}</Box>
                 </>
-                {/* {room && roomList?.length > 0 && ( */}
                 <>
                   <Typography
                     variant="body2"
@@ -397,44 +337,36 @@ export default function HostelDetailsForm({
                   >
                     Room Number
                   </Typography>
-                  <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-                    <Input
-                      error={errors?.roomNumber?.message}
-                      // value={watch('studentName')}
-                      placeholder="Room No." register={register}
-                      name={"roomNumber"}
-                      type={"text"}
-                      onChange={(e) => {
-                        const value = e?.target?.value.replace(/^\s+/, "");
-                         const onlyDigits = value.replace(/\D/g, '');
-                        setValue('roomNumber', onlyDigits, { shouldValidate: true })
-                      }
-                      }
-                    />
-                    {/* {roomList?.map((room) => ( */}
+                  <RHFAutocomplete
+                    name="roomNumber"
+                    label="Select Room"
+                    size="small"
+                    options={watch('floor')} // ✅ use your Redux room data
+                    getOptionLabel={(option) => option.label?.toString() || ""}
+                    onChange={(_, value) => {
+                      setValue('rooms', [])
+                      setValue("roomNumber", value, { shouldValidate: true });
+                      setValue('bedNumber', null)
 
-                    {/* ))} */}
-                    {/* {roomList?.length > 5 && ( */}
-                    {/* <Button
-                            onClick={() => setDialogOpen(true)}
-                            // disabled={!verified}
-                            sx={{
-                              backgroundColor: "#5E2E8C",
-                              color: "white",
-                              cursor: "pointer",
-                              height: "40px",
-                              width: "40px",
-                              minWidth: "unset",
-                              padding: 0,
-                              display: "flex",
-                              justifyContent: "center",
-                              alignItems: "center",
-                            }}
-                          >
-                            <MoreHorizIcon />
-                          </Button> */}
-                    {/* )} */}
-                  </Box>
+                      // prepare bed options based on selected room
+                      let bedOptions
+                      if(id && Number(value?.roomNumber === Number(roomNumber))){
+                         bedOptions = value?.bedNumbers?.map(item => ({
+                          label: item.bedNumber,
+                          value: Number(item.bedNumber)
+                        })).concat(bedNumber) || [];
+                      }else{
+                         bedOptions = value?.bedNumbers?.map(item => ({
+                          label: item.bedNumber,
+                          value: Number(item.bedNumber)
+                        })) || []
+                      }
+
+                      setValue("rooms", bedOptions); // ✅ update beds list
+
+                    }}
+                  />
+
                   <Box sx={{ marginTop: "10px" }}>
                     <Typography
                       variant="body2"
@@ -444,35 +376,20 @@ export default function HostelDetailsForm({
                       Bed Number
                     </Typography>
                     <RHFAutocomplete
-                      name="bedNo"
+                      name="bedNumber"
                       label="Select Bed No."
                       size="small"
-                      options={watch('bedType')?.value === "Single" ? singlebedNo : doublebedNo}
+                      options={watch('rooms')}
+                      getOptionLabel={(option) => option.label?.toString() || ""}
                     // disabled={!id && !verified}
                     />
 
                   </Box>
-                  {/* <Box mt={2}>
-                    <Typography fontSize={"14px"}>
-                      Vacant:{" "}
-                      <Chip
-                        label={vacantRoom}
-                        size="small"
-                        sx={{
-                          borderRadius: "8px",
-                          fontWeight: "500",
-                          backgroundColor: "#846ABF",
-                          color: "white",
-                        }}
-                      />{" "}
-                      (Free/Total)
-                    </Typography>
-                  </Box> */}
+
                 </>
-                {/* )} */}
+
               </Grid>
             </>
-            {/* )} */}
             {/* Dialog for Number Picker */}
             <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
               <DialogContent>

@@ -45,6 +45,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { getUsersHostelDetail } from "@features/users/userSlice";
 
 export default function StudentIndex() {
   const theme = useTheme();
@@ -54,8 +55,8 @@ export default function StudentIndex() {
 
   const location = useLocation();
   const currentData = location?.state?.studentDetail;
+  console.log(currentData,"currentData")
   const isLoading = location?.state?.staffByIdLoading;
-  console.log(currentData, "currentData")
   const [open, setOpen] = useState(false);
   const [openOtpModal, setOpenOtpModal] = useState(false);
   const [openFatherOtpModal, setOpenFatherOtpModal] = useState(false);
@@ -74,7 +75,7 @@ export default function StudentIndex() {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
 
-  const { hostelList, isSubmitting } = useSelector((state) => state.hostel);
+  const { hostelList, isSubmitting, floorNumber } = useSelector((state) => state.hostel);
   const { vehicleData } = useSelector((state) => state.users);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const sectionRefs = [
@@ -97,6 +98,8 @@ export default function StudentIndex() {
   const validationSchema = id
     ? yup.object().shape(addStudentValidationsUpdate)
     : yup.object().shape(addStudentValidations);
+
+ 
 
   const methods = useForm(
     {
@@ -173,7 +176,6 @@ export default function StudentIndex() {
     },
     [currentData]
   );
-  console.log(currentData, "current")
   const {
     handleSubmit,
     formState: { errors },
@@ -182,9 +184,9 @@ export default function StudentIndex() {
     setSelectedTab(index); // Select the clicked tab
     sectionRefs[index]?.current?.scrollIntoView({ behavior: "smooth" }); // Smoothly scroll to the selected section
   };
-
+ console.log(errors, "errorssssssssssssssssssssssss")
   const onSubmit = (values) => {
-    console.log(values, "valuess")
+    console.log(values,"valueeeeeeeeeeeeee",selectedFloor)
     if (openOtpModal === false || openFatherOtpModal === false) {
       const vehicles = vehicleData.map((item) => ({
         vechicleType: item?.vechicleType || null,
@@ -226,11 +228,11 @@ export default function StudentIndex() {
         // currentAddress: values?.currentAddress,
         familiyDetails: {
           fatherName: values?.fatherName,
-          // fatherNumber: Number(values?.fatherphoneNumber),
+          fatherNumber: Number(values?.fatherphoneNumber),
           // fatherEmail: values?.fatherEmail,
           // fatherOccuption: values?.fatherOccupation,
           motherName: values?.motherName,
-          // motherNumber: Number(values?.motherphoneNumber),
+          motherNumber: Number(values?.motherphoneNumber),
           // motherEmail: values?.motherEmail,
           guardianName: values?.guardianName,
           // guardianContactNo: Number(values?.guardianMobileNumber),
@@ -239,7 +241,7 @@ export default function StudentIndex() {
           // guardianEmail: values?.emailId,
           address: values?.familyAddress,
           parentEmail: values?.parentEmail,
-          parentsContactNo: Number(values?.parentMobileNumber)
+          // parentsContactNo: Number(values?.parentMobileNumber)
         },
         academicDetails: {
           universityId: values?.college?._id,
@@ -259,13 +261,14 @@ export default function StudentIndex() {
         },
         vechicleDetails: vehicles,
         hostelId: values?.hostel?._id,
-        bedType: values?.bedType?.value === "single" ? 1 : 2,
+        // bedType: values?.bedType?.value === "single" ? 1 : 2,
         buildingNumber: values?.selectWing,
-        floorNumber: values?.floor,
-        roomNumber: selectedRoom?.roomNumber || values?.roomNumber,
-        bedNumber: values?.bedNumber?._id,
+        floorNumber: Number(selectedFloor),
+        roomNumber: Number(values?.roomNumber?.value),
+        bedNumber: String(values?.bedNumber?.label),
         billingCycle: values?.billingCycle?.value,
       };
+      console.log(payload,"payloaddddddddddddd")
 
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
@@ -291,7 +294,7 @@ export default function StudentIndex() {
         });
     }
   };
-  console.log(errors, "errror")
+
   useEffect(() => {
     const observerCallback = (entries) => {
       entries.forEach((entry) => {
@@ -351,6 +354,17 @@ export default function StudentIndex() {
 
     }
   }, [id, currentData]);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getUsersHostelDetail({ studentId: id, type: "hostel" })).then((item) => {
+        const { data } = item?.payload
+        setValue('floor', data)
+        setValue('roomNumber', { label: data?.roomNumber, value: data?.roomNumber })
+        setValue('bedNumber', { label: data?.bedNumber, value: data?.bedNumber })
+      });
+    }
+  }, [id])
 
   return (
     <>
@@ -613,6 +627,7 @@ export default function StudentIndex() {
                     <Box key={index} ref={section.ref}>
                       {index === 0 && !isLoading && (
                         <CreateStudentForm
+                          currentData={currentData}
                           id={currentData?._id || null}
                           country={currentData?.country || null}
                           methods={methods}

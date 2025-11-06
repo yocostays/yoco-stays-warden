@@ -49,6 +49,7 @@ import TextArea from "@components/customComponents/customTextarea";
 import moment from "moment";
 
 CreateStudentForm.propTypes = {
+  currentData: PropTypes.object.isRequired,
   methods: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
@@ -72,6 +73,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function CreateStudentForm({
+  currentData,
   methods,
   open,
   setOpen,
@@ -109,7 +111,7 @@ export default function CreateStudentForm({
   const [avatarPreview, setAvatarPreview] = useState(
     image || "/path-to-avatar.png"
   );
-
+  console.log(currentData, "error")
   const mobile = watch("phoneNumber");
   const [phone, setPhone] = useState(mobile || "");
   const [sameAdd, setSameAdd] = useState(false);
@@ -170,18 +172,7 @@ export default function CreateStudentForm({
     });
   };
 
-  const handleVerifyClick = () => {
-    if (!verified) {
-      dispatch(generateOtp({ phone })).then((response) => {
-        if (response?.payload?.statusCode === 200) {
-          console.log(response, "response");
-          toast.success(response?.payload?.message || "OTP Sent!");
-          toast.success(response?.payload?.data);
-          setOpen(true);
-        }
-      });
-    }
-  };
+
 
   const handleClose = () => {
     setOpen(false);
@@ -194,31 +185,7 @@ export default function CreateStudentForm({
     reset();
   };
 
-  const handleSameAddress = (e) => {
-    // Toggle the state
-    if (e?.target?.checked) {
-      setValue('currentAddress', permanentAddress)
-      setValue('sameAddress', e?.target?.checked)
-      setValue('permanentAddress', watch('currentAddress'))
-    } else {
-      setValue("currentAddress", "");
-      setValue('sameAddress', e?.target?.checked)
-      // resetField('sameAddress')
-    }
-    // setSameAdd((prev) => {
-    //   const newState = !prev;
-    //   if (newState) {
-    //     // If the radio button is checked, sync the address
-    //     setValue("currentAddress", permanentAddress);
-    //     setValue('sameAddress', e?.target?.checked)
-    //   } else {
-    //     // If the radio button is unchecked, reset the current address
-    //     setValue("currentAddress", "");
-    //     // resetField('sameAddress')
-    //   }
-    //   // return newState;
-    // });
-  };
+
 
   //   Fetch all countries on component mount
   const apiKey = "NnF1NWxKZm03bURIbHJmU3lyYnV3MXJoRk91UEZSb3FUNnRsbWdsQw==";
@@ -243,6 +210,10 @@ export default function CreateStudentForm({
             ...item
           }
         })
+        const selectedCountry = data.filter((item) => item?.label === currentData?.nationality)
+        setValue('country', selectedCountry[0])
+        setSelectedCountry(selectedCountry[0])
+
         setAllCountryData(data);
       } catch (error) {
         console.error("Error fetching countries:", error);
@@ -265,6 +236,9 @@ export default function CreateStudentForm({
             },
           };
           const response = await axios(config);
+          const selectedState = response?.data.filter((item) => item?.name === currentData?.bulkState)
+          setValue('state', selectedState[0])
+          setSelectedState(selectedState[0])
           setAllStateData(response?.data);
         } catch (error) {
           console.error("Error fetching states:", error);
@@ -293,6 +267,9 @@ export default function CreateStudentForm({
             },
           };
           const response = await axios(config);
+          const selectedCity = response?.data.filter((item) => item?.name === currentData?.bulkCity)
+          setValue('city', selectedCity[0])
+          setSelectedCity(selectedCity[0])
           setAllCityData(response?.data);
         } catch (error) {
           console.error("Error fetching cities:", error);
@@ -305,6 +282,16 @@ export default function CreateStudentForm({
 
     fetchCities();
   }, [selectedState, selectedCountry]);
+
+  // useEffect(()=>{
+  //   if(allCountryData){
+  //      const d = allCountryData.filter((item)=> item?.label === currentData?.nationality)
+  //       setValue('country',d[0])
+  //       setSelectedCountry(d[0])
+  //       console.log(d,"dddddddddddddddddddddddddddddd")
+  //   }
+  // },[allCountryData])
+
 
   return (
     <>
@@ -450,7 +437,7 @@ export default function CreateStudentForm({
               />
             </Grid>
             <Grid item xs={12} sm={3} >
-              <FormLabel label="Aadhar Number" required/>
+              <FormLabel label="Aadhar Number" />
             </Grid>
             <Grid item xs={12} sm={9}>
               <Input
@@ -469,15 +456,9 @@ export default function CreateStudentForm({
 
             {/* E-mail ID */}
             <Grid item xs={12} sm={3}>
-              <FormLabel label="E-mail ID" />
+              <FormLabel label="E-mail ID" required />
             </Grid>
             <Grid item xs={12} sm={9}>
-              {/* <RHFTextField
-                placeholder="Type Here"
-                size="small"
-                name="studentEmail"
-                disabled={!id && !verified}
-              /> */}
               <Input error={errors?.studentEmail?.message}
                 value={watch('studentEmail')}
                 placeholder="E-mail" register={register}
@@ -486,6 +467,7 @@ export default function CreateStudentForm({
                   const value = e?.target?.value.replace(/^\s+/, "");
                   setValue('studentEmail', value)
                 }}
+              // disabled={!id && !verified}
               />
             </Grid>
 
@@ -494,20 +476,14 @@ export default function CreateStudentForm({
               <FormLabel label="Date of Birth" required />
             </Grid>
             <Grid item xs={12} sm={3}>
-              {/* <RHFDatePicker
-                name="studentDob"
-                control={control}
-                size="small"
-                format="DD/MM/YYYY"
-                maxDate={dayjs()}
-                disabled={!id && !verified}
-              /> */}
               <Input error={errors?.studentDob?.message}
                 value={moment(watch('studentDob')).format("YYYY-MM-DD")}
                 placeholder="dob" register={register}
                 name="studentDob"
                 type={"date"}
                 max={new Date().toISOString().split('T')[0]}
+              // disabled={!id && !verified}
+
               />
             </Grid>
 

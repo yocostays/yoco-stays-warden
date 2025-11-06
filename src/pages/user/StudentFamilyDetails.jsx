@@ -124,7 +124,6 @@ export default function StudentFamilyDetails({ studentDetail }) {
             </Box>
           </Box> */}
           {/* <Box> */}
-          {console.log(studentDetail,"student")}
             <Box
               sx={{
                 borderRadius: 1,

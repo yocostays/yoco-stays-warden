@@ -66,6 +66,7 @@ export default function StudentDetails() {
     userVehicleDetail,
     userIndisciplinaryDetail,
   } = useSelector((state) => state?.users);
+
   const [statusName, setStatusName] = useState("")
 
   const personalDetailsRef = useRef(null);

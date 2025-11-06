@@ -16,6 +16,7 @@ import {
   getFloorNoByHostelIdAsync,
   getRoomNumberByFloorNumberAsync,
   getRoomsByMultipleFloorsAsync,
+  getFloorsRooms
 } from "./hostelApi";
 
 const initialState = {
@@ -29,14 +30,15 @@ const initialState = {
   isRoomLoading: false,
   roomNo: [],
   roleList: [],
-  hostelList:[],
-  floorList:[],
-  roomList:[],
-  roomMates:[],
-  getBillingCycle:[],
-  getFloorNoByHostelId:[],
-  getRoomNumberByFloorNumber:[],
-  roomsListByMultipleFloors:[],
+  hostelList: [],
+  floorList: [],
+  roomList: [],
+  roomMates: [],
+  getBillingCycle: [],
+  getFloorNoByHostelId: [],
+  getRoomNumberByFloorNumber: [],
+  roomsListByMultipleFloors: [],
+  floorRooms: []
 };
 
 const hostelDetailSlice = createSlice({
@@ -46,11 +48,11 @@ const hostelDetailSlice = createSlice({
     clearRoomDetails(state) {
       state.roomNo = [];
     },
-    ClearSelectedFloorDetails(state){
+    ClearSelectedFloorDetails(state) {
       state.getFloorNoByHostelId = [];
       state.getRoomNumberByFloorNumber = [];
     },
-    ClearSelectedRoomDetails(state){
+    ClearSelectedRoomDetails(state) {
       // state.getFloorNoByHostelId = [];
       state.getRoomNumberByFloorNumber = [];
     }
@@ -126,7 +128,7 @@ const hostelDetailSlice = createSlice({
       state.loading = false;
       state.roleList = [];
     });
-    
+
     // staff creation
     builder.addMatcher(isAnyOf(createStaffAsync.pending), (state) => {
       state.isSubmitting = true;
@@ -137,12 +139,12 @@ const hostelDetailSlice = createSlice({
     builder.addMatcher(isAnyOf(createStaffAsync.rejected), (state) => {
       state.isSubmitting = false;
     });
-    
+
     // hostel list by warden
     builder.addMatcher(isAnyOf(getHostelListAsync.pending), (state) => {
       state.isSubmitting = true;
     });
-    builder.addMatcher(isAnyOf(getHostelListAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getHostelListAsync.fulfilled), (state, { payload }) => {
       state.isSubmitting = false;
       state.hostelList = payload?.data
     });
@@ -150,12 +152,12 @@ const hostelDetailSlice = createSlice({
       state.isSubmitting = false;
       state.hostelList = []
     });
-    
+
     // Floor by hostel id
     builder.addMatcher(isAnyOf(getFloorByHostelAsync.pending), (state) => {
       state.isLoading = true;
     });
-    builder.addMatcher(isAnyOf(getFloorByHostelAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getFloorByHostelAsync.fulfilled), (state, { payload }) => {
       state.isLoading = false;
       state.floorList = payload?.data
     });
@@ -163,12 +165,12 @@ const hostelDetailSlice = createSlice({
       state.isLoading = false;
       state.floorList = []
     });
-    
+
     // Room by hostel id and floor
     builder.addMatcher(isAnyOf(getRoomsByFloorAndHostelAsync.pending), (state) => {
       state.isLoading = true;
     });
-    builder.addMatcher(isAnyOf(getRoomsByFloorAndHostelAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getRoomsByFloorAndHostelAsync.fulfilled), (state, { payload }) => {
       state.isLoading = false;
       state.roomList = payload?.data
     });
@@ -176,12 +178,12 @@ const hostelDetailSlice = createSlice({
       state.isLoading = false;
       state.roomList = []
     });
-    
+
     // Get roommates
     builder.addMatcher(isAnyOf(getRoommatesAsync.pending), (state) => {
       state.isLoading = true;
     });
-    builder.addMatcher(isAnyOf(getRoommatesAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getRoommatesAsync.fulfilled), (state, { payload }) => {
       state.isLoading = false;
       state.roomMates = payload?.data
     });
@@ -189,7 +191,7 @@ const hostelDetailSlice = createSlice({
       state.isLoading = false;
       state.roomMates = []
     });
-    
+
     // Create residence
     builder.addMatcher(isAnyOf(createResidentAsync.pending), (state) => {
       state.isSubmitting = true;
@@ -200,7 +202,7 @@ const hostelDetailSlice = createSlice({
     builder.addMatcher(isAnyOf(createResidentAsync.rejected), (state) => {
       state.isSubmitting = false;
     });
-    
+
     // Create residence
     builder.addMatcher(isAnyOf(updateResidentAsync.pending), (state) => {
       state.isSubmitting = true;
@@ -211,7 +213,7 @@ const hostelDetailSlice = createSlice({
     builder.addMatcher(isAnyOf(updateResidentAsync.rejected), (state) => {
       state.isSubmitting = false;
     });
-    
+
     // Create residence
     builder.addMatcher(isAnyOf(updateStaffAsync.pending), (state) => {
       state.isSubmitting = true;
@@ -223,12 +225,12 @@ const hostelDetailSlice = createSlice({
       state.isSubmitting = false;
     });
     // ===================
-   
+
     // Create residence
     builder.addMatcher(isAnyOf(getBillingCycleAsync.pending), (state) => {
       state.isSubmitting = true;
     });
-    builder.addMatcher(isAnyOf(getBillingCycleAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getBillingCycleAsync.fulfilled), (state, { payload }) => {
       state.isSubmitting = false;
       state.getBillingCycle = payload?.data
     });
@@ -236,12 +238,12 @@ const hostelDetailSlice = createSlice({
       state.isSubmitting = false;
     });
     // ===================
-    
+
     // getFloorNoByHostelIdAsync
     builder.addMatcher(isAnyOf(getFloorNoByHostelIdAsync.pending), (state) => {
       state.isFloorLoading = true;
     });
-    builder.addMatcher(isAnyOf(getFloorNoByHostelIdAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getFloorNoByHostelIdAsync.fulfilled), (state, { payload }) => {
       state.isFloorLoading = false;
       state.getFloorNoByHostelId = payload?.data
     });
@@ -249,12 +251,12 @@ const hostelDetailSlice = createSlice({
       state.isFloorLoading = false;
     });
     // ===================
-   
+
     // getRoomNumberByFloorNumberAsync
     builder.addMatcher(isAnyOf(getRoomNumberByFloorNumberAsync.pending), (state) => {
       state.isRoomLoading = true;
     });
-    builder.addMatcher(isAnyOf(getRoomNumberByFloorNumberAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getRoomNumberByFloorNumberAsync.fulfilled), (state, { payload }) => {
       state.isRoomLoading = false;
       state.getRoomNumberByFloorNumber = payload?.data
     });
@@ -262,16 +264,31 @@ const hostelDetailSlice = createSlice({
       state.isRoomLoading = false;
     });
     // ===================
-   
+
     // getRoomsByMultipleFloorsAsync
     builder.addMatcher(isAnyOf(getRoomsByMultipleFloorsAsync.pending), (state) => {
       state.isFloorRoomLoading = true;
     });
-    builder.addMatcher(isAnyOf(getRoomsByMultipleFloorsAsync.fulfilled), (state, {payload}) => {
+    builder.addMatcher(isAnyOf(getRoomsByMultipleFloorsAsync.fulfilled), (state, { payload }) => {
       state.isFloorRoomLoading = false;
       state.getRoomNumberByFloorNumber = payload?.data
     });
     builder.addMatcher(isAnyOf(getRoomsByMultipleFloorsAsync.rejected), (state) => {
+      state.isFloorRoomLoading = false;
+    });
+
+    // getFloorsRooms
+    builder.addMatcher(isAnyOf(getFloorsRooms.pending), (state) => {
+      state.isFloorRoomLoading = true;
+    });
+
+    builder.addMatcher(isAnyOf(getFloorsRooms.fulfilled), (state, { payload }) => {
+      console.log("Reducer payload", payload);
+      state.isFloorRoomLoading = false;
+      state.floorRooms = payload;
+    });
+
+    builder.addMatcher(isAnyOf(getFloorsRooms.rejected), (state) => {
       state.isFloorRoomLoading = false;
     });
     // ===================

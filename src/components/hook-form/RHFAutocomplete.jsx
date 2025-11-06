@@ -88,7 +88,7 @@ export default function RHFAutocomplete({
                 placeholder={placeholder}
                 label={label}
                 error={!!error}
-                // helperText={error ? error.message : helperText}
+                helperText={error && !errors ? error.message : helperText}
               />
             )}
             {...other}
