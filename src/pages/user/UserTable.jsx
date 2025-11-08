@@ -200,8 +200,8 @@ function UserTable() {
     dispatch(setStudentPagination(0))
   };
 
-  const [setDrawerOpen] = useState(false); // State to control drawer
-  const [setSelectedRow] = useState(null); // Store the selected row's data
+  const [dranwerOpen,setDrawerOpen] = useState(false); // State to control drawer
+  const [selectedRow,setSelectedRow] = useState(null); // Store the selected row's data
 
   const handleRowDetailsPage = (id) => {
     navigate(`/users/staff/details/${id}`);

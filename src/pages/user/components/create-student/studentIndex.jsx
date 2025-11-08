@@ -186,7 +186,8 @@ export default function StudentIndex() {
   };
  console.log(errors, "errorssssssssssssssssssssssss")
   const onSubmit = (values) => {
-    console.log(values,"valueeeeeeeeeeeeee",selectedFloor)
+    console.log(values,"valueeeeeeeeeeeeee")
+  
     if (openOtpModal === false || openFatherOtpModal === false) {
       const vehicles = vehicleData.map((item) => ({
         vechicleType: item?.vechicleType || null,
@@ -198,11 +199,11 @@ export default function StudentIndex() {
       const payload = {
         name: values?.studentName,
         image,
-        phone: Number(values?.phoneNumber),
+        phone: String(values?.phoneNumber),
         email: values.studentEmail,
         dob: moment.utc(values?.studentDob).toISOString(),
         enrollmentNumber: values?.enrollNo,
-        bloodGroup: values?.bloodGroup?.value || null,
+        bloodGroup: values?.bloodGroup?.value || values?.bloodGroup || null,
         gender: values?.gender,
         divyang: values?.disabilities === "no" ? false : true,
         identificationMark: values?.identificationMark,
@@ -228,11 +229,11 @@ export default function StudentIndex() {
         // currentAddress: values?.currentAddress,
         familiyDetails: {
           fatherName: values?.fatherName,
-          fatherNumber: Number(values?.fatherphoneNumber),
+          fatherNumber: String(values?.fatherphoneNumber),
           // fatherEmail: values?.fatherEmail,
           // fatherOccuption: values?.fatherOccupation,
           motherName: values?.motherName,
-          motherNumber: Number(values?.motherphoneNumber),
+          motherNumber: String(values?.motherphoneNumber),
           // motherEmail: values?.motherEmail,
           guardianName: values?.guardianName,
           // guardianContactNo: Number(values?.guardianMobileNumber),
@@ -247,9 +248,10 @@ export default function StudentIndex() {
           universityId: values?.college?._id,
           courseId: values?.course?._id,
           academicYear: values?.academicYear,
-          semester: values?.semester?.value,
+          semester: Number(values?.semester?.value),
         },
         documents: {
+          // aadharNumber:Number(values?.aadharNumber),
           aadharNumber: values?.aadharNumber,
           aadhaarCard: values?.aadhaar,
           drivingLicense: values?.drivingLicense
@@ -268,13 +270,11 @@ export default function StudentIndex() {
         bedNumber: String(values?.bedNumber?.label),
         billingCycle: values?.billingCycle?.value,
       };
-      console.log(payload,"payloaddddddddddddd")
-
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
-            // navigate("/user");
+            navigate("/user");
           } else {
             toast.error(res?.payload);
           }
@@ -282,12 +282,11 @@ export default function StudentIndex() {
         : dispatch(
           createResidentAsync({
             ...payload
-
           })
         ).then((res) => {
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
-            // navigate("/user");
+            navigate("/user");
           } else {
             toast.error(res?.payload);
           }

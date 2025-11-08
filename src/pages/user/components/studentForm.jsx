@@ -111,7 +111,6 @@ export default function CreateStudentForm({
   const [avatarPreview, setAvatarPreview] = useState(
     image || "/path-to-avatar.png"
   );
-  console.log(currentData, "error")
   const mobile = watch("phoneNumber");
   const [phone, setPhone] = useState(mobile || "");
   const [sameAdd, setSameAdd] = useState(false);
@@ -291,10 +290,12 @@ export default function CreateStudentForm({
   //       console.log(d,"dddddddddddddddddddddddddddddd")
   //   }
   // },[allCountryData])
+  console.log(watch('bloodGroup'),"bloodGroup")
 
 
   return (
     <>
+    
       {isLoading ? (
         <Card>
           <CardContent>
@@ -512,8 +513,10 @@ export default function CreateStudentForm({
             <Grid item xs={12} sm={3}>
               {/* <SelectBox
                 onChange={(e) => {
-                  setValue('bloodGroup', e?.target?.value, { shouldValidate: true })
+                  console.log(e,"eeeee")
+                  setValue('bloodGroup', e, { shouldValidate: true })
                 }}
+                
                 value={watch('bloodGroup')}
                 register={register}
                 name={"bloodGroup"}
@@ -529,7 +532,8 @@ export default function CreateStudentForm({
                 error={errors?.bloodGroup?.message}
               />
             </Grid>
-
+            {console.log(watch('bloodGroup'),"bloodGroup")}
+  {console.log(errors,"errrrrrrrrrrr")}
             <Grid item xs={12} sm={3} textAlign="end">
               <Typography variant="body1">Disabilities</Typography>
             </Grid>

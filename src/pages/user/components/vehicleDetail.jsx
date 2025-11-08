@@ -157,13 +157,16 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
       setValue('vechicleNumber', "")
     }
   }, [watch('vehicleType')])
-  console.log(vehicleDetails, "vehicle")
+  
   useEffect(() => {
     if (id) {
       vehicleDetails.map((item) => {
         dispatch(setVehicleData(item))
       })
     }
+    // return ()=>{
+    //   dispatch(setVehicleData())
+    // }
   }, [id])
 
   return (

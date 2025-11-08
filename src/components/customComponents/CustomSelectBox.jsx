@@ -23,10 +23,16 @@ const SelectBox = ({
                 select
                 name={name}
                 value={selectedValue}
+                // onChange={(e) => {
+                //     console.log(e,"eeeeeeeeeeeeeddddddddddddddddddddddddddd")
+                //     const val = e.target.value;
+                //     if (setValue) setValue(name, val); // set only string
+                //     if (onChange) onChange(val);
+                // }}
                 onChange={(e) => {
-                    const val = e.target.value;
-                    if (setValue) setValue(name, val); // set only string
-                    if (onChange) onChange(val);
+                    const selected = select.find((opt) => opt.value === e.target.value);
+                    if (setValue) setValue(name, selected); // set the whole object
+                    if (onChange) onChange(selected);
                 }}
                 variant="outlined"
                 size="small"

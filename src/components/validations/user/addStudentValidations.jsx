@@ -15,8 +15,8 @@ export const addStudentValidations = {
       label: yup.string().required(),
       value: yup.string().required(),
     })
-    .nullable()
     .required("Blood group is required"),
+  //  bloodGroup:yup.string().required(),
   gender: yup.string().required('Gender is required.'),
   disabilities: yup.string().nullable(),
   identificationMark: yup.string().nullable(),
@@ -125,18 +125,18 @@ export const addStudentValidations = {
 
   // Upload KYC Documents
   aadhaar: yup.string().required("Aadhar Card is required"),
- aadharNumber: yup
-  .string()
-  .trim()
-  .nullable()
-  .test(
-    "aadhaar-length",
-    "Aadhaar number must be exactly 12 digits",
-    (value) => {
-      if (!value) return true; // allow empty
-      return /^\d{12}$/.test(value); // must match 12 digits
-    }
-  ),
+  aadharNumber: yup
+    .string()
+    .trim()
+    .nullable()
+    .test(
+      "aadhaar-length",
+      "Aadhaar number must be exactly 12 digits",
+      (value) => {
+        if (!value) return true; // allow empty
+        return /^\d{12}$/.test(value); // must match 12 digits
+      }
+    ),
   // passport: yup.string().required("Passport Card is required"),
   // kyc: yup.string()
   //   .required("Please select document type")
@@ -257,8 +257,8 @@ export const addStudentValidationsUpdate = {
       label: yup.string().required(),
       value: yup.string().required(),
     })
-    .nullable()
     .required("Blood group is required"),
+  // bloodGroup:yup.string().required(),
   gender: yup.string().required('Gender is required.'),
   disabilities: yup.string().nullable(),
   identificationMark: yup.string().nullable(),
@@ -354,18 +354,18 @@ export const addStudentValidationsUpdate = {
 
   // Upload KYC Documents
   aadhaar: yup.string().nullable().optional(),
-aadharNumber: yup
-  .string()
-  .trim()
-  .nullable()
-  .test(
-    "aadhaar-length",
-    "Aadhaar number must be exactly 12 digits",
-    (value) => {
-      if (!value) return true; // allow empty
-      return /^\d{12}$/.test(value); // must match 12 digits
-    }
-  )
+  aadharNumber: yup
+    .string()
+    .trim()
+    .nullable()
+    .test(
+      "aadhaar-length",
+      "Aadhaar number must be exactly 12 digits",
+      (value) => {
+        if (!value) return true; // allow empty
+        return /^\d{12}$/.test(value); // must match 12 digits
+      }
+    )
   ,
 
   aadhaarFile: yup.mixed().when('kyc', {

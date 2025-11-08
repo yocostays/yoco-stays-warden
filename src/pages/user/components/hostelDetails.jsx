@@ -71,7 +71,7 @@ export default function HostelDetailsForm({
   const [roomNumberInput, setRoomNumberInput] = useState("");
   const [bedNumber, setBedNumber] = useState({})
   const [hostelDetails, setHostelDetails] = useState([])
-  const [roomNumber,setRoomNumber] = useState()
+  const [roomNumber, setRoomNumber] = useState()
 
 
 
@@ -186,7 +186,7 @@ export default function HostelDetailsForm({
         setValue("rooms", bedOptions);
         setValue('roomNumber', { label: hostel?.roomNumber, value: hostel?.roomNumber })
         setValue('bedNumber', { label: hostel?.bedNumber, value: hostel?.bedNumber })
-        setValue('selectWing',hostel?.buildingNumber)
+        setValue('selectWing', hostel?.buildingNumber)
       });
 
     }
@@ -279,7 +279,7 @@ export default function HostelDetailsForm({
                         onClick={() => {
                           setValue('roomNumber', null)
                           setValue('bedNumber', null)
-                          setValue('rooms',[])
+                          setValue('rooms', [])
                           setValue('floor', [])
                           const rooms = floor?.rooms.map((item) => {
                             return {
@@ -350,15 +350,18 @@ export default function HostelDetailsForm({
 
                       // prepare bed options based on selected room
                       let bedOptions
-                      if(id && Number(value?.roomNumber === Number(roomNumber))){
-                         bedOptions = value?.bedNumbers?.map(item => ({
+                      if (id && Number(value?.roomNumber === Number(roomNumber))) {
+                        bedOptions = value?.bedNumbers?.map(item => ({
                           label: item.bedNumber,
-                          value: Number(item.bedNumber)
+                          value: item.bedNumber
                         })).concat(bedNumber) || [];
-                      }else{
-                         bedOptions = value?.bedNumbers?.map(item => ({
+                      
+
+                        console.log(bedOptions, "bedOptions")
+                      } else {
+                        bedOptions = value?.bedNumbers?.map(item => ({
                           label: item.bedNumber,
-                          value: Number(item.bedNumber)
+                          value: item.bedNumber
                         })) || []
                       }
 
