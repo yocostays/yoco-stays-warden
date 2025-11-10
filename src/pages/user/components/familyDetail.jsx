@@ -133,7 +133,9 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 placeholder="Father Name" register={register}
                 name="fatherName"
                 onChange={(e) => {
-                  const value = e?.target?.value.replace(/^\s+/, "");
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
                   setValue('fatherName', value.toUpperCase(), { shouldValidate: true })
                 }
 
@@ -156,7 +158,9 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 placeholder="Mother Name" register={register}
                 name="motherName"
                 onChange={(e) => {
-                  const value = e?.target?.value.replace(/^\s+/, "");
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
                   setValue('motherName', value.toUpperCase(), { shouldValidate: true })
                 }
                 }
@@ -173,7 +177,10 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 size="small"
                 name="fatherphoneNumber"
                 onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                  let value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                  if (value.startsWith("0")) {
+                    value = ""; // replace with empty
+                  }
                   setValue("fatherphoneNumber", value.slice(0, 10)); // Restrict to 10 digits
                   setPhone(value.slice(0, 10));
                   setIsFathersNoVerified(false)
@@ -203,7 +210,10 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 size="small"
                 name="motherphoneNumber"
                 onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                  let value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
+                  if (value.startsWith("0")) {
+                    value = ""; // replace with empty
+                  }
                   setValue("motherphoneNumber", value.slice(0, 10)); // Restrict to 10 digits
                 }}
                 disabled={!id && !isFathersNoVerified} />
@@ -226,7 +236,9 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 register={register}
                 name="guardianName"
                 onChange={(e) => {
-                  const value = e?.target?.value.replace(/^\s+/, "");
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
                   setValue('guardianName', value.toUpperCase(), { shouldValidate: true })
                 }
                 }
@@ -242,7 +254,10 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 placeholder="Guardian Relationship" register={register}
                 name="relationship"
                 onChange={(e) => {
-                  const value = e?.target?.value.replace(/^\s+/, "");
+
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
                   setValue('relationship', value, { shouldValidate: true })
                 }
                 }
@@ -263,7 +278,9 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 placeholder="Occupation" register={register}
                 name="occupation"
                 onChange={(e) => {
-                  const value = e?.target?.value.replace(/^\s+/, "");
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
                   setValue('occupation', value, { shouldValidate: true })
                 }
                 }

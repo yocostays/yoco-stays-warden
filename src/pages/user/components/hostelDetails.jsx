@@ -253,6 +253,7 @@ export default function HostelDetailsForm({
                   setValue('selectWing', value, { shouldValidate: true })
                 }
                 }
+                disabled={id}
               />
             </Grid>
 

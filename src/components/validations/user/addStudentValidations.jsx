@@ -1,7 +1,7 @@
 import * as yup from "yup";
 
 export const addStudentValidations = {
-  studentName: yup.string().required("Student name is required"),
+  studentName: yup.string().matches(/^[A-Za-z\s]+$/, "Only alphabets are allowed").required("Student name is required"),
   phoneNumber: yup
     .string()
     .matches(/^\d{10}$/, "Phone number must be up to 10 digits")
@@ -244,7 +244,7 @@ export const addStudentValidations = {
 // };
 
 export const addStudentValidationsUpdate = {
-  studentName: yup.string().required("Student name is required"),
+  studentName: yup.string().matches(/^[A-Za-z\s]+$/, "Only alphabets are allowed").required("Student name is required"),
   phoneNumber: yup
     .string()
     .matches(/^\d{10}$/, "Phone number must be up to 10 digits")

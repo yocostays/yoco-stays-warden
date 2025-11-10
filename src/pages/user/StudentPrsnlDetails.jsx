@@ -171,9 +171,9 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   value: studentDetail.phone,
                 },
                 {
-                  icon:<PhoneIcon/>,
+                  icon: <Icon icon="mdi:card-account-details" width="20" height="20" />,
                   label: "Aadhar Number",
-                  value : studentDetail?.documents?.aadhaarNumber
+                  value: studentDetail?.documents?.aadhaarNumber
                 },
                 {
                   icon: <EmailIcon />,

@@ -32,7 +32,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import Input from "@components/customComponents/InputFields";
 import RadioButton from "@components/customComponents/CustomRadio";
-import { removeVehicleData, setVehicleData, updateVehicleData } from "@features/users/userSlice";
+import { deleteVehicleDetails, removeVehicleData, setVehicleData, updateVehicleData } from "@features/users/userSlice";
 
 const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
 
@@ -157,17 +157,23 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
       setValue('vechicleNumber', "")
     }
   }, [watch('vehicleType')])
-  
+
+  // useEffect(() => {
+  //   console.log(vehicleDetails?.length,"lengthhhhhhhhhhhhhhh")
+  //   if (vehicleDetails && vehicleDetails.length > 0 && id) {
+  //     vehicleDetails.forEach((item) => {
+  //       console.log(item,"itemmmmmmmmmmmmmmmmm")
+  //       dispatch(setVehicleData(item));
+  //     });
+  //   }
+  // }, [vehicleDetails]);
+
   useEffect(() => {
-    if (id) {
-      vehicleDetails.map((item) => {
-        dispatch(setVehicleData(item))
-      })
+    return () => {
+      dispatch(deleteVehicleDetails())
     }
-    // return ()=>{
-    //   dispatch(setVehicleData())
-    // }
-  }, [id])
+  }, [dispatch])
+
 
   return (
     <Stack spacing={2} my={2}>
@@ -358,7 +364,7 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
                               ? "Car"
                               : vehicle.vechicleType) || "--"}
                           </TableCell>
-                          <TableCell>{vehicle.engineType==="not required" ? "--" : vehicle.engineType || "--"}</TableCell>
+                          <TableCell>{vehicle.engineType === "not required" ? "--" : vehicle.engineType || "--"}</TableCell>
                           <TableCell>
                             {vehicle.vechicleNumber || "--"}
                           </TableCell>

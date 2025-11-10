@@ -45,7 +45,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import { getUsersHostelDetail } from "@features/users/userSlice";
+import { deleteVehicleDetails, getUsersHostelDetail, setVehicleData } from "@features/users/userSlice";
 
 export default function StudentIndex() {
   const theme = useTheme();
@@ -55,7 +55,7 @@ export default function StudentIndex() {
 
   const location = useLocation();
   const currentData = location?.state?.studentDetail;
-  console.log(currentData,"currentData")
+  
   const isLoading = location?.state?.staffByIdLoading;
   const [open, setOpen] = useState(false);
   const [openOtpModal, setOpenOtpModal] = useState(false);
@@ -99,7 +99,7 @@ export default function StudentIndex() {
     ? yup.object().shape(addStudentValidationsUpdate)
     : yup.object().shape(addStudentValidations);
 
- 
+
 
   const methods = useForm(
     {
@@ -184,10 +184,9 @@ export default function StudentIndex() {
     setSelectedTab(index); // Select the clicked tab
     sectionRefs[index]?.current?.scrollIntoView({ behavior: "smooth" }); // Smoothly scroll to the selected section
   };
- console.log(errors, "errorssssssssssssssssssssssss")
+  console.log(currentData, "errorssssssssssssssssssssssss")
   const onSubmit = (values) => {
-    console.log(values,"valueeeeeeeeeeeeee")
-  
+
     if (openOtpModal === false || openFatherOtpModal === false) {
       const vehicles = vehicleData.map((item) => ({
         vechicleType: item?.vechicleType || null,
@@ -270,13 +269,21 @@ export default function StudentIndex() {
         bedNumber: String(values?.bedNumber?.label),
         billingCycle: values?.billingCycle?.value,
       };
+      console.log(payload,"payloadddddddddd")
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
             navigate("/user");
           } else {
-            toast.error(res?.payload);
+          if(Array.isArray(res?.payload)){
+
+              res?.payload.map((item) => {
+                toast.error(item);
+              })
+            }else{
+              toast.error(res?.payload)
+            }
           }
         })
         : dispatch(
@@ -284,11 +291,21 @@ export default function StudentIndex() {
             ...payload
           })
         ).then((res) => {
+            console.log(res?.payload,"payloadddddddddddd")
+
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
             navigate("/user");
           } else {
-            toast.error(res?.payload);
+            // toast.error(res?.payload);
+            if(isArray(res?.payload)){
+
+              res?.payload.map((item) => {
+                toast.error(item);
+              })
+            }else{
+              toast.error(res?.payload)
+            }
           }
         });
     }
@@ -330,6 +347,10 @@ export default function StudentIndex() {
   useEffect(() => {
     if (id && currentData) {
       setVehicleDetails(currentData?.vechicleDetails);
+      dispatch(deleteVehicleDetails())
+      // currentData?.vechicleDetails?.map((item)=>{
+      //   dispatch(setVehicleData(item));
+      // })
       setVerified(true);
       setIsFathersNoVerified(true);
 

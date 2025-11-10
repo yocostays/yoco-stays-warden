@@ -282,20 +282,12 @@ export default function CreateStudentForm({
     fetchCities();
   }, [selectedState, selectedCountry]);
 
-  // useEffect(()=>{
-  //   if(allCountryData){
-  //      const d = allCountryData.filter((item)=> item?.label === currentData?.nationality)
-  //       setValue('country',d[0])
-  //       setSelectedCountry(d[0])
-  //       console.log(d,"dddddddddddddddddddddddddddddd")
-  //   }
-  // },[allCountryData])
-  console.log(watch('bloodGroup'),"bloodGroup")
+
 
 
   return (
     <>
-    
+
       {isLoading ? (
         <Card>
           <CardContent>
@@ -399,7 +391,9 @@ export default function CreateStudentForm({
                 placeholder="Student Name" register={register}
                 name="studentName"
                 onChange={(e) => {
-                  const value = e?.target?.value.replace(/^\s+/, "");
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
                   setValue('studentName', value.toUpperCase(), { shouldValidate: true })
 
                 }
@@ -412,17 +406,6 @@ export default function CreateStudentForm({
               <FormLabel label="Phone Number" required />
             </Grid>
             <Grid item xs={12} sm={9}>
-              {/* <RHFTextField
-                placeholder="+91"
-                size="small"
-                name="phoneNumber"
-                onChange={(e) => {
-                  const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-                  setValue("phoneNumber", value.slice(0, 10)); // Restrict to 10 digits
-                  setPhone(value.slice(0, 10));
-                  setVerified(false);
-                }}
-              /> */}
               <Input error={errors?.phoneNumber?.message}
                 value={watch('phoneNumber')}
                 placeholder="Phone Number" register={register}
@@ -430,9 +413,13 @@ export default function CreateStudentForm({
                 phoneCode={"+91"}
                 onChange={(e) => {
                   const value = e?.target?.value.replace(/^\s+/, "");
-                  const onlyDigits = value.replace(/\D/g, '');
+                  let onlyDigits = value.replace(/\D/g, '');
+                  if (onlyDigits.startsWith("0")) {
+                    onlyDigits = ""; // replace with empty
+                  }
                   setValue('phoneNumber', onlyDigits,
                     { shouldValidate: true })
+
                 }
                 }
               />
@@ -511,18 +498,6 @@ export default function CreateStudentForm({
 
             </Grid>
             <Grid item xs={12} sm={3}>
-              {/* <SelectBox
-                onChange={(e) => {
-                  console.log(e,"eeeee")
-                  setValue('bloodGroup', e, { shouldValidate: true })
-                }}
-                
-                value={watch('bloodGroup')}
-                register={register}
-                name={"bloodGroup"}
-                placeholder="Select"
-                select={bloodGroupOptions}
-                error={errors?.bloodGroup?.message} /> */}
               <SelectBox
                 name="bloodGroup"
                 placeholder="Select Blood Group"
@@ -532,29 +507,23 @@ export default function CreateStudentForm({
                 error={errors?.bloodGroup?.message}
               />
             </Grid>
-            {console.log(watch('bloodGroup'),"bloodGroup")}
-  {console.log(errors,"errrrrrrrrrrr")}
+            {console.log(watch('bloodGroup'), "bloodGroup")}
+            {console.log(errors, "errrrrrrrrrrr")}
             <Grid item xs={12} sm={3} textAlign="end">
               <Typography variant="body1">Disabilities</Typography>
             </Grid>
             <Grid item xs={12} sm={3}>
-              {/* <RHFRadioGroup
-                name="disabilities"
-                options={[
-                  { value: "yes", label: "Yes" },
-                  { value: "no", label: "No" },
-                ]}
-                row
-                spacing={2}
-              /> */}
+
               <RadioButton
-                value={watch('disablities')}
+                value={String(watch('disabilities'))}
+                checked={watch('disabilities')}
                 {...register('disabilities')}
                 onChange={(e) => { setValue('disabilities', e?.target?.value) }}
                 data={[
                   { value: "yes", label: "Yes" },
                   { value: "no", label: "No" },
-                ]} />
+                ]}
+              />
             </Grid>
 
             <Grid item xs={12} sm={3}>
@@ -644,12 +613,6 @@ export default function CreateStudentForm({
             </Grid>
 
             <Grid item xs={12} sm={3}>
-              {/* <RHFTextField
-                placeholder="Type Here"
-                size="small"
-                name="caste"
-                // disabled={!id && !verified}
-              /> */}
               <Input error={errors?.caste?.message}
                 value={watch('caste')}
                 placeholder="Caste" register={register}
