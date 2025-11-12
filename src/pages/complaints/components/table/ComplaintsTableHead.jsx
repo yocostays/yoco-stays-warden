@@ -41,6 +41,7 @@ const ComplaintsTableHead = ({
   setIsSelectedAll,
   filterValues,
   setFilterValues,
+  handleChange
 }) => {
   const [floorNumber, setFloorNumber] = useState(null);
   const [searchFloorNumber, setSearchFloorNumber] = useState("");
@@ -690,6 +691,7 @@ const ComplaintsTableHead = ({
               roomNumber={roomNumber}
               floorNumber={floorNumber}
               searchFloorNumber={searchFloorNumber}
+              handleChange={handleChange}
             />
           </Box>
         </Box>

@@ -2,7 +2,7 @@ import PropTypes from "prop-types";
 // form
 import { useFormContext, Controller } from "react-hook-form";
 // @mui
-import { Autocomplete, TextField } from "@mui/material";
+import { Autocomplete, Box, TextField } from "@mui/material";
 import { useState } from "react";
 
 // ----------------------------------------------------------------------
@@ -31,6 +31,7 @@ export default function RHFAutocomplete({
   helperText,
   options = [],
   multiple,
+  errors,
   ...other
 }) {
   const { control, setValue } = useFormContext();
@@ -46,53 +47,61 @@ export default function RHFAutocomplete({
 
   const filteredOptions = multiple
     ? options.filter(
-        (option) =>
-          !selectedOptions.some(
-            (selected) =>
-              isLabelValueFormat
-                ? selected.value === option.value // Compare using `value` for label-value arrays
-                : selected._id === option._id // Compare using `_id` for _id-name arrays
-          )
-      )
+      (option) =>
+        !selectedOptions.some(
+          (selected) =>
+            isLabelValueFormat
+              ? selected.value === option.value // Compare using `value` for label-value arrays
+              : selected._id === option._id // Compare using `_id` for _id-name arrays
+        )
+    )
     : options;
 
   return (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field, fieldState: { error } }) => (
-        <Autocomplete
-          sx={{ backgroundColor: "white" }}
-          filterSelectedOptions
-          {...field}
-          multiple={multiple} // Dynamically handle multiple selections
-          options={filteredOptions} // Use filtered options for multiple selections
-          onChange={(event, newValue) => {
-            setValue(name, newValue, { shouldValidate: true });
-            if (multiple) handleChange(event, newValue);
-          }}
-          getOptionLabel={(option) =>
-            isLabelValueFormat ? option.label : option.name || ""
-          }
-          getIsOptionEqualToValue={
-            (option, value) =>
-              isLabelValueFormat
-                ? option.value === value.value // Match using `value` for label-value arrays
-                : option._id === value._id // Match using `_id` for _id-name arrays
-          }
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              placeholder={placeholder}
-              label={label}
-              error={!!error}
-              helperText={error ? error.message : helperText}
-            />
-          )}
-          {...other}
-        />
-      )}
-    />
+    <>
+      <Controller
+        name={name}
+        control={control}
+        render={({ field, fieldState: { error } }) => (
+          <Autocomplete
+            sx={{ backgroundColor: "white" }}
+            filterSelectedOptions
+            {...field}
+            multiple={multiple} // Dynamically handle multiple selections
+            options={filteredOptions} // Use filtered options for multiple selections
+            onChange={(event, newValue) => {
+              setValue(name, newValue, { shouldValidate: true });
+              if (multiple) handleChange(event, newValue);
+            }}
+            getOptionLabel={(option) =>
+              isLabelValueFormat ? option.label : option.name || ""
+            }
+            getIsOptionEqualToValue={
+              (option, value) =>
+                isLabelValueFormat
+                  ? option.value === value.value // Match using `value` for label-value arrays
+                  : option._id === value._id // Match using `_id` for _id-name arrays
+            }
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                placeholder={placeholder}
+                label={label}
+                error={!!error}
+                helperText={error && !errors ? error.message : helperText}
+              />
+            )}
+            {...other}
+          />
+        )}
+      />
+      {errors && <Box sx={{
+        fontSize: "12px",
+        color: "red",
+        margintTop: "7px",
+        paddingTop: "5px"
+      }} >{errors}</Box>}
+    </>
   );
 }
 

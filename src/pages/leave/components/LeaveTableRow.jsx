@@ -11,11 +11,11 @@ import {
   Button,
   IconButton,
 } from "@mui/material";
-import moment from "moment";
+// import moment from "moment";
+import moment from 'moment-timezone';
 import ProfilePopOver from "./tableComponent/ProfilePopOver";
 import Edit from "@assets/images/edit_square.svg";
 import NoDataAvailable from "./table/NoDataAvailable";
-
 const LeaveTableRow = ({
   leaveManagementList,
   isRowSelected,
@@ -91,7 +91,7 @@ const LeaveTableRow = ({
               </Box>
             </TableCell>
             <TableCell sx={{ minWidth: "200px" }}>
-              {moment(row?.createdAt).format("Do MMM YYYY | hh:mm A") ||
+              {moment.utc(row?.createdAt).format("Do MMM YYYY | hh:mm A") ||
                 "-"}
             </TableCell>
             <TableCell sx={{ minWidth: "200px" }}>

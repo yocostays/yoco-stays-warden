@@ -38,6 +38,7 @@ import { useNavigate } from "react-router-dom";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 import {
+  getComplaint,
   getComplaintById,
   getIndividualComplaint,
   updateComplaintStatusThunk,
@@ -55,6 +56,7 @@ import {
 } from "@components/enums/complaintsEnums";
 import {
   assignStaffAsync,
+  getComplaints,
   getStaffListAsync,
 } from "@features/complaints/complaintsSlice";
 import Iconify from "@components/iconify/iconify";
@@ -68,6 +70,9 @@ const ComplaintsSideDrawer = ({
   selectedRow,
   handleRowDetailsPage,
   handleGetComplaintsData,
+  setFilterValues,
+  filterValues,
+  handleChange
 }) => {
   const dispatch = useDispatch();
   const {
@@ -212,31 +217,31 @@ const ComplaintsSideDrawer = ({
     },
     complaintById?.audio?.trim() || complaintById?.image?.trim()
       ? {
-          label: "Attachments",
-          value: (
-            // <Button variant="text" onClick={() => setShowAttachments(true)}>
-            <Button
-              variant="text"
-              onClick={() => handleOpenAttachmentDrawer("pendingAttached")}
-            >
-              View
-            </Button>
-          ),
-        }
+        label: "Attachments",
+        value: (
+          // <Button variant="text" onClick={() => setShowAttachments(true)}>
+          <Button
+            variant="text"
+            onClick={() => handleOpenAttachmentDrawer("pendingAttached")}
+          >
+            View
+          </Button>
+        ),
+      }
       : null,
     (complaintById?.audio?.trim() || complaintById?.image?.trim()) &&
-    complaintById?.complainStatus === "resolved"
+      complaintById?.complainStatus === "resolved"
       ? {
-          label: "Resolved Attachments",
-          value: (
-            <Button
-              variant="text"
-              onClick={() => handleOpenAttachmentDrawer("resoledAttached")}
-            >
-              View
-            </Button>
-          ),
-        }
+        label: "Resolved Attachments",
+        value: (
+          <Button
+            variant="text"
+            onClick={() => handleOpenAttachmentDrawer("resoledAttached")}
+          >
+            View
+          </Button>
+        ),
+      }
       : null,
   ].filter(Boolean); // This removes `null` values from the array
 
@@ -290,21 +295,31 @@ const ComplaintsSideDrawer = ({
       complaintId: selectedRow?._id || "", // Ensure correct complaint ID
       staffId: user, // Selected staff ID
       remark: remark || "", // Include remark
+      userId: id?.userId
     };
 
     const payloadForStatus = {
       complaintId: selectedRow?._id || "",
       remark: remark || "",
-      complainStatus: "escalated",
+      // complainStatus: "escalated",
+      complainStatus: selectedOption,
       attachments: [],
+      userId: id?.userId
     };
-
     dispatch(assignStaffAsync(payload))
       .then(async (res) => {
         if (res?.payload?.statusCode === 200) {
           toast.success("Complaint assigned successfully!");
           await dispatch(updateComplaintStatusThunk(payloadForStatus));
+          handleGetComplaintsData()
+          const payload = {
+            page: page + 1,
+            limit: rowsPerPage,
+            status: selectedOption || "",
+          };
+          dispatch(getComplaint(payload));
           setIsDialogOpen(false);
+          handleCloseDrawer()
         } else {
           toast.error("Failed to assign complaint.");
         }
@@ -320,7 +335,6 @@ const ComplaintsSideDrawer = ({
     }
   };
 
-  
   const payload = {
     limit: rowsPerPage,
     page: page + 1,
@@ -375,6 +389,7 @@ const ComplaintsSideDrawer = ({
       const payload = {
         categoryType: role,
         compaintId: selectedRow?._id,
+        userId: id?.userId
       };
       dispatch(getStaffListAsync(payload));
     }
@@ -501,9 +516,9 @@ const ComplaintsSideDrawer = ({
                       onClick={
                         complaintById?.nextComplaintId
                           ? () =>
-                              handleRowDetailsPage(
-                                complaintById?.nextComplaintId
-                              )
+                            handleRowDetailsPage(
+                              complaintById?.nextComplaintId
+                            )
                           : undefined
                       }
                       style={{
@@ -664,11 +679,10 @@ const ComplaintsSideDrawer = ({
                           {/* {`F${complaintById?.floorNumber || 0}/${complaintById?.roomNumber || 0}` ||
                             "-"} */}
                           {complaintById?.roomNumber
-                            ? `${
-                                complaintById?.floorNumber
-                                  ? `F${complaintById.floorNumber}/`
-                                  : ""
-                              } ${complaintById.roomNumber}`
+                            ? `${complaintById?.floorNumber
+                              ? `F${complaintById.floorNumber}/`
+                              : ""
+                            } ${complaintById.roomNumber}`
                             : "-"}
                         </Typography>
                       </Box>
@@ -707,26 +721,26 @@ const ComplaintsSideDrawer = ({
                             complaintById?.complainStatus === "in progress"
                               ? "green"
                               : complaintById?.complainStatus === "pending"
-                              ? "orange"
-                              : complaintById?.complainStatus === "on hold"
-                              ? "orange"
-                              : complaintById?.complainStatus ===
-                                "long term work"
-                              ? "orange"
-                              : complaintById?.complainStatus === "escalated"
-                              ? "orange"
-                              : complaintById?.complainStatus === "rejected"
-                              ? "red"
-                              : complaintById?.complainStatus === "cancelled"
-                              ? "red"
-                              : complaintById?.complainStatus === "in progress"
-                              ? "green"
-                              : complaintById?.complainStatus ===
-                                "work completed"
-                              ? "green"
-                              : complaintById?.complainStatus === "resolved"
-                              ? "green"
-                              : "black",
+                                ? "orange"
+                                : complaintById?.complainStatus === "on hold"
+                                  ? "orange"
+                                  : complaintById?.complainStatus ===
+                                    "long term work"
+                                    ? "orange"
+                                    : complaintById?.complainStatus === "escalated"
+                                      ? "orange"
+                                      : complaintById?.complainStatus === "rejected"
+                                        ? "red"
+                                        : complaintById?.complainStatus === "cancelled"
+                                          ? "red"
+                                          : complaintById?.complainStatus === "in progress"
+                                            ? "green"
+                                            : complaintById?.complainStatus ===
+                                              "work completed"
+                                              ? "green"
+                                              : complaintById?.complainStatus === "resolved"
+                                                ? "green"
+                                                : "black",
                           borderRadius: "30px",
                           fontSize: { md: "13px", sm: "11px" },
                           marginBottom: "10px",
@@ -735,26 +749,26 @@ const ComplaintsSideDrawer = ({
                             complaintById?.complainStatus === "in progress"
                               ? "green"
                               : complaintById?.complainStatus === "pending"
-                              ? "orange"
-                              : complaintById?.complainStatus === "on hold"
-                              ? "orange"
-                              : complaintById?.complainStatus ===
-                                "long term work"
-                              ? "orange"
-                              : complaintById?.complainStatus === "escalated"
-                              ? "orange"
-                              : complaintById?.complainStatus === "rejected"
-                              ? "red"
-                              : complaintById?.complainStatus === "cancelled"
-                              ? "red"
-                              : complaintById?.complainStatus === "in progress"
-                              ? "green"
-                              : complaintById?.complainStatus ===
-                                "work completed"
-                              ? "green"
-                              : complaintById?.complainStatus === "resolved"
-                              ? "green"
-                              : "black",
+                                ? "orange"
+                                : complaintById?.complainStatus === "on hold"
+                                  ? "orange"
+                                  : complaintById?.complainStatus ===
+                                    "long term work"
+                                    ? "orange"
+                                    : complaintById?.complainStatus === "escalated"
+                                      ? "orange"
+                                      : complaintById?.complainStatus === "rejected"
+                                        ? "red"
+                                        : complaintById?.complainStatus === "cancelled"
+                                          ? "red"
+                                          : complaintById?.complainStatus === "in progress"
+                                            ? "green"
+                                            : complaintById?.complainStatus ===
+                                              "work completed"
+                                              ? "green"
+                                              : complaintById?.complainStatus === "resolved"
+                                                ? "green"
+                                                : "black",
                         }}
                       >
                         {complaintById?.complainStatus}
@@ -921,8 +935,8 @@ const ComplaintsSideDrawer = ({
                             >
                               {row?.complainStatus === "resolved"
                                 ? moment
-                                    .utc(row?.date)
-                                    .format("Do MMM, YYYY | hh:mm A")
+                                  .utc(row?.date)
+                                  .format("Do MMM, YYYY | hh:mm A")
                                 : "-"}
                             </TableCell>
                             <TableCell>
@@ -934,24 +948,24 @@ const ComplaintsSideDrawer = ({
                                     row?.complainStatus === "in progress"
                                       ? "green"
                                       : row?.complainStatus === "pending"
-                                      ? "orange"
-                                      : row?.complainStatus === "on hold"
-                                      ? "orange"
-                                      : row?.complainStatus === "long term work"
-                                      ? "orange"
-                                      : row?.complainStatus === "escalated"
-                                      ? "orange"
-                                      : row?.complainStatus === "rejected"
-                                      ? "red"
-                                      : row?.complainStatus === "cancelled"
-                                      ? "red"
-                                      : row?.complainStatus === "in progress"
-                                      ? "green"
-                                      : row?.complainStatus === "work completed"
-                                      ? "green"
-                                      : row?.complainStatus === "resolved"
-                                      ? "green"
-                                      : "black",
+                                        ? "orange"
+                                        : row?.complainStatus === "on hold"
+                                          ? "orange"
+                                          : row?.complainStatus === "long term work"
+                                            ? "orange"
+                                            : row?.complainStatus === "escalated"
+                                              ? "orange"
+                                              : row?.complainStatus === "rejected"
+                                                ? "red"
+                                                : row?.complainStatus === "cancelled"
+                                                  ? "red"
+                                                  : row?.complainStatus === "in progress"
+                                                    ? "green"
+                                                    : row?.complainStatus === "work completed"
+                                                      ? "green"
+                                                      : row?.complainStatus === "resolved"
+                                                        ? "green"
+                                                        : "black",
                                 }}
                               >
                                 {row?.complainStatus}
@@ -991,7 +1005,7 @@ const ComplaintsSideDrawer = ({
                         sx={{
                           backgroundColor:
                             complaintById?.complainStatus === "resolved" ||
-                            complaintById?.complainStatus === "rejected"
+                              complaintById?.complainStatus === "rejected"
                               ? "#E0E0E0"
                               : "#FFF3CD",
                           color: "#9E9E9E",
@@ -1008,7 +1022,7 @@ const ComplaintsSideDrawer = ({
                           "& .MuiOutlinedInput-root:hover": {
                             backgroundColor:
                               complaintById?.complainStatus === "resolved" ||
-                              complaintById?.complainStatus === "rejected"
+                                complaintById?.complainStatus === "rejected"
                                 ? "#E0E0E0"
                                 : "#FFEB3B",
                           },
@@ -1027,8 +1041,8 @@ const ComplaintsSideDrawer = ({
                               }
                             >
                               {fields.length > 1 ||
-                              fields[0]?.fileType?.value === "image" ||
-                              fields[0]?.fileType?.value === "video" ? (
+                                fields[0]?.fileType?.value === "image" ||
+                                fields[0]?.fileType?.value === "video" ? (
                                 <IconButton
                                   sx={{
                                     cursor: "pointer",
@@ -1045,14 +1059,14 @@ const ComplaintsSideDrawer = ({
                                 <AttachFileIcon
                                   disabled={
                                     complaintById?.complainStatus ===
-                                      "resolved" ||
+                                    "resolved" ||
                                     complaintById?.complainStatus === "rejected"
                                   }
                                   sx={{
                                     color:
                                       complaintById?.complainStatus ===
                                         "resolved" ||
-                                      complaintById?.complainStatus ===
+                                        complaintById?.complainStatus ===
                                         "rejected"
                                         ? "black"
                                         : "#674D9F",
@@ -1069,11 +1083,11 @@ const ComplaintsSideDrawer = ({
                       {(fields.length > 1 ||
                         fields[0]?.fileType?.value === "image" ||
                         fields[0]?.fileType?.value === "video") && (
-                        <Typography
-                          variant="caption"
-                          sx={{ pl: 1 }}
-                        >{`Total File Attached : ${fields.length} File`}</Typography>
-                      )}
+                          <Typography
+                            variant="caption"
+                            sx={{ pl: 1 }}
+                          >{`Total File Attached : ${fields.length} File`}</Typography>
+                        )}
                     </Box>
                   </Box>
 
@@ -1125,7 +1139,7 @@ const ComplaintsSideDrawer = ({
                   <Box
                     display="flex"
                     justifyContent="center"
-                    // onClick={handleSubmit}
+                  // onClick={handleSubmit}
                   >
                     <LoadingButton
                       loading={submitting}
@@ -1142,7 +1156,7 @@ const ComplaintsSideDrawer = ({
                     </LoadingButton>
                   </Box>
                 </Box>
-               
+
 
                 <Dialog
                   open={isDialogOpen}

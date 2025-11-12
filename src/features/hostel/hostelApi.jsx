@@ -247,3 +247,21 @@ export const getRoomsByMultipleFloorsAsync = createAsyncThunk(
     }
   }
 );
+
+
+export const getFloorsRooms = createAsyncThunk(
+  "hostel/getFloorsRooms",
+  async (data, { rejectWithValue }) => {
+    try {
+      const response = await axiosInstance.post(
+        "/api/hostel/floors-rooms",
+        data
+      );
+      console.log(response,"responseeeeeeeeeeeeeeeeeeeee")
+      return response?.data;
+    } catch (error) {
+      console.error("Error fetching Floor No.:", error);
+      return rejectWithValue(error.response?.data || error.message);
+    }
+  }
+);

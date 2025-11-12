@@ -1,3 +1,4 @@
+import Input from "@components/customComponents/InputFields";
 import { RHFAutocomplete } from "@components/hook-form";
 import { getCoursesAsync } from "@features/course/courseApi";
 import { getUniversityList } from "@features/university/universitySlice";
@@ -17,7 +18,7 @@ AcademicDetailsForm.propTypes = {
 
 export default function AcademicDetailsForm({ methods, verified, id }) {
   const dispatch = useDispatch();
-  const { handleSubmit, setValue } = methods;
+  const { handleSubmit, setValue,register } = methods;
   const [universityId, setUniversityId] = useState("");
   const { universityList } = useSelector((state) => state.university);
   const { courseList } = useSelector((state) => state.course);
@@ -32,7 +33,7 @@ export default function AcademicDetailsForm({ methods, verified, id }) {
     { value: "7", label: "7th" },
     { value: "8", label: "8th" },
   ];
-  
+
 
   const generateYears = (startYear) => {
     const currentYear = moment().year();
@@ -87,23 +88,23 @@ export default function AcademicDetailsForm({ methods, verified, id }) {
                 label="Select Academic Year"
                 size="small"
                 options={academicYears || []}
-                disabled={!id && !verified}
+                // disabled={!id && !verified}
                 getOptionLabel={(option) => option || ""}
               />
             </Grid>
 
             {/*Cource Section */}
             <Grid item xs={12} sm={3}>
-             <FormLabel label="College Name" required />
+              <FormLabel label="University Name" />
 
             </Grid>
             <Grid item xs={12} sm={9}>
               <RHFAutocomplete
                 name="college"
-                label="Select College"
+                label="Select University"
                 size="small"
                 options={universityList || []}
-                disabled={!id && !verified}
+                // disabled={!id && !verified}
                 onChange={(e, value) => {
                   setValue("college", value, { shouldValidate: true });
                   setUniversityId(value?._id);
@@ -111,9 +112,42 @@ export default function AcademicDetailsForm({ methods, verified, id }) {
               />
             </Grid>
 
+
+            {/*College Section */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="College Name" />
+
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              {/* <RHFAutocomplete
+                name="college"
+                label="Select College"
+                size="small"
+                options={universityList || []}
+                // disabled={!id && !verified}
+                onChange={(e, value) => {
+                  setValue("college", value, { shouldValidate: true });
+                  setUniversityId(value?._id);
+                }}
+              /> */}
+              <Input
+                // value={watch('caste')}
+                placeholder="College Name"
+                name="collegeName"
+                register={register}
+                type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('collegeName', value, { shouldValidate: true })
+                }
+                }
+              />
+            </Grid>
+
+
             {/*Cource Section */}
             <Grid item xs={12} sm={3}>
-                            <FormLabel label="Course Name" required />
+              <FormLabel label="Course Name" />
 
             </Grid>
 
@@ -123,13 +157,13 @@ export default function AcademicDetailsForm({ methods, verified, id }) {
                 label="Select Course"
                 size="small"
                 options={courseList || []}
-                disabled={!id && !verified}
+              // disabled={!id && !verified}
               />
             </Grid>
 
             {/*Semester Section */}
             <Grid item xs={12} sm={3}>
-                            <FormLabel label="Semester" required />
+              <FormLabel label="Semester" />
 
             </Grid>
 
@@ -139,7 +173,7 @@ export default function AcademicDetailsForm({ methods, verified, id }) {
                 label="Select Semester"
                 size="small"
                 options={semesterOptions}
-                disabled={!id && !verified}
+              // disabled={!id && !verified}
               />
             </Grid>
           </Grid>

@@ -270,7 +270,7 @@ export default function StaffIndex() {
   }, [dispatch]);
 
   useEffect(()=>{
-    console.log('roleId', roleId)
+   
     if(roleId){
     dispatch(getCategoryAsync({roleId}))
     }

@@ -86,7 +86,7 @@ export default function ComplaintsTableTabs() {
     setExportAnchorEl(null); // Closes the menu
   };
 
-  const handleChange = (event, newValue) => {
+  const handleChange = (event,newValue) => {
     setValue(newValue);
     setFilterValues({...filterValues, status : newValue});
   };
@@ -194,6 +194,7 @@ export default function ComplaintsTableTabs() {
                 isSelectedAll={isSelectedAll}
                 setIsSelectedAll={setIsSelectedAll}
                 setFilterValues={setFilterValues}
+                handleChange={handleChange}
                 filterValues={filterValues}
               />
               {/* <ComplaintsTableContainer selectedTab={value} /> */}

@@ -45,6 +45,7 @@ import moment from "moment";
 import { toast } from "react-toastify";
 import { LoadingButton } from "@mui/lab";
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import { deleteVehicleDetails, getUsersHostelDetail, setVehicleData } from "@features/users/userSlice";
 
 export default function StudentIndex() {
   const theme = useTheme();
@@ -54,8 +55,8 @@ export default function StudentIndex() {
 
   const location = useLocation();
   const currentData = location?.state?.studentDetail;
+  
   const isLoading = location?.state?.staffByIdLoading;
-
   const [open, setOpen] = useState(false);
   const [openOtpModal, setOpenOtpModal] = useState(false);
   const [openFatherOtpModal, setOpenFatherOtpModal] = useState(false);
@@ -74,7 +75,8 @@ export default function StudentIndex() {
   const [selectedState, setSelectedState] = useState(null);
   const [selectedCity, setSelectedCity] = useState(null);
 
-  const { hostelList, isSubmitting } = useSelector((state) => state.hostel);
+  const { hostelList, isSubmitting, floorNumber } = useSelector((state) => state.hostel);
+  const { vehicleData } = useSelector((state) => state.users);
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const sectionRefs = [
     useRef(null),
@@ -97,10 +99,15 @@ export default function StudentIndex() {
     ? yup.object().shape(addStudentValidationsUpdate)
     : yup.object().shape(addStudentValidations);
 
+
+
   const methods = useForm(
     {
       resolver: yupResolver(validationSchema),
+      mode: "onTouched",           // Show error only after touching & leaving field
+      reValidateMode: "onChange",          // 👈 Shows error when field is touched
       defaultValues: {
+        aadharNumber: currentData?.documents?.aadhaarNumber || "",
         studentName: currentData?.name || "",
         userName: currentData?.userName || "",
         phoneNumber: currentData?.phone || "",
@@ -140,7 +147,7 @@ export default function StudentIndex() {
           currentData?.familiyDetails?.guardianContactNo || "",
         emailId: currentData?.familiyDetails?.guardianEmail || "",
         familyAddress: currentData?.familiyDetails?.address || "",
-
+        parentMobileNumber: String(currentData?.familiyDetails?.parentsContactNo) || "",
         // Hostel Details
         hostel: currentData?.hostelId || null,
         selectWing: currentData?.hostelId || null,
@@ -169,78 +176,82 @@ export default function StudentIndex() {
     },
     [currentData]
   );
-
   const {
     handleSubmit,
-    // formState: { errors },
+    formState: { errors },
+    setValue,
   } = methods;
   const handleTabChange = (index) => {
     setSelectedTab(index); // Select the clicked tab
     sectionRefs[index]?.current?.scrollIntoView({ behavior: "smooth" }); // Smoothly scroll to the selected section
   };
-
+  
   const onSubmit = (values) => {
     if (openOtpModal === false || openFatherOtpModal === false) {
-      const vehicles = vehicleDetails.map((item) => ({
-        vechicleType: item?.vechicleType,
-        engineType: item?.engineType ? item.engineType : null,
-        vechicleNumber: item?.vechicleNumber,
+      const vehicles = vehicleData.map((item) => ({
+        vechicleType: item?.vechicleType || null,
+        engineType: item?.engineType ? item.engineType : "not required",
+        vechicleNumber: item?.vechicleNumber || null,
         modelName: item?.modelName ? item.modelName : null,
-      }));
+      }))
 
       const payload = {
-        name: values.studentName,
+        name: values?.studentName,
         image,
-        phone: Number(values.phoneNumber),
+        phone: String(values?.phoneNumber),
         email: values.studentEmail,
-        dob: moment.utc(values.studentDob).toISOString(),
-        enrollmentNumber: values.enrollNo,
-        bloodGroup: values.bloodGroup.value,
-        gender: values.gender,
-        divyang: values.disabilities === "no" ? false : true,
-        identificationMark: values.identificationMark,
-        medicalIssue: values.medicalIssue,
-        allergyProblem: values.allergyProblem,
+        dob: moment.utc(values?.studentDob).toISOString(),
+        enrollmentNumber: values?.enrollNo,
+        bloodGroup: values?.bloodGroup?.value || values?.bloodGroup || null,
+        gender: values?.gender,
+        divyang: values?.disabilities === "no" ? false : true,
+        identificationMark: values?.identificationMark,
+        medicalIssue: values?.medicalIssue,
+        allergyProblem: values?.allergyProblem,
         country: {
-          name: selectedCountry?.name,
-          iso2: selectedCountry?.iso2,
-          countryId: selectedCountry?.id,
+          name: values?.country?.name,
+          iso2: values?.country?.iso2,
+          countryId: values?.country?.id,
         },
         state: {
-          stateId: selectedState?.id,
-          name: selectedState?.name,
-          iso2: selectedState?.iso2,
+          stateId: values?.state?.id,
+          name: values?.state?.name,
+          iso2: values?.state?.iso2,
         },
         city: {
-          cityId: selectedCity?.id,
-          name: selectedCity?.name,
+          cityId: values?.city?.id,
+          name: values?.city?.name,
         },
-        cast: values.caste,
-        category: values.category.value,
-        permanentAddress: values.permanentAddress,
-        currentAddress: values.currentAddress,
+        cast: values?.caste,
+        category: values?.category?.value,
+        permanentAddress: values?.permanentAddress,
+        // currentAddress: values?.currentAddress,
         familiyDetails: {
-          fatherName: values.fatherName,
-          fatherNumber: Number(values.fatherphoneNumber),
-          fatherEmail: values.fatherEmail,
-          fatherOccuption: values.fatherOccupation,
-          motherName: values.motherName,
-          motherNumber: Number(values.motherphoneNumber),
-          motherEmail: values.motherEmail,
-          guardianName: values.guardianName,
-          guardianContactNo: Number(values.guardianMobileNumber),
-          relationship: values.relationship,
-          occuption: values.occupation,
-          guardianEmail: values.emailId,
-          address: values.familyAddress,
+          fatherName: values?.fatherName,
+          fatherNumber: String(values?.fatherphoneNumber),
+          // fatherEmail: values?.fatherEmail,
+          // fatherOccuption: values?.fatherOccupation,
+          motherName: values?.motherName,
+          motherNumber: String(values?.motherphoneNumber),
+          // motherEmail: values?.motherEmail,
+          guardianName: values?.guardianName,
+          // guardianContactNo: Number(values?.guardianMobileNumber),
+          relationship: values?.relationship,
+          occuption: values?.occupation,
+          // guardianEmail: values?.emailId,
+          address: values?.familyAddress,
+          parentEmail: values?.parentEmail,
+          // parentsContactNo: Number(values?.parentMobileNumber)
         },
         academicDetails: {
-          universityId: values.college?._id,
-          courseId: values.course?._id,
+          universityId: values?.college?._id,
+          courseId: values?.course?._id,
           academicYear: values?.academicYear,
-          semester: values.semester.value,
+          semester: Number(values?.semester?.value),
         },
         documents: {
+          // aadharNumber:Number(values?.aadharNumber),
+          aadharNumber: values?.aadharNumber,
           aadhaarCard: values?.aadhaar,
           drivingLicense: values?.drivingLicense
             ? values?.drivingLicense
@@ -250,34 +261,49 @@ export default function StudentIndex() {
           voterCard: values?.voterId ? values?.voterId : null,
         },
         vechicleDetails: vehicles,
+        hostelId: values?.hostel?._id,
+        // bedType: values?.bedType?.value === "single" ? 1 : 2,
+        buildingNumber: values?.selectWing,
+        floorNumber: Number(selectedFloor),
+        roomNumber: Number(values?.roomNumber?.value),
+        bedNumber: String(values?.bedNumber?.label),
+        billingCycle: values?.billingCycle?.value,
       };
-
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
             navigate("/user");
           } else {
-            toast.error(res?.payload);
+          if(Array.isArray(res?.payload)){
+
+              res?.payload.map((item) => {
+                toast.error(item);
+              })
+            }else{
+              toast.error(res?.payload)
+            }
           }
         })
         : dispatch(
           createResidentAsync({
-            ...payload,
-            hostelId: values?.hostel?._id,
-            bedType: values?.bedType?.bedType,
-            buildingNumber: values?.selectWing,
-            floorNumber: selectedFloor?.floorNumber,
-            roomNumber: selectedRoom?.roomNumber || values?.roomNumber,
-            bedNumber: values?.bedNumber?._id,
-            billingCycle: values?.billingCycle?.value,
+            ...payload
           })
         ).then((res) => {
+
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
             navigate("/user");
           } else {
-            toast.error(res?.payload);
+            // toast.error(res?.payload);
+            if(isArray(res?.payload)){
+
+              res?.payload.map((item) => {
+                toast.error(item);
+              })
+            }else{
+              toast.error(res?.payload)
+            }
           }
         });
     }
@@ -319,6 +345,10 @@ export default function StudentIndex() {
   useEffect(() => {
     if (id && currentData) {
       setVehicleDetails(currentData?.vechicleDetails);
+      dispatch(deleteVehicleDetails())
+      currentData?.vechicleDetails?.map((item)=>{
+        dispatch(setVehicleData(item));
+      })
       setVerified(true);
       setIsFathersNoVerified(true);
 
@@ -342,6 +372,17 @@ export default function StudentIndex() {
 
     }
   }, [id, currentData]);
+
+  useEffect(() => {
+    if (id) {
+      dispatch(getUsersHostelDetail({ studentId: id, type: "hostel" })).then((item) => {
+        const { data } = item?.payload
+        setValue('floor', data)
+        setValue('roomNumber', { label: data?.roomNumber, value: data?.roomNumber })
+        setValue('bedNumber', { label: data?.bedNumber, value: data?.bedNumber })
+      });
+    }
+  }, [id])
 
   return (
     <>
@@ -388,26 +429,29 @@ export default function StudentIndex() {
               <Typography>Back</Typography>
             </Box>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>
-              <Box>
-                <a sx={{ height: "100%" }} href={'/public/bulk_upload.csv'} download>
-                  <Button
-                    size="small"
+              {!id && (
+                <Box>
+                  <a sx={{ height: "100%" }} href={'/bulk_upload.csv'} download>
+                    <Button
+                      size="small"
 
-                    sx={{
-                      boxShadow: 1, borderRadius: 50, backgroundColor: '#fff',
-                      paddingX: "0.5rem",
-                      border: "0.2px solid #674D9F", height: "1.9rem",
-                      fontWeight:"bold"
-                    }}
-                  type="button"
-                  >
-                    <Box sx={{ display: "flex", gap: 0.5 }}>
-                      Sample File
-                      <ArrowDownwardIcon sx={{ width: "1rem" }} />
-                    </Box>
-                  </Button>
-                </a>
-              </Box>
+                      sx={{
+                        boxShadow: 1, borderRadius: 50, backgroundColor: '#fff',
+                        paddingX: "0.5rem",
+                        border: "0.2px solid #674D9F", height: "1.9rem",
+                        fontWeight: "bold"
+                      }}
+                      type="button"
+                    >
+                      <Box sx={{ display: "flex", gap: 0.5 }}>
+                        Sample File
+                        <ArrowDownwardIcon sx={{ width: "1rem" }} />
+                      </Box>
+                    </Button>
+                  </a>
+                </Box>
+              )}
+
               {!id && (
                 <Box>
                   <Button
@@ -514,7 +558,7 @@ export default function StudentIndex() {
             },
           }}
         >
-          <Grid container spacing={3} sx={{ padding: "0 16px" }}>
+          <Grid container spacing={2} sx={{ padding: "0 10px" }}>
             {/* Steps Section */}
             <Grid
               item
@@ -594,106 +638,105 @@ export default function StudentIndex() {
             {/* Content Section */}
             <Grid item xs={12} md={9}>
               <FormProvider {...methods}>
-                <form onSubmit={handleSubmit(onSubmit)}>
-                  <Box
-                    sx={{ marginTop: "16px", padding: { sm: "20px", xs: "0" } }}
-                  >
-                    {sections.map((section, index) => (
-                      <Box key={index} ref={section.ref}>
-                        {index === 0 && !isLoading && (
-                          <CreateStudentForm
-                            id={currentData?._id || null}
-                            country={currentData?.country || null}
+                <Box
+                  sx={{ marginTop: "16px", padding: { sm: "20px", xs: "0" } }}
+                >
+                  {sections.map((section, index) => (
+                    <Box key={index} ref={section.ref}>
+                      {index === 0 && !isLoading && (
+                        <CreateStudentForm
+                          currentData={currentData}
+                          id={currentData?._id || null}
+                          country={currentData?.country || null}
+                          methods={methods}
+                          open={openOtpModal}
+                          setOpen={setOpenOtpModal}
+                          verified={verified}
+                          setVerified={setVerified}
+                          setImage={setImage}
+                          isLoading={isLoading}
+                          image={image}
+                          setSelectedCity={setSelectedCity}
+                          setSelectedState={setSelectedState}
+                          setSelectedCountry={setSelectedCountry}
+                          selectedCity={selectedCity}
+                          selectedState={selectedState}
+                          selectedCountry={selectedCountry}
+                        />
+                      )}
+                      {index === 1 && (
+                        <FamilyDetailsForm
+                          id={currentData?._id || null}
+                          methods={methods}
+                          verified={verified}
+                          isFathersNoVerified={isFathersNoVerified}
+                          setIsFathersNoVerified={setIsFathersNoVerified}
+                          open={openFatherOtpModal}
+                          setOpen={setOpenFatherOtpModal}
+                        />
+                      )}
+                      {index === 2 && (
+                        <HostelDetailsForm
+                          id={currentData?._id || null}
+                          methods={methods}
+                          verified={isFathersNoVerified}
+                          hostelList={hostelList}
+                          setSelectedFloor={setSelectedFloor}
+                          selectedFloor={selectedFloor}
+                          selectedRoom={selectedRoom}
+                          setSelectedRoom={setSelectedRoom}
+                        />
+                      )}
+                      {index === 3 && (
+                        <AcademicDetailsForm
+                          id={currentData?._id || null}
+                          methods={methods}
+                          verified={isFathersNoVerified}
+                        />
+                      )}
+                      {index === 4 && (
+                        <KycUpload
+                          id={currentData?._id || null}
+                          methods={methods}
+                          verified={isFathersNoVerified}
+                          isKycFrom={"student"}
+                        />
+                      )}
+                      {index === 5 && (
+                        <>
+                          <VehicleForm
                             methods={methods}
-                            open={openOtpModal}
-                            setOpen={setOpenOtpModal}
-                            verified={verified}
-                            setVerified={setVerified}
-                            setImage={setImage}
-                            isLoading={isLoading}
-                            image={image}
-                            setSelectedCity={setSelectedCity}
-                            setSelectedState={setSelectedState}
-                            setSelectedCountry={setSelectedCountry}
-                            selectedCity={selectedCity}
-                            selectedState={selectedState}
-                            selectedCountry={selectedCountry}
-                          />
-                        )}
-                        {index === 1 && (
-                          <FamilyDetailsForm
                             id={currentData?._id || null}
-                            methods={methods}
-                            verified={verified}
-                            isFathersNoVerified={isFathersNoVerified}
-                            setIsFathersNoVerified={setIsFathersNoVerified}
-                            open={openFatherOtpModal}
-                            setOpen={setOpenFatherOtpModal}
-                          />
-                        )}
-                        {!id && index === 2 && (
-                          <HostelDetailsForm
-                            id={currentData?._id || null}
-                            methods={methods}
+                            vehicleDetails={vehicleDetails}
+                            setVehicleDetails={setVehicleDetails}
                             verified={isFathersNoVerified}
-                            hostelList={hostelList}
-                            setSelectedFloor={setSelectedFloor}
-                            selectedFloor={selectedFloor}
-                            selectedRoom={selectedRoom}
-                            setSelectedRoom={setSelectedRoom}
                           />
-                        )}
-                        {index === 3 && (
-                          <AcademicDetailsForm
-                            id={currentData?._id || null}
-                            methods={methods}
-                            verified={isFathersNoVerified}
-                          />
-                        )}
-                        {index === 4 && (
-                          <KycUpload
-                            id={currentData?._id || null}
-                            methods={methods}
-                            verified={isFathersNoVerified}
-                            isKycFrom={"student"}
-                          />
-                        )}
-                        {index === 5 && (
-                          <>
-                            <VehicleForm
-                              methods={methods}
-                              id={currentData?._id || null}
-                              vehicleDetails={vehicleDetails}
-                              setVehicleDetails={setVehicleDetails}
-                              verified={isFathersNoVerified}
-                            />
-                            <Box
+                          <Box
+                            sx={{
+                              display: "flex", // Flexbox layout
+                              justifyContent: "center", // Center horizontally
+                              alignItems: "center", // Center vertically (if needed)
+                              marginTop: "16px", // Add margin for spacing
+                            }}
+                          >
+                            <LoadingButton
+                              variant="contained"
+                              color="primary"
+                              loading={isSubmitting}
+                              onClick={handleSubmit(onSubmit)}
                               sx={{
-                                display: "flex", // Flexbox layout
-                                justifyContent: "center", // Center horizontally
-                                alignItems: "center", // Center vertically (if needed)
-                                marginTop: "16px", // Add margin for spacing
-                              }}
+                                padding: "10px 20px",
+                                borderRadius: "10px",
+                              }} // Adjust padding for better appearance
                             >
-                              <LoadingButton
-                                variant="contained"
-                                color="primary"
-                                loading={isSubmitting}
-                                onClick={handleSubmit(onSubmit)}
-                                sx={{
-                                  padding: "10px 20px",
-                                  borderRadius: "10px",
-                                }} // Adjust padding for better appearance
-                              >
-                                Submit
-                              </LoadingButton>
-                            </Box>
-                          </>
-                        )}
-                      </Box>
-                    ))}
-                  </Box>
-                </form>
+                              Submit
+                            </LoadingButton>
+                          </Box>
+                        </>
+                      )}
+                    </Box>
+                  ))}
+                </Box>
               </FormProvider>
             </Grid>
           </Grid>

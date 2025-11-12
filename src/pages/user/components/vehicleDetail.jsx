@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Stack,
   Card,
@@ -22,131 +22,155 @@ import {
   IconButton,
   Box,
 } from "@mui/material";
+import * as yup from "yup";
 import AddIcon from "@mui/icons-material/Add";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import PropTypes from "prop-types";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import Input from "@components/customComponents/InputFields";
+import RadioButton from "@components/customComponents/CustomRadio";
+import { deleteVehicleDetails, removeVehicleData, setVehicleData, updateVehicleData } from "@features/users/userSlice";
 
 const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
-  const [vechicleType, setvechicleType] = useState("");
-  const [engineType, setEngineType] = useState("");
-  const [vechicleNumber, setvechicleNumber] = useState("");
-  const [modelName, setmodelName] = useState("");
-  const [editIndex, setEditIndex] = useState(null);
 
-  const { verifyUserName } = useSelector((state) => state.users);
+  const [editVehicle, setEditVehicle] = useState(false)
+  const { verifyUserName, vehicleData } = useSelector((state) => state.users);
 
-  const [errors, setErrors] = useState({
-    vechicleType: false,
-    engineType: false,
-    vechicleNumber: false,
-    modelName: false,
-  });
+  const dispatch = useDispatch()
+
+
+  const validationSchema = yup.object({
+    vehicleType: yup.string().nullable(),
+    vechicleNumber: yup
+      .string()
+      .transform((value) => value?.trim().toUpperCase() || "") // trims and capitalizes
+      .when("vehicleType", {
+        is: (val) => val !== "bicycle",
+        then: (schema) =>
+          schema
+            .required("Vehicle Number is required.")
+            .matches(
+              /^[A-Za-z0-9\s]+$/,
+              "Vehicle Number must contain only letters, numbers, and spaces."
+            )
+            .min(6, "Vehicle Number must be at least 6 characters long.")
+            .max(10, "Vehicle Number cannot be more than 10 characters long."),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+
+    modelNumber: yup.string().when("vehicleType", {
+      is: (val) => {
+        return val;
+      },
+      then: (schema) => schema.required("Model Number is required."),
+      otherwise: (schema) => schema.notRequired(),
+    }),
+    engineType: yup.string().when('vehicleType', {
+      is: (val) => val !== 'bicycle',
+      then: (schema) => schema.required('Engine Type is required.'),
+      otherwise: (schema) => schema.notRequired()
+    }),
+
+  })
+
+
+  const { register, clearErrors, setValue, watch, setError, handleSubmit,
+    reset,
+    resetField,
+    formState: { errors },
+  } = useForm(
+    {
+      resolver: yupResolver(validationSchema),
+      mode: "onTouched",           // Show error only after touching & leaving field
+      reValidateMode: "onChange",
+      defaultValues: {
+        vechicleNumber: "",
+        modelNumber: "",
+        engineType: "",
+        vechicleType: ""
+      },
+    })
+
 
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const validateFields = () => {
-    const newErrors = {
-      vechicleType: !vechicleType,
-      engineType: vechicleType !== "bicycle" && !engineType,
-      vechicleNumber: vechicleType !== "bicycle" && !vechicleNumber,
-      modelName: !modelName,
-    };
-    setErrors(newErrors);
-    return !Object.values(newErrors).some(Boolean);
-  };
+  const onSubmit = async (values) => {
 
-  const handleAddOrUpdateVehicle = () => {
-    // Validate input fields
-    if (!validateFields()) return;
-
-    // Check for duplicate vehicleNumber
-    const isDuplicate = vehicleDetails.some(
-      (vehicle, index) =>
-        vehicle.vechicleNumber.trim().toLowerCase() ===
-          vechicleNumber.trim().toLowerCase() && index !== editIndex
-    );
+    const isDuplicate = vehicleData?.some((vehicle) => {
+      const existingNumber = String(vehicle?.vechicleNumber || "").trim().toLowerCase();
+      const currentNumber = String(values?.vechicleNumber || "").trim().toLowerCase();
+      if (!existingNumber || !currentNumber) return false;
+      return existingNumber === currentNumber;
+    });
 
     if (isDuplicate) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        vechicleNumber: true,
-      }));
+      setError("vechicleNumber", {
+        type: "custom", message: "Vehicle Number already exist"
+      })
       return;
     }
 
-    // Check for alphanumeric vehicle number (including spaces)
-    if (
-      !/^[a-zA-Z0-9\s]+$/.test(vechicleNumber) &&
-      vechicleType !== "bicycle"
-    ) {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        vechicleNumber: true,
-      }));
-      return;
-    }
-
-    if (vechicleNumber.trim().length < 10 && vechicleType !== "bicycle") {
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        vechicleNumber: true,
-      }));
-      return;
-    }
-
-    const newVehicle = {
-      vechicleType,
-      engineType,
-      vechicleNumber: vechicleNumber.trim(),
-      modelName,
+    let newVehicle = {
+      vechicleType: values?.vehicleType,
+      engineType: values?.vehicleType !== "bicycle" ? values?.engineType : "",
+      vechicleNumber: values?.vechicleNumber.trim(),
+      modelName: values?.modelNumber,
     };
-
-    if (editIndex !== null) {
-      // Update existing vehicle
-      setVehicleDetails((prevVehicles) =>
-        prevVehicles.map((vehicle, index) =>
-          index === editIndex ? newVehicle : vehicle
-        )
-      );
+    if (editVehicle) {
+      newVehicle.index = values?.index
+      dispatch(updateVehicleData(newVehicle))
+      setEditVehicle(false)
     } else {
-      // Add new vehicle
-      setVehicleDetails((prevVehicles) => [...prevVehicles, newVehicle]);
+      dispatch(setVehicleData(newVehicle));
     }
+    if (values?.vehicleType === "bicycle") {
+      resetField("engineType")
+    }
+    resetField("modelNumber")
+    resetField("vechicleNumber")
 
-    resetForm();
-  };
+  }
 
-  const handleEditVehicle = (index) => {
-    const vehicle = vehicleDetails[index];
-    setvechicleType(vehicle.vechicleType);
-    setEngineType(vehicle.engineType);
-    setvechicleNumber(vehicle.vechicleNumber);
-    setmodelName(vehicle.modelName);
-    setEditIndex(index);
+
+  const handleEditVehicle = (index, vehicle) => {
+    setValue('index', index)
+    setValue('engineType', vehicle?.engineType)
+    setValue('modelNumber', vehicle?.modelName)
+    setValue('vechicleNumber', vehicle?.vechicleNumber)
+    setValue('vehicleType', vehicle?.vechicleType)
+    setEditVehicle(true)
   };
 
   const handleDeleteVehicle = (index) => {
-    setVehicleDetails((prevVehicles) =>
-      prevVehicles.filter((_, i) => i !== index)
-    );
+    dispatch(removeVehicleData(index))
+
   };
 
-  const resetForm = () => {
-    setvechicleType("");
-    setEngineType("");
-    setvechicleNumber("");
-    setmodelName("");
-    setEditIndex(null);
-    setErrors({
-      vechicleType: false,
-      engineType: false,
-      vechicleNumber: false,
-      modelName: false,
-    });
-  };
+
+  useEffect(() => {
+    if (editVehicle && watch('vehicleType') === 'bicycle') {
+      setValue('engineType', "")
+      setValue('vechicleNumber', "")
+    }
+  }, [watch('vehicleType')])
+
+  // useEffect(() => {
+  //   if (vehicleDetails && vehicleDetails.length > 0 && id) {
+  //     vehicleDetails.forEach((item) => {
+  //       dispatch(setVehicleData(item));
+  //     });
+  //   }
+  // }, [vehicleDetails]);
+
+  useEffect(() => {
+    return () => {
+      dispatch(deleteVehicleDetails())
+    }
+  }, [dispatch])
 
   return (
     <Stack spacing={2} my={2}>
@@ -172,181 +196,155 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
           }
         />
         <CardContent>
-          <form>
-            <Stack spacing={2}>
-              {/* Vehicle Type Section */}
-              <FormControl fullWidth error={errors.vechicleType}>
-                <Stack
-                  direction={isSmallScreen ? "column" : "row"}
-                  alignItems={isSmallScreen ? "start" : "center"}
-                  spacing={2}
-                >
+          <Stack spacing={2}>
+            {/* Vehicle Type */}
+            <Stack
+              direction={isSmallScreen ? "column" : "row"}
+              alignItems={isSmallScreen ? "start" : "center"}
+              spacing={2}
+            >
+
+              <FormLabel sx={{ minWidth: "120px", pt: "10px" }}>
+                Vehicle Type
+              </FormLabel>
+              <RadioButton
+                error={errors?.vehicleType?.message}
+                checked={watch('vehicleType')}
+                value={watch('vehicleType') || ''}
+                {...register('vehicleType')}
+                onChange={(e) => {
+                  clearErrors()
+                  setValue('vehicleType', e?.target?.value, { shouldValidate: true })
+
+                }}
+                data={[
+                  { value: "bicycle", label: "Bicycle" },
+                  { value: "bike", label: "Bike" },
+                  { value: "car", label: "Car" },
+                ]} />
+
+            </Stack>
+            {watch('vehicleType') !== 'bicycle' && (
+              <Stack
+                direction={isSmallScreen ? "column" : "row"}
+                alignItems={isSmallScreen ? "start" : "center"}
+                spacing={2}
+              >
+
+                <FormLabel sx={{ minWidth: "120px", pt: "10px" }}>
+                  Engine Type
+                </FormLabel>
+                <RadioButton
+                  error={errors?.engineType?.message}
+                  checked={watch('engineType')}
+                  value={watch('engineType')}
+                  {...register('engineType')}
+                  onChange={(e) => {
+                    setValue('engineType', e?.target?.value,
+                      { shouldValidate: true })
+                  }}
+                  data={[
+                    { value: "ev", label: "EV" },
+                    { value: "fuel", label: "Fuel" },
+                  ]} />
+
+              </Stack>
+            )}
+            <Stack
+              direction={isSmallScreen ? "column" : "row"}
+              alignItems={isSmallScreen ? "start" : "center"}
+              spacing={2}
+            >
+              {watch('vehicleType') !== 'bicycle' && (
+                <>
                   <FormLabel sx={{ minWidth: "120px", pt: "10px" }}>
-                    Vehicle Type
+                    Vehicle Number
                   </FormLabel>
                   <Box>
-                    <RadioGroup
-                      row
-                      value={vechicleType}
+                    <Input error={errors?.vechicleNumber?.message}
+                      placeholder="Vehicle Number"
+                      register={register} name={"vechicleNumber"}
                       onChange={(e) => {
-                        setvechicleType(e.target.value);
-                        setEngineType("");
-                        setvechicleNumber("");
-                        setmodelName("");
-                      }}
-                    >
-                      <FormControlLabel
-                        value="bicycle"
-                        control={
-                          <Radio
-                            disabled={(!id && !verified) || verifyUserName}
-                          />
-                        }
-                        label="Bicycle"
-                      />
-                      <FormControlLabel
-                        value="bike"
-                        control={
-                          <Radio
-                            disabled={(!id && !verified) || verifyUserName}
-                          />
-                        }
-                        label="Bike"
-                      />
-                      <FormControlLabel
-                        value="four wheeler"
-                        control={
-                          <Radio
-                            disabled={(!id && !verified) || verifyUserName}
-                          />
-                        }
-                        label="Car"
-                      />
-                    </RadioGroup>
-                    {errors.vechicleType && (
-                      <Typography fontSize="12px" color="error">
-                        Vehicle Type is required
-                      </Typography>
-                    )}
+                        const value = e?.target?.value.replace(/^\s+/, "");
+                        setValue('vechicleNumber', value.toUpperCase(), { shouldValidate: true })
+                      }
+                      }
+                    />
                   </Box>
-                </Stack>
-              </FormControl>
-
-              {/* Engine Type Section */}
-              {vechicleType !== "bicycle" && (
-                <FormControl fullWidth error={errors.engineType}>
-                  <Stack
-                    direction={isSmallScreen ? "column" : "row"}
-                    alignItems={isSmallScreen ? "start" : "center"}
-                    spacing={2}
-                  >
-                    <FormLabel sx={{ minWidth: "120px", pt: "10px" }}>
-                      Engine Type
-                    </FormLabel>
-                    <Box>
-                      <RadioGroup
-                        row
-                        value={engineType}
-                        onChange={(e) => setEngineType(e.target.value)}
-                      >
-                        <FormControlLabel
-                          value="ev"
-                          control={
-                            <Radio
-                              disabled={(!id && !verified) || verifyUserName}
-                            />
-                          }
-                          label="EV"
-                        />
-                        <FormControlLabel
-                          value="fuel"
-                          control={
-                            <Radio
-                              disabled={(!id && !verified) || verifyUserName}
-                            />
-                          }
-                          label="Fuel"
-                        />
-                      </RadioGroup>
-                      {errors.engineType && (
-                        <Typography fontSize="12px" color="error">
-                          Engine Type is required
-                        </Typography>
-                      )}
-                    </Box>
-                  </Stack>
-                </FormControl>
+                </>
               )}
 
-              {/* Vehicle Number */}
-              {vechicleType !== "bicycle" && (
-                <Stack
-                  direction={isSmallScreen ? "column" : "row"}
-                  spacing={2.5}
-                >
-                  <Typography sx={{ minWidth: "120px" }}>
-                    Vehicle Number
-                  </Typography>
-                
-                  <TextField
-                    size="small"
-                    value={vechicleNumber}
-                    onChange={(e) => {
-                      const input = e.target.value.slice(0, 10); // Limit input to 10 characters
-                      setvechicleNumber(input);
-                      setErrors((prevErrors) => ({
-                        ...prevErrors,
-                        vechicleNumber: false,
-                      }));
-                    }}
-                    error={errors.vechicleNumber}
-                    disabled={(!id && !verified) || verifyUserName}
-                    helperText={
-                      errors.vechicleNumber &&
-                      "Vehicle Number must be alphanumeric, unique, and can include spaces (max 10 characters)"
-                    }
-                  />
-                </Stack>
-              )}
 
-              {/* Model/Company */}
-              <Stack direction={isSmallScreen ? "column" : "row"} spacing={2}>
-                <Typography sx={{ minWidth: "120px" }}>
-                  Model/Company
-                </Typography>
-                <TextField
-                  size="small"
-                  value={modelName}
-                  onChange={(e) => setmodelName(e.target.value)}
-                  error={errors.modelName}
-                  helperText={errors.modelName && "Model/Company is required"}
-                  disabled={(!id && !verified) || verifyUserName}
+            </Stack>
+            <Stack
+              direction={isSmallScreen ? "column" : "row"}
+              alignItems={isSmallScreen ? "start" : "center"}
+              spacing={2}
+            >
+
+              <FormLabel sx={{ minWidth: "120px", pt: "10px" }}>
+                Model/Company
+              </FormLabel>
+              <Box>
+                <Input
+                  error={errors?.modelNumber?.message}
+                  placeholder="Model/Company"
+                  register={register} name={"modelNumber"}
+                  onChange={(e) => {
+                    const value = e?.target?.value.replace(/^\s+/, "");
+                    setValue('modelNumber', value.toUpperCase(), { shouldValidate: true })
+                  }
+                  }
                 />
-              </Stack>
+              </Box>
 
-              {/* Add or Update Vehicle Button */}
-              <Stack direction={isSmallScreen ? "column" : "row"} spacing={2}>
-                <Typography sx={{ minWidth: "120px" }}>Add More</Typography>
+            </Stack>
+            <Stack direction={isSmallScreen ? "column" : "row"} spacing={2}>
+              <Typography sx={{ minWidth: "120px" }}>Add More</Typography>
+
+
+              <Button
+                disabled={!watch('vehicleType')}
+                variant="contained"
+                onClick={handleSubmit(onSubmit)}
+                // disabled={!verified || verifyUserName}
+                sx={{
+                  mt: 2,
+                  borderRadius: "10px",
+                  textTransform: "none",
+                }}
+              >
+                <AddIcon />
+                {editVehicle ? "Update Vehicle" : "Add Vehicle"}
+              </Button>
+              {editVehicle && (
                 <Button
+                  disabled={!watch('vehicleType')}
                   variant="contained"
-                  onClick={handleAddOrUpdateVehicle}
-                  disabled={!verified || verifyUserName}
+                  // onClick={handleAddOrUpdateVehicle}
+                  onClick={() => { reset(); setEditVehicle(false) }}
+                  // disabled={!verified || verifyUserName}
                   sx={{
                     mt: 2,
                     borderRadius: "10px",
                     textTransform: "none",
                   }}
                 >
-                  <AddIcon />
-                  {editIndex !== null ? "Update Vehicle" : "Add Vehicle"}
+                  {/* <AddIcon /> */}
+                  {"Cancel"}
                 </Button>
-              </Stack>
+              )}
 
-              {/* Vehicle Table */}
-              {vehicleDetails && (
-                <Box sx={{ overflowX: "auto", width: "100%" }}>
+
+
+            </Stack>
+            <Stack>
+              {vehicleData?.length && vehicleData ? (
+                <Box sx={{ overflowX: "auto", width: "100%", height: "100", maxHeight: "70vh" }}>
                   <Table>
-                    <TableHead>
+                    <TableHead sx={{
+                      position: "sticky", top: "0", zIndex: 9999, background: "#f7f6fa"
+                    }}>
                       <TableRow>
                         <TableCell>Vehicle Type</TableCell>
                         <TableCell>Engine Type</TableCell>
@@ -356,25 +354,26 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
                       </TableRow>
                     </TableHead>
                     <TableBody>
-                      {vehicleDetails.map((vehicle, index) => (
+                      {vehicleData.map((vehicle, index) => (
                         <TableRow key={index}>
                           <TableCell>
                             {(vehicle.vechicleType === "four wheeler"
                               ? "Car"
                               : vehicle.vechicleType) || "--"}
                           </TableCell>
-                          <TableCell>{vehicle.engineType || "--"}</TableCell>
+                          <TableCell>{vehicle.engineType === "not required" ? "--" : vehicle.engineType || "--"}</TableCell>
                           <TableCell>
                             {vehicle.vechicleNumber || "--"}
                           </TableCell>
                           <TableCell>{vehicle.modelName || "--"}</TableCell>
                           <TableCell>
                             <IconButton
-                              onClick={() => handleEditVehicle(index)}
+                              onClick={() => handleEditVehicle(index, vehicle)}
                             >
                               <EditIcon />
                             </IconButton>
                             <IconButton
+                              disabled={editVehicle}
                               onClick={() => handleDeleteVehicle(index)}
                             >
                               <DeleteIcon />
@@ -385,10 +384,12 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
                     </TableBody>
                   </Table>
                 </Box>
-              )}
+              ) : ""}
+
             </Stack>
-          </form>
+          </Stack>
         </CardContent>
+
       </Card>
     </Stack>
   );

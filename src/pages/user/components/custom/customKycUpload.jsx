@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 
 function KycUploadCard({
   name,
+  register,
   image,
   imageName,
   control,
@@ -123,7 +124,7 @@ function KycUploadCard({
           borderRadius: "4px",
         }}
         alt={imageName}
-        disabled={(!id && !verified) || checkVerifyUserName}
+      // disabled={(!id && !verified) || checkVerifyUserName}
       />
       <Box
         sx={{
@@ -163,7 +164,7 @@ function KycUploadCard({
         style={{ display: "none" }}
         ref={fileInputRef}
         onChange={(e) => handleFileUpload(e.target.files[0])}
-        disabled={(!id && !verified) || checkVerifyUserName}
+      // disabled={(!id && !verified) || checkVerifyUserName}
       />
       {error && !value && (
         <IconButton
@@ -174,7 +175,7 @@ function KycUploadCard({
             color: "#ACB5BD",
           }}
           onClick={triggerFileInput}
-          disabled={(!id && !verified) || checkVerifyUserName}
+        // disabled={(!id && !verified) || checkVerifyUserName}
         >
           <WarningIcon />
         </IconButton>
@@ -188,7 +189,7 @@ function KycUploadCard({
             color: "#ACB5BD",
           }}
           onClick={triggerFileInput}
-          disabled={(!id && !verified) || checkVerifyUserName}
+        // disabled={(!id && !verified) || checkVerifyUserName}
         >
           <FileUploadIcon />
         </IconButton>
@@ -258,6 +259,7 @@ function KycUploadCard({
           >
             {selectedImage ? (
               <img
+                {...register("kyc")}
                 src={`${selectedImage}`}
                 alt="Document"
                 style={{
