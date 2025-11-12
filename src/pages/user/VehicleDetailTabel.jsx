@@ -19,7 +19,6 @@ VehicleDetailTabel.propTypes = {
 
 export default function VehicleDetailTabel({ vechicleDetails }) {
 
-  console.log('vechicleDetails', vechicleDetails)
 
   return (
     <Box sx={{ overflowX: "auto" }}>

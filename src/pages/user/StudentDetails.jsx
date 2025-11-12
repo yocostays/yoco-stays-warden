@@ -66,8 +66,8 @@ export default function StudentDetails() {
     userVehicleDetail,
     userIndisciplinaryDetail,
   } = useSelector((state) => state?.users);
-  const [statusName, setStatusName] = useState("")
 
+  const [statusName, setStatusName] = useState("")
 
   const personalDetailsRef = useRef(null);
   const familyDetailsRef = useRef(null);
@@ -304,21 +304,22 @@ export default function StudentDetails() {
   }, [id, tabValue]);
 
   const handleNavigation = () => {
-    const profileView = localStorage.getItem('profileView');
+    navigate('/user')
+    // const profileView = localStorage.getItem('profileView');
 
-    switch (profileView) {
-      case 'leave':
-        navigate('/leave');
-        break;
-      case 'mess':
-        navigate('/newmessmanagement');
-        break;
-      case 'complaints':
-        navigate('/complaints');
-        break;
-      default:
-        navigate('/user');
-    }
+    // switch (profileView) {
+    //   case 'leave':
+    //     navigate('/leave');
+    //     break;
+    //   case 'mess':
+    //     navigate('/newmessmanagement');
+    //     break;
+    //   case 'complaints':
+    //     navigate('/complaints');
+    //     break;
+    //   default:
+    //     navigate('/user');
+    // }
   };
 
 
@@ -575,10 +576,10 @@ export default function StudentDetails() {
           }}
         >
           <Box ref={personalDetailsRef} sx={{ minHeight: "80vh", width: "80%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <StudentPrsnDetails studentDetail={userPersonalDetail} />
+            <StudentPrsnDetails studentDetail={studentDetail} />
           </Box>
           <Box ref={familyDetailsRef} sx={{ minHeight: "80vh", width: "80%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
-            <StudentFamilyDetails studentDetail={userFamilyDetail} />
+            <StudentFamilyDetails studentDetail={studentDetail?.familiyDetails} />
           </Box>
           <Box ref={hostelDetailsRef} sx={{ minHeight: "80vh", width: "80%", display: "flex", flexDirection: "column", justifyContent: "center" }}>
             <StudentHostelDetails studentDetail={userHostelDetail} />

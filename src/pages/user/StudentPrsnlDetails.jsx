@@ -171,6 +171,11 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   value: studentDetail.phone,
                 },
                 {
+                  icon: <Icon icon="mdi:card-account-details" width="20" height="20" />,
+                  label: "Aadhar Number",
+                  value: studentDetail?.documents?.aadhaarNumber
+                },
+                {
                   icon: <EmailIcon />,
                   label: "Email ID",
                   value: studentDetail.email,
@@ -260,11 +265,11 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   label: "Permanent Address",
                   value: studentDetail.permanentAddress,
                 },
-                {
-                  icon: <HomeWorkIcon />,
-                  label: "Current Address",
-                  value: studentDetail.currentAddress,
-                },
+                // {
+                //   icon: <HomeWorkIcon />,
+                //   label: "Current Address",
+                //   value: studentDetail.currentAddress,
+                // },
               ].map((item, index) => (
                 <Box
                   key={index}

@@ -16,7 +16,7 @@ KycUpload.propTypes = {
 };
 
 export default function KycUpload({ methods, verified, id , isKycFrom }) {
-  const { handleSubmit } = methods;
+  const { handleSubmit ,register,errors} = methods;
 
   const initialDocuments = [
     { id: 1, name: "aadhaar", imageName: "Aadhaar Card", image: aadhaar },
@@ -66,18 +66,20 @@ export default function KycUpload({ methods, verified, id , isKycFrom }) {
               {initialDocuments.map((doc) => (
                 <Box key={doc.id}>
                   <KycUploadCard
+                  register={register}
                     name={doc.name}
                     image={doc.image}
                     imageName={doc.imageName}
                     control={methods.control}
                     rules={{ required: `${doc.imageName} is required.` }}
-                    verified={verified}
-                    id={id}
+                    // verified={verified}
+                    // id={id}
                     isKycFrom={isKycFrom}
                   />
                 </Box>
               ))}
             </Box>
+            {console.log(errors,"error")}
           </form>
         </FormProvider>
       </Box>

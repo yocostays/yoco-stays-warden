@@ -55,6 +55,7 @@ export const fetchComplaintById = async (id) => {
   export const getStaffListApi = async (data) => {
     try {
       const response = await axiosInstance.post('/api/staff/maintenance-list', data);
+      console.log(response,"response")
       return response.data;
     } catch (error) {
       console.error("Error fetching users:", error);

@@ -15,6 +15,9 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  TextField,
+  TextareaAutosize,
+  Checkbox,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import PropTypes from "prop-types";
@@ -39,8 +42,14 @@ import { toast } from "react-toastify";
 import { generateOtp, verifyOtp } from "@features/auth/authSlice";
 import dayjs from "dayjs";
 import FormLabel from "@utils/FormLabel";
+import Input from "@components/customComponents/InputFields";
+import SelectBox from "@components/customComponents/CustomSelectBox";
+import RadioButton from "@components/customComponents/CustomRadio";
+import TextArea from "@components/customComponents/customTextarea";
+import moment from "moment";
 
 CreateStudentForm.propTypes = {
+  currentData: PropTypes.object.isRequired,
   methods: PropTypes.object.isRequired,
   open: PropTypes.bool.isRequired,
   setOpen: PropTypes.func.isRequired,
@@ -64,6 +73,7 @@ const Transition = React.forwardRef(function Transition(props, ref) {
 });
 
 export default function CreateStudentForm({
+  currentData,
   methods,
   open,
   setOpen,
@@ -93,13 +103,14 @@ export default function CreateStudentForm({
     control,
     watch,
     reset,
+    resetField,
+    clearErrors,
     formState: { errors },
   } = methods;
   const permanentAddress = watch("permanentAddress");
   const [avatarPreview, setAvatarPreview] = useState(
     image || "/path-to-avatar.png"
   );
-
   const mobile = watch("phoneNumber");
   const [phone, setPhone] = useState(mobile || "");
   const [sameAdd, setSameAdd] = useState(false);
@@ -160,18 +171,7 @@ export default function CreateStudentForm({
     });
   };
 
-  const handleVerifyClick = () => {
-    if (!verified) {
-      dispatch(generateOtp({ phone })).then((response) => {
-        if (response?.payload?.statusCode === 200) {
-          console.log(response, "response");
-          toast.success(response?.payload?.message || "OTP Sent!");
-          toast.success(response?.payload?.data);
-          setOpen(true);
-        }
-      });
-    }
-  };
+
 
   const handleClose = () => {
     setOpen(false);
@@ -184,20 +184,7 @@ export default function CreateStudentForm({
     reset();
   };
 
-  const handleSameAddress = () => {
-    // Toggle the state
-    setSameAdd((prev) => {
-      const newState = !prev;
-      if (newState) {
-        // If the radio button is checked, sync the address
-        setValue("currentAddress", permanentAddress);
-      } else {
-        // If the radio button is unchecked, reset the current address
-        setValue("currentAddress", "");
-      }
-      return newState;
-    });
-  };
+
 
   //   Fetch all countries on component mount
   const apiKey = "NnF1NWxKZm03bURIbHJmU3lyYnV3MXJoRk91UEZSb3FUNnRsbWdsQw==";
@@ -215,7 +202,18 @@ export default function CreateStudentForm({
           },
         };
         const response = await axios(config);
-        setAllCountryData(response?.data);
+        const data = response?.data.map((item) => {
+          return {
+            label: item?.name,
+            value: item?.id,
+            ...item
+          }
+        })
+        const selectedCountry = data.filter((item) => item?.label === currentData?.nationality)
+        setValue('country', selectedCountry[0])
+        setSelectedCountry(selectedCountry[0])
+
+        setAllCountryData(data);
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
@@ -237,6 +235,9 @@ export default function CreateStudentForm({
             },
           };
           const response = await axios(config);
+          const selectedState = response?.data.filter((item) => item?.name === currentData?.bulkState)
+          setValue('state', selectedState[0])
+          setSelectedState(selectedState[0])
           setAllStateData(response?.data);
         } catch (error) {
           console.error("Error fetching states:", error);
@@ -265,6 +266,9 @@ export default function CreateStudentForm({
             },
           };
           const response = await axios(config);
+          const selectedCity = response?.data.filter((item) => item?.name === currentData?.bulkCity)
+          setValue('city', selectedCity[0])
+          setSelectedCity(selectedCity[0])
           setAllCityData(response?.data);
         } catch (error) {
           console.error("Error fetching cities:", error);
@@ -278,8 +282,12 @@ export default function CreateStudentForm({
     fetchCities();
   }, [selectedState, selectedCountry]);
 
+
+
+
   return (
     <>
+
       {isLoading ? (
         <Card>
           <CardContent>
@@ -369,350 +377,354 @@ export default function CreateStudentForm({
             </Box>
           </Box>
 
-          <FormProvider {...methods}>
-            <form onSubmit={handleSubmit()}>
-              {/* Form Fields */}
-              <Grid container spacing={3} alignItems="center">
-                {/* Student Name */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Student Name" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="studentName"
-                  />
-                </Grid>
+          {/* <FormProvider {...methods}>
+            <form onSubmit={handleSubmit()}> */}
+          {/* Form Fields */}
+          <Grid container spacing={3} alignItems="center">
+            {/* Student Name */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Student Name" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input error={errors?.studentName?.message}
+                value={watch('studentName')}
+                placeholder="Student Name" register={register}
+                name="studentName"
+                onChange={(e) => {
+                  let value
+                  value = e?.target?.value.replace(/^\s+/, "");
+                  value = value.replace(/[^A-Za-z\s]/g, "");
+                  setValue('studentName', value.toUpperCase(), { shouldValidate: true })
 
-                {/* Phone Number */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Phone Number" required />
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                  <RHFTextField
-                    placeholder="+91"
-                    size="small"
-                    name="phoneNumber"
-                    onChange={(e) => {
-                      const value = e.target.value.replace(/[^0-9]/g, ""); // Remove non-numeric characters
-                      setValue("phoneNumber", value.slice(0, 10)); // Restrict to 10 digits
-                      setPhone(value.slice(0, 10));
-                      setVerified(false);
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <LoadingButton
-                    variant="contained"
-                    sx={{ borderRadius: "50px", fontSize: 12 }}
-                    onClick={handleVerifyClick}
-                    loading={isSubmitting}
-                    disabled={!phone}
-                    endIcon={
-                      (id ? id && verified : verified) ? (
-                        <Icon icon="hugeicons:tick-01" />
-                      ) : (
-                        <Icon icon="bitcoin-icons:cross-filled" />
-                      )
-                    }
-                  >
-                    {(id ? id && verified : verified)
-                      ? "Verified"
-                      : "Send OTP"}
-                  </LoadingButton>
-                </Grid>
-                {!verified && !id && (
-                  <Grid item xs={12} display="flex" justifyContent="center">
-                    <Typography fontSize={14} color="red">
-                      Please fill above details to proceed
-                    </Typography>
-                  </Grid>
-                )}
+                }
+                }
+              />
+            </Grid>
 
-                {/* E-mail ID */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="E-mail ID" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="studentEmail"
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            {/* Phone Number */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Phone Number" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input error={errors?.phoneNumber?.message}
+                value={watch('phoneNumber')}
+                placeholder="Phone Number" register={register}
+                name="phoneNumber"
+                phoneCode={"+91"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  let onlyDigits = value.replace(/\D/g, '');
+                  if (onlyDigits.startsWith("0")) {
+                    onlyDigits = ""; // replace with empty
+                  }
+                  setValue('phoneNumber', onlyDigits,
+                    { shouldValidate: true })
 
-                {/* Date of Birth Section */}
-                <Grid item xs={12} sm={3}>
-                  <Typography variant="body1">Date of Birth</Typography>
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <RHFDatePicker
-                    name="studentDob"
-                    control={control}
-                    size="small"
-                    format="DD/MM/YYYY"
-                    maxDate={dayjs()}
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+                }
+                }
+              />
+            </Grid>
+            <Grid item xs={12} sm={3} >
+              <FormLabel label="Aadhar Number" />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input
+                error={errors?.aadharNumber?.message}
+                value={watch("aadharNumber")}
+                placeholder="Aadhar Number"
+                register={register}
+                name={"aadharNumber"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  const onlyDigits = value.replace(/\D/g, '');
+                  setValue('aadharNumber', onlyDigits, { shouldValidate: true })
+                }}
+              />
+            </Grid>
 
-                {/* Enrollment Section */}
-                <Grid item xs={12} sm={2} textAlign="end">
-                  <FormLabel label="Enroll. No." required />
-                </Grid>
-                <Grid item xs={12} sm={3}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="enrollNo"
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            {/* E-mail ID */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="E-mail ID" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input error={errors?.studentEmail?.message}
+                value={watch('studentEmail')}
+                placeholder="E-mail" register={register}
+                name="studentEmail"
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('studentEmail', value)
+                }}
+              // disabled={!id && !verified}
+              />
+            </Grid>
 
-                {/* Blood Group */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Blood Group" required />
+            {/* Date of Birth Section */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Date of Birth" required />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Input error={errors?.studentDob?.message}
+              
+                value={moment(watch('studentDob')).format("YYYY-MM-DD")}
+                placeholder="dob" register={register}
+                name="studentDob"
+                type={"date"}
+                onChange={(e)=>{
+                  setValue('studentDob',e?.target?.value,{shouldValidate:true})
+                }}
+              // disabled={!id && !verified}
+              />
+            </Grid>
 
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <RHFAutocomplete
-                    name="bloodGroup"
-                    label="Select Blood Group"
-                    size="small"
-                    options={bloodGroupOptions}
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            {/* Enrollment Section */}
+            <Grid item xs={12} sm={3} textAlign="end">
+              <FormLabel label="Enroll. No." />
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <Input error={errors?.enrollNo?.message}
+                value={watch('enrollNo')}
+                placeholder="Enroll. No" register={register}
+                name="enrollNo"
+                type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('enrollNo', value)
+                }}
+              />
+            </Grid>
 
-                {/* Disabilities Section */}
-                <Grid item xs={12} sm={1.5} textAlign="end">
-                  <Typography variant="body1">Disabilities</Typography>
-                </Grid>
-                <Grid item xs={12} sm={2.5}>
-                  <RHFRadioGroup
-                    name="disabilities"
-                    options={[
-                      { value: "yes", label: "Yes" },
-                      { value: "no", label: "No" },
-                    ]}
-                    row
-                    spacing={2}
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            {/* Blood Group */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Blood Group" />
 
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Gender" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFRadioGroup
-                    name="gender"
-                    options={[
-                      { value: "male", label: "Male" },
-                      { value: "female", label: "Female" },
-                      { value: "other", label: "Other" },
-                    ]}
-                    row
-                    spacing={2}
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            </Grid>
+            <Grid item xs={12} sm={3}>
+              <SelectBox
+                name="bloodGroup"
+                placeholder="Select Blood Group"
+                value={watch("bloodGroup")}
+                setValue={setValue}
+                select={bloodGroupOptions}
+                error={errors?.bloodGroup?.message}
+              />
+            </Grid>
+            {console.log(errors, "errrrrrrrrrrr")}
+            <Grid item xs={12} sm={3} textAlign="end">
+              <Typography variant="body1">Disabilities</Typography>
+            </Grid>
+            <Grid item xs={12} sm={3}>
 
-                {/* Identification Mark Section */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Identification Mark" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="identificationMark"
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+              <RadioButton
+                value={String(watch('disabilities'))}
+                checked={watch('disabilities')}
+                {...register('disabilities')}
+                onChange={(e) => { setValue('disabilities', e?.target?.value) }}
+                data={[
+                  { value: "yes", label: "Yes" },
+                  { value: "no", label: "No" },
+                ]}
+              />
+            </Grid>
 
-                {/* Identification Mark Section */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Any Medical Issue" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="medicalIssue"
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Gender" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <RadioButton
+                error={errors?.gender?.message}
+                checked={watch('gender')}
+                value={watch('gender')}
+                {...register('gender')}
+                onChange={(e) => { setValue('gender', e?.target?.value, { shouldValidate: true }) }}
+                data={[
+                  { value: "male", label: "Male" },
+                  { value: "female", label: "Female" },
+                  { value: "other", label: "Other" },
+                ]} />
 
-                {/* Identification Mark Section */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Any Allergy problem" required />
+            </Grid>
 
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="allergyProblem"
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            {/* Identification Mark Section */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Identification Mark" />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input error={errors?.identificationMark?.message}
+                value={watch('identificationMark')}
+                placeholder="Identification Mark" register={register}
+                name="identificationMark"
+                type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('identificationMark', value)
+                }}
+              />
+            </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Nationality" required />
+            {/* Identification Mark Section */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Any Medical Issue" />
+            </Grid>
+            <Grid item xs={12} sm={9}>
 
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFAutocomplete
-                    size="small"
-                    name="country"
-                    label="Select Nationality"
-                    value={selectedCountry}
-                    options={allCountryData || []}
-                    getOptionLabel={(option) => option.name || ""}
-                    onChange={(_, newValue) => {
-                      setSelectedCountry(newValue);
-                      setValue("country", newValue); // Update form value
-                      setSelectedState(null);
-                      setSelectedCity(null);
-                      setAllStateData([]);
-                      setAllCityData([]);
-                    }}
-                    fullWidth
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+              <Input error={errors?.medicalIssue?.message}
+                value={watch('medicalIssue')}
+                placeholder="Mention any current medical issues" register={register}
+                name="medicalIssue"
+                type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('medicalIssue', value)
+                }}
+              />
+            </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  <Typography variant="body1">State</Typography>
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFAutocomplete
-                    size="small"
-                    name="state"
-                    label="Select State"
-                    value={selectedState}
-                    options={allStateData || []} // Ensure options is always an array
-                    getOptionLabel={(option) => option.name || ""} // Handle cases where option may not have a name
-                    onChange={(_, newValue) => {
-                      setSelectedState(newValue);
-                      setSelectedCity(null);
-                      setAllCityData([]);
-                    }}
-                    fullWidth
-                    disabled={!selectedCountry || (!id && !verified)} // Disable if no country selected
-                  />
-                </Grid>
+            {/* Identification Mark Section */}
+            {/* <Grid item xs={12} sm={3}>
+              <FormLabel label="Any Allergy problem" />
 
-                <Grid item xs={12} sm={3}>
-                  <Typography variant="body1">City</Typography>
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFAutocomplete
-                    size="small"
-                    name="city"
-                    label="Select City"
-                    value={selectedCity}
-                    options={allCityData || []} // Ensure options is always an array
-                    getOptionLabel={(option) => option.name || ""} // Handle cases where option may not have a name
-                    onChange={(_, newValue) => setSelectedCity(newValue)}
-                    fullWidth
-                    disabled={!selectedState || (!id && !verified)} // Disable if no state selected
-                  />
-                </Grid>
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <Input error={errors?.allergyProblem?.message}
+                value={watch('allergyProblem')}
+                placeholder="Allergy Problem" register={register}
+                name="allergyProblem"
+                type={"text"}
+              />
+            </Grid> */}
 
-                {/* Identification Mark Section */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Category" required />
-                </Grid>
-                <Grid item xs={12} sm={4}>
-                  <RHFAutocomplete
-                    name="category"
-                    label="Select Category"
-                    size="small"
-                    options={categoryOptions}
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            {/* Identification Mark Section */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Category" />
+            </Grid>
+            <Grid item xs={12} sm={4}>
+              <RHFAutocomplete
+                name="category"
+                label="Select Category"
+                size="small"
+                options={categoryOptions}
+              // disabled={!id && !verified}
+              />
+            </Grid>
 
-                {/* Identification Mark Section */}
-                <Grid item xs={12} sm={2} textAlign="end">
-                  <FormLabel label="Caste" required />
-                </Grid>
+            {/* Identification Mark Section */}
+            <Grid item xs={12} sm={2} textAlign="end">
+              <FormLabel label="Caste" />
+            </Grid>
 
-                <Grid item xs={12} sm={3}>
-                  <RHFTextField
-                    placeholder="Type Here"
-                    size="small"
-                    name="caste"
-                    disabled={!id && !verified}
-                  />
-                </Grid>
+            <Grid item xs={12} sm={3}>
+              <Input error={errors?.caste?.message}
+                value={watch('caste')}
+                placeholder="Caste" register={register}
+                name="caste"
+                type={"text"}
+                onChange={(e) => {
+                  const value = e?.target?.value.replace(/^\s+/, "");
+                  setValue('caste', value)
+                }}
+              />
+            </Grid>
 
-                {/* Permanent Address Section */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Permanent Address" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    name="permanentAddress"
-                    placeholder="Type Here"
-                    size="small"
-                    disabled={!id && !verified}
-                    multiline
-                    rows={2}
-                  />
-                </Grid>
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Country" required />
 
-                {/* Current Address Section */}
-                <Grid item xs={12} sm={3}>
-                  <FormLabel label="Current Address" required />
-                </Grid>
-                <Grid item xs={12} sm={9}>
-                  <RHFTextField
-                    name="currentAddress"
-                    placeholder="Type Here"
-                    size="small"
-                    disabled={!id && !verified}
-                    multiline
-                    rows={2}
-                  />
-                </Grid>
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <RHFAutocomplete
+                errors={errors?.country?.message}
+                size="small"
+                name="country"
+                label="Select Country"
+                value={selectedCountry}
+                options={allCountryData || []}
+                getOptionLabel={(option) => option.name || ""}
+                onChange={(_, newValue) => {
+                  setSelectedCountry(newValue);
+                  setValue("country", newValue, { shouldValidate: true }); // Update form value
+                  resetField('state')
+                  setSelectedState(null);
+                  setSelectedCity(null);
+                  setAllStateData([]);
+                  setAllCityData([]);
+                }}
+                fullWidth
+              // disabled={!id && !verified}
+              />
+            </Grid>
 
-                <Grid
-                  item
-                  xs={12}
-                  sm={9}
-                  sx={{
-                    marginLeft: { sm: "25%", xs: "0" },
-                    display: "flex",
-                    alignItems: "center",
-                  }}
-                >
-                  {/* Radio Icon */}
-                  <Radio
-                    size="small"
-                    sx={{
-                      color: "#b0aeae", // default color
-                      "&.Mui-checked": {
-                        color: "#5E2E8C", // color when selected
-                      },
-                    }}
-                    disabled={!id && !verified}
-                    onClick={handleSameAddress}
-                    checked={sameAdd}
-                  />
+            <Grid item xs={12} sm={3}>
+              {/* <Typography variant="body1">State</Typography> */}
+              <FormLabel label="State" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <RHFAutocomplete
+                errors={errors?.state?.message}
+                size="small"
+                name="state"
+                label="Select State"
+                value={selectedState}
+                options={allStateData || []} // Ensure options is always an array
+                getOptionLabel={(option) => option.name || ""} // Handle cases where option may not have a name
+                onChange={(_, newValue) => {
+                  setValue('state', newValue)
+                  resetField('city')
+                  setSelectedState(newValue);
+                  setSelectedCity(null);
+                  setAllCityData([]);
+                }}
+                fullWidth
+                disabled={(!watch('country'))} // Disable if no country selected
+              />
+            </Grid>
 
-                  <Typography variant="body2">
-                    Same as Permanent Address
-                  </Typography>
+            <Grid item xs={12} sm={3}>
+              {/* <Typography variant="body1">City</Typography> */}
+              <FormLabel label="City" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <RHFAutocomplete
+                errors={errors?.city?.message}
+                size="small"
+                name="city"
+                label="Select City"
+                value={selectedCity}
+                options={allCityData || []} // Ensure options is always an array
+                getOptionLabel={(option) => option.name || ""} // Handle cases where option may not have a name
+                onChange={(_, newValue) => {
+                  setValue('city', newValue, { shouldValidate: true })
+                  setSelectedCity(newValue);
+                }}
+                fullWidth
+                disabled={!watch('state')}
+              // disabled={!selectedState || (!id && !verified)} // Disable if no state selected
+              />
+            </Grid>
 
-                </Grid>
-              </Grid>
-            </form>
-          </FormProvider>
+
+
+            {/* Permanent Address Section */}
+            <Grid item xs={12} sm={3}>
+              <FormLabel label="Permanent Address" required />
+            </Grid>
+            <Grid item xs={12} sm={9}>
+              <RHFTextField
+                errors={errors?.permanentAddress?.message}
+                name="permanentAddress"
+                placeholder="Permanent Address"
+                size="small"
+                // disabled={!id && !verified}
+                multiline
+                rows={2}
+
+              />
+            </Grid>
+
+
+
+          </Grid>
+          {/* </form>
+          </FormProvider> */}
           <DialogBox
             title="OTP Verification"
             open={open}

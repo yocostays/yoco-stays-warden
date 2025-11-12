@@ -65,37 +65,38 @@ const ComplaintsTableContainer = ({
   setSelectedRows,
   isSelectedAll,
   setIsSelectedAll,
-  // filterValues,
-  // setFilterValues,
+  filterValues,
+  setFilterValues,
   searchFloorNumber,
   floorNumber,
   roomNumber,
+  handleChange
 }) => {
   const getTableHead = (selectedTab) => {
     return selectedTab === "resolved"
       ? [
-          { id: "ticketid", value: "Ticket ID" },
-          { id: "name", value: "Name" },
-          { id: "createddate", value: "Created Date" },
-          { id: "resolveddate", value: "Resolved Date" },
-          { id: "fixtime", value: "Fix Time" },
-          { id: "typesofcomplaints", value: "Types Of Complaints" },
-          { id: "complaintsreason", value: "Complaint Reason" },
-          { id: "status", value: "Status" },
-          { id: "action", value: "Action" },
-        ]
+        { id: "ticketid", value: "Ticket ID" },
+        { id: "name", value: "Name" },
+        { id: "createddate", value: "Created Date" },
+        { id: "resolveddate", value: "Resolved Date" },
+        { id: "fixtime", value: "Fix Time" },
+        { id: "typesofcomplaints", value: "Types Of Complaints" },
+        { id: "complaintsreason", value: "Complaint Reason" },
+        { id: "status", value: "Status" },
+        { id: "action", value: "Action" },
+      ]
       : [
-          { id: "ticketid", value: "Ticket ID" },
-          { id: "name", value: "Name" },
-          { id: "createddate", value: "Created Date" },
-          { id: "department", value: "Department" },
-          { id: "typeofcomplaints", value: "Type" },
-          { id: "complaintsreason", value: "Complaints Reason" },
-          { id: "floorandroom", value: "Floor & Room" },
-          { id: "assignto", value: "Assign To" },
-          { id: "status", value: "Status" },
-          { id: "action", value: "Action" },
-        ];
+        { id: "ticketid", value: "Ticket ID" },
+        { id: "name", value: "Name" },
+        { id: "createddate", value: "Created Date" },
+        { id: "department", value: "Complaint Category" },
+        { id: "typeofcomplaints", value: "Role Category" },
+        { id: "complaintsreason", value: "Complaints Reason" },
+        { id: "floorandroom", value: "Floor & Room" },
+        { id: "assignto", value: "Assign To" },
+        { id: "status", value: "Status" },
+        { id: "action", value: "Action" },
+      ];
   };
 
   const TABLE_HEAD = getTableHead(selectedTab);
@@ -268,13 +269,16 @@ const ComplaintsTableContainer = ({
   ]);
 
   useEffect(() => {
-    if (isDialogOpen && selectedRows.length > 0) {
+    // if (isDialogOpen && selectedRows.length > 0) {
+    if (isDialogOpen) {
       const payload = {
         categoryType: role,
         compaintId: selectedRows[0],
       };
+
       dispatch(getStaffListAsync(payload));
     }
+    // }
   }, [dispatch, role]);
 
   useEffect(() => {
@@ -388,6 +392,7 @@ const ComplaintsTableContainer = ({
     const selectedComplaint = complaintData.find(
       (c) => c._id === selectedRows[0]
     );
+    
 
     const payload = {
       complaintId: selectedComplaint?._id || "", // Ensure correct complaint ID
@@ -398,7 +403,8 @@ const ComplaintsTableContainer = ({
     const payloadForStatus = {
       complaintId: selectedComplaint?._id || "",
       remark: remark || "",
-      complainStatus: "escalated",
+      // complainStatus: "escalated",
+      complainStatus: selectedResolveOption,
       attachments: [],
     };
 
@@ -410,7 +416,8 @@ const ComplaintsTableContainer = ({
             updateComplaintStatusThunk(payloadForStatus)
           );
           if (res?.payload?.statusCode === 200) {
-            dispatch(
+           handleGetComplaintsData() 
+          dispatch(
               getComplaints({
                 page: page + 1,
                 limit: rowsPerPage,
@@ -586,8 +593,8 @@ const ComplaintsTableContainer = ({
                             `${dayjs(item.createdAt)
                               .utc()
                               .format("Do MMM, YYYY")} | ${dayjs(item.createdAt)
-                              .utc()
-                              .format("hh:mm A")}`) ||
+                                .utc()
+                                .format("hh:mm A")}`) ||
                             "--"}
                         </TableCell>
                         <TableCell sx={{ minWidth: { sm: 190, xs: 150 } }}>
@@ -595,10 +602,10 @@ const ComplaintsTableContainer = ({
                             `${dayjs(item.resolvedDate)
                               .utc()
                               .format("Do MMM, YYYY")} | ${dayjs(
-                              item.resolvedDate
-                            )
-                              .utc()
-                              .format("hh:mm A")}`) ||
+                                item.resolvedDate
+                              )
+                                .utc()
+                                .format("hh:mm A")}`) ||
                             "--"}
                         </TableCell>
                         <TableCell>{item.resolvedTime || "--"}</TableCell>
@@ -695,8 +702,8 @@ const ComplaintsTableContainer = ({
                             `${dayjs(item.createdAt)
                               .utc()
                               .format("Do MMM, YYYY")} | ${dayjs(item.createdAt)
-                              .utc()
-                              .format("hh:mm A")}`) ||
+                                .utc()
+                                .format("hh:mm A")}`) ||
                             "--"}
                         </TableCell>
                         <TableCell sx={{ fontSize: "16px", fontWeight: "500" }}>
@@ -760,7 +767,7 @@ const ComplaintsTableContainer = ({
                                 objectFit: "cover",
                                 marginRight: 8,
                               }}
-                              // onClick={() => setIsDialogOpen(true)}
+                            // onClick={() => setIsDialogOpen(true)}
                             />
                             <Typography>
                               {item.assignedStaff || "--"}
@@ -916,13 +923,13 @@ const ComplaintsTableContainer = ({
                             option.value === "escalated") ||
                           selectedTab === option.value
                         }
-                        // disabled={
-                        //   complaintById?.complainStatus === option.value
-                        // }
-                        // disabled={
-                        //   (selectedRows.length > 1 && option.value === "escalated") ||
-                        //   (option.value === "escalated" && isStaffAssigned === null)
-                        // }
+                      // disabled={
+                      //   complaintById?.complainStatus === option.value
+                      // }
+                      // disabled={
+                      //   (selectedRows.length > 1 && option.value === "escalated") ||
+                      //   (option.value === "escalated" && isStaffAssigned === null)
+                      // }
                       >
                         {option.label}
                       </MenuItem>
@@ -1122,6 +1129,9 @@ const ComplaintsTableContainer = ({
         </Box>
       </CustomPagination>
       <ComplaintsSideDrawer
+        setFilterValues={setFilterValues}
+        filterValues={filterValues}
+        handleChange={handleChange}
         drawerOpen={drawerOpen}
         handleCloseDrawer={handleCloseDrawer}
         isFullScreen={isFullScreen}

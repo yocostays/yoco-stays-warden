@@ -69,7 +69,8 @@ const initialState = {
   selectedAcademicOption: "",
   searchUser: "",
   sortUserFilter: "",
-  studentPagination : 0
+  studentPagination: 0,
+  vehicleData: []
 };
 
 // Thunk for fetching users
@@ -375,9 +376,29 @@ const usersSlice = createSlice({
     setSortUserFilter: (state, action) => {
       state.sortUserFilter = action?.payload
     },
-    setStudentPagination :(state,action)=>{
+    setStudentPagination: (state, action) => {
       state.studentPagination = action?.payload
-    }
+    },
+    setVehicleData: (state, action) => {
+      
+        state.vehicleData.push(action.payload);
+    },
+    deleteVehicleDetails: (state, action) => {
+      state.vehicleData = [];
+    },
+    updateVehicleData: (state, action) => {
+      state.vehicleData[action.payload?.index] = {
+        ...state.vehicleData[action.payload?.index],
+        ...action.payload
+      };
+    },
+
+    removeVehicleData: (state, action) => {
+      const index = action.payload; // payload = index to remove
+      if (index >= 0 && index < state.vehicleData.length) {
+        state.vehicleData.splice(index, 1); // removes 1 item at index
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -806,6 +827,6 @@ export const selectLoading = (state) => state.users.loading;
 export const selectStaffByIdLoading = (state) => state.users.staffByIdLoading;
 export const selectError = (state) => state.users.error;
 
-export const { clearUserName, setStaffSelection, setSelectedTab, setSelectedAcademicOption, setSearch, setSortUserFilter ,setStudentPagination} = usersSlice.actions;
+export const { clearUserName, deleteVehicleDetails, setStaffSelection, removeVehicleData, updateVehicleData, setVehicleData, setSelectedTab, setSelectedAcademicOption, setSearch, setSortUserFilter, setStudentPagination } = usersSlice.actions;
 // Export the reducer
 export default usersSlice.reducer;
