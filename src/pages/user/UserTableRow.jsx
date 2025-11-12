@@ -48,7 +48,6 @@ const UserTableRow = ({
                 checked={isRowSelected(row?._id)}
                 onChange={(event) => handleRowSelect(event, row._id)} // Trigger row select/deselect
               />
-              {console.log(row,"rowwwwwwwwwwwwwww")}
             </TableCell>
             <TableCell
               sx={{

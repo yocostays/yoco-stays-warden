@@ -159,10 +159,8 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
   }, [watch('vehicleType')])
 
   // useEffect(() => {
-  //   console.log(vehicleDetails?.length,"lengthhhhhhhhhhhhhhh")
   //   if (vehicleDetails && vehicleDetails.length > 0 && id) {
   //     vehicleDetails.forEach((item) => {
-  //       console.log(item,"itemmmmmmmmmmmmmmmmm")
   //       dispatch(setVehicleData(item));
   //     });
   //   }
@@ -173,7 +171,6 @@ const VehicleForm = ({ vehicleDetails, setVehicleDetails, verified, id }) => {
       dispatch(deleteVehicleDetails())
     }
   }, [dispatch])
-
 
   return (
     <Stack spacing={2} my={2}>

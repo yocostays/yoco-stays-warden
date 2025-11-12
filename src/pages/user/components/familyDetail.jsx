@@ -82,7 +82,6 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
     if (!isFathersNoVerified) {
       dispatch(generateOtp({ phone, })).then((response) => {
         if (response?.payload?.statusCode === 200) {
-          console.log(response, 'response');
           toast.success(response?.payload?.message || "OTP Sent!");
           toast.success(response?.payload?.data);
           setOpen(true)

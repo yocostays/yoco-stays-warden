@@ -70,6 +70,7 @@ export default function HostelDetailsForm({
   const [dialogOpen, setDialogOpen] = useState(false);
   const [roomNumberInput, setRoomNumberInput] = useState("");
   const [bedNumber, setBedNumber] = useState({})
+  const [roomNo, setRoomNo] = useState({})
   const [hostelDetails, setHostelDetails] = useState([])
   const [roomNumber, setRoomNumber] = useState()
 
@@ -172,18 +173,20 @@ export default function HostelDetailsForm({
             value: Number(item?.roomNumber),
             ...item
           }
-        })
+        }).concat([
+          { label: hostel?.roomNumber, value: Number(hostel?.roomNumber) }
+        ])
+
         setValue('floor', rooms, { shouldValidate: true })
         const bedList = rooms?.filter((item) => item?.roomNumber === hostel?.roomNumber)
-        const bedOptions = bedList[0]?.bedNumbers?.map(item => ({
+        let bedOptions = bedList[0]?.bedNumbers?.map(item => ({
           label: item.bedNumber,
-          value: Number(item.bedNumber),
-        })).concat([
-          { label: hostel?.bedNumber, value: Number(hostel?.bedNumber) }
-        ]) || [];
+          value: item.bedNumber,
+        })) || [];
         setBedNumber({ label: hostel?.bedNumber, value: hostel?.bedNumber })
+        setRoomNo({ label: hostel?.roomNumber, value: hostel?.roomNumber })
         setRoomNumber(hostel?.roomNumber)
-        setValue("rooms", bedOptions);
+        setValue("rooms", bedOptions.concat([{ label: hostel?.bedNumber, value: Number(hostel?.bedNumber) }]));
         setValue('roomNumber', { label: hostel?.roomNumber, value: hostel?.roomNumber })
         setValue('bedNumber', { label: hostel?.bedNumber, value: hostel?.bedNumber })
         setValue('selectWing', hostel?.buildingNumber)
@@ -282,13 +285,24 @@ export default function HostelDetailsForm({
                           setValue('bedNumber', null)
                           setValue('rooms', [])
                           setValue('floor', [])
-                          const rooms = floor?.rooms.map((item) => {
-                            return {
-                              label: String(item?.roomNumber),
-                              value: item?.roomNumber,
-                              ...item
-                            }
-                          })
+                          let rooms
+                          if (id) {
+                            rooms = floor?.rooms.map((item) => {
+                              return {
+                                label: String(item?.roomNumber),
+                                value: item?.roomNumber,
+                                ...item
+                              }
+                            }).concat(roomNo) || []
+                          } else {
+                            rooms = floor?.rooms.map((item) => {
+                              return {
+                                label: String(item?.roomNumber),
+                                value: item?.roomNumber,
+                                ...item
+                              }
+                            })
+                          }
                           setValue('floor', rooms, { shouldValidate: true })
                           setSelectedFloor(floor?.floorNumber);
                           setIsVacant(false);
@@ -317,7 +331,7 @@ export default function HostelDetailsForm({
                         }}
                       // disabled={!id && !verified}
                       >
-                        {floor?.floorNumber || ""}
+                        {floor?.floorNumber || "0"}
                       </Button>
                     ))}
                   </Box>
@@ -348,25 +362,15 @@ export default function HostelDetailsForm({
                       setValue('rooms', [])
                       setValue("roomNumber", value, { shouldValidate: true });
                       setValue('bedNumber', null)
-
                       // prepare bed options based on selected room
                       let bedOptions
-                      if (id && Number(value?.roomNumber === Number(roomNumber))) {
-                        bedOptions = value?.bedNumbers?.map(item => ({
-                          label: item.bedNumber,
-                          value: item.bedNumber
-                        })).concat(bedNumber) || [];
-                      
 
-                        console.log(bedOptions, "bedOptions")
-                      } else {
-                        bedOptions = value?.bedNumbers?.map(item => ({
-                          label: item.bedNumber,
-                          value: item.bedNumber
-                        })) || []
-                      }
+                      bedOptions = value?.bedNumbers?.map(item => ({
+                        label: item.bedNumber,
+                        value: item.bedNumber
+                      })) || [];
 
-                      setValue("rooms", bedOptions); // ✅ update beds list
+                      setValue("rooms", id && Number(value?.value)===Number(roomNumber) ? bedOptions.concat(bedNumber) : bedOptions); // ✅ update beds list
 
                     }}
                   />

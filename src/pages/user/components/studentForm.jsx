@@ -465,13 +465,15 @@ export default function CreateStudentForm({
             </Grid>
             <Grid item xs={12} sm={3}>
               <Input error={errors?.studentDob?.message}
+              
                 value={moment(watch('studentDob')).format("YYYY-MM-DD")}
                 placeholder="dob" register={register}
                 name="studentDob"
                 type={"date"}
-                max={new Date().toISOString().split('T')[0]}
+                onChange={(e)=>{
+                  setValue('studentDob',e?.target?.value,{shouldValidate:true})
+                }}
               // disabled={!id && !verified}
-
               />
             </Grid>
 
@@ -507,7 +509,6 @@ export default function CreateStudentForm({
                 error={errors?.bloodGroup?.message}
               />
             </Grid>
-            {console.log(watch('bloodGroup'), "bloodGroup")}
             {console.log(errors, "errrrrrrrrrrr")}
             <Grid item xs={12} sm={3} textAlign="end">
               <Typography variant="body1">Disabilities</Typography>

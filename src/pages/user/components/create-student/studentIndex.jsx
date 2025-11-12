@@ -179,14 +179,14 @@ export default function StudentIndex() {
   const {
     handleSubmit,
     formState: { errors },
+    setValue,
   } = methods;
   const handleTabChange = (index) => {
     setSelectedTab(index); // Select the clicked tab
     sectionRefs[index]?.current?.scrollIntoView({ behavior: "smooth" }); // Smoothly scroll to the selected section
   };
-  console.log(currentData, "errorssssssssssssssssssssssss")
+  
   const onSubmit = (values) => {
-
     if (openOtpModal === false || openFatherOtpModal === false) {
       const vehicles = vehicleData.map((item) => ({
         vechicleType: item?.vechicleType || null,
@@ -269,7 +269,6 @@ export default function StudentIndex() {
         bedNumber: String(values?.bedNumber?.label),
         billingCycle: values?.billingCycle?.value,
       };
-      console.log(payload,"payloadddddddddd")
       id
         ? dispatch(updateResidentAsync({ id, data: payload })).then((res) => {
           if (res?.payload?.statusCode === 200) {
@@ -291,7 +290,6 @@ export default function StudentIndex() {
             ...payload
           })
         ).then((res) => {
-            console.log(res?.payload,"payloadddddddddddd")
 
           if (res?.payload?.statusCode === 200) {
             toast.success(res?.payload?.message);
@@ -348,9 +346,9 @@ export default function StudentIndex() {
     if (id && currentData) {
       setVehicleDetails(currentData?.vechicleDetails);
       dispatch(deleteVehicleDetails())
-      // currentData?.vechicleDetails?.map((item)=>{
-      //   dispatch(setVehicleData(item));
-      // })
+      currentData?.vechicleDetails?.map((item)=>{
+        dispatch(setVehicleData(item));
+      })
       setVerified(true);
       setIsFathersNoVerified(true);
 

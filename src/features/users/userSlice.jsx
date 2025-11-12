@@ -380,10 +380,11 @@ const usersSlice = createSlice({
       state.studentPagination = action?.payload
     },
     setVehicleData: (state, action) => {
-      state.vehicleData.push(action.payload);
+      
+        state.vehicleData.push(action.payload);
     },
     deleteVehicleDetails: (state, action) => {
-      state.vehicleData.push([]);
+      state.vehicleData = [];
     },
     updateVehicleData: (state, action) => {
       state.vehicleData[action.payload?.index] = {
@@ -826,6 +827,6 @@ export const selectLoading = (state) => state.users.loading;
 export const selectStaffByIdLoading = (state) => state.users.staffByIdLoading;
 export const selectError = (state) => state.users.error;
 
-export const { clearUserName,deleteVehicleDetails, setStaffSelection, removeVehicleData, updateVehicleData, setVehicleData, setSelectedTab, setSelectedAcademicOption, setSearch, setSortUserFilter, setStudentPagination } = usersSlice.actions;
+export const { clearUserName, deleteVehicleDetails, setStaffSelection, removeVehicleData, updateVehicleData, setVehicleData, setSelectedTab, setSelectedAcademicOption, setSearch, setSortUserFilter, setStudentPagination } = usersSlice.actions;
 // Export the reducer
 export default usersSlice.reducer;
