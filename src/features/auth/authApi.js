@@ -70,3 +70,31 @@ export const verifyOtpAsync = async (body) => {
     throw error;
   }
 };
+
+export const generateOtpMail = async (body) => {
+  try {
+    const response = await axiosInstance.post("/api/user/request-account-deletion", body);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const verifyGmailOtp = async (body) => {
+  try {
+    const response = await axiosInstance.post("/api/user/request-otp-verify", body);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
+export const userDeactivateRequest = async (body) => {
+  try {
+    const response = await axiosInstance.patch("/api/user/request-account-deactivate", body);
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
+};
+
