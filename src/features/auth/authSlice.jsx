@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginApi, logoutApi, refreshTokenApi, fetchOTP, resetCredentials, generateOtpAsync, verifyOtpAsync } from "./authApi"; // Ensure refreshTokenApi is imported
+import { loginApi, logoutApi, refreshTokenApi, fetchOTP, resetCredentials, generateOtpAsync, verifyOtpAsync, generateOtpMail, verifyGmailOtp, userDeactivateRequest } from "./authApi"; // Ensure refreshTokenApi is imported
 
 // Thunk for handling login
 export const login = createAsyncThunk(
@@ -91,6 +91,46 @@ export const verifyOtp = createAsyncThunk(
     }
   }
 );
+
+// Generate OTP
+export const sendOtpMail = createAsyncThunk(
+  "auth/sendOtpMail",
+  async (data, thunkAPI) => {
+    try {
+      const response = await generateOtpMail(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message || "Otp not generated");
+    }
+  }
+);
+
+// Verify OTP
+export const verifyOtpMail = createAsyncThunk(
+  "auth/verifyOtpMail",
+  async (data, thunkAPI) => {
+    try {
+      const response = await verifyGmailOtp(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message || "Otp not generated");
+    }
+  }
+);
+
+// Generate OTP
+export const userAccDeactivateRequest = createAsyncThunk(
+  "auth/userAccDeactivateRequest",
+  async (data, thunkAPI) => {
+    try {
+      const response = await userDeactivateRequest(data);
+      return response;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message || "Otp not generated");
+    }
+  }
+);
+
 
 const authSlice = createSlice({
   name: "auth",
@@ -230,6 +270,36 @@ const authSlice = createSlice({
       .addCase(verifyOtp.rejected, (state) => {
         state.isVerifying = false;
       });
+
+    builder
+      .addCase(sendOtpMail.pending, (state) => {
+        state.isSubmitting = true;
+      })
+      .addCase(sendOtpMail.fulfilled, (state) => {
+        state.isSubmitting = false;
+      })
+      .addCase(sendOtpMail.rejected, (state) => {
+        state.isSubmitting = false;
+      });
+
+    builder
+      .addCase(verifyOtpMail.pending, (state) => {
+        state.isSubmitting = true;
+      })
+      .addCase(verifyOtpMail.fulfilled, (state) => {
+        state.isSubmitting = false;
+      })
+      .addCase(verifyOtpMail.rejected, (state) => {
+        state.isSubmitting = false;
+      });
+
+    builder.addCase(userAccDeactivateRequest.pending, (state) => {
+      state.isSubmitting = true
+    }).addCase(userAccDeactivateRequest.fulfilled, (state) => {
+      state.isSubmitting = false
+    }).addCase(userAccDeactivateRequest.rejected, (state) => {
+      state.isSubmitting = false
+    })
   },
 });
 

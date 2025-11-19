@@ -56,10 +56,11 @@ import StudentDetails from "@pages/user/StudentDetails";
 import MessManagementAddWastage from "@pages/newmessmanagement/components/MessManagementAddWastage";
 import AddMissedBookingPage from "@pages/newmessmanagement/components/missedBooking/AddMissedBookingPage";
 import Complaints from "@pages/complaints/components/Complaints";
+import DeleteAccountIndex from "@pages/deleteAccount/DeleteAccountIndex";
 
 function App() {
   const location = useLocation();
-  const noLayoutRoutes = ["/", "/forgot-password", "/page-not-found"]; // Add other routes if needed
+  const noLayoutRoutes = ["/", "/forgot-password", "/page-not-found","/request-user-account-delete"]; // Add other routes if needed
 
   // Required later for environment checkup
   // console.log('Current Environment:', import.meta.env.MODE);
@@ -88,6 +89,7 @@ function App() {
 
   return (
     <>
+
       <RemoveTrailingSlash />
       {!noLayoutRoutes.includes(location.pathname) && (
         <Layout>
@@ -543,11 +545,18 @@ function App() {
             <LoginIndex />
           </LoginPrivate>
         } />
+        <Route path="request-user-account-delete" element={
+          <LoginPrivate>
+            <DeleteAccountIndex />
+          </LoginPrivate>
+        } />
+
         <Route path="forgot-password" element={
           <LoginPrivate>
             <ForgotPassword />
           </LoginPrivate>
         } />
+
         <Route path="page-not-found" element={<Page404 />} />
         {/* <Route path="chart-test" element={<ChartTest />} /> */}
       </Routes>
