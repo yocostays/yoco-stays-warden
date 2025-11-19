@@ -209,7 +209,7 @@ export default function CreateStudentForm({
             ...item
           }
         })
-        const selectedCountry = data.filter((item) => item?.label === currentData?.nationality)
+        const selectedCountry = data.filter((item) => item?.label.toLowerCase() === currentData?.bulkCountry.toLowerCase())
         setValue('country', selectedCountry[0])
         setSelectedCountry(selectedCountry[0])
 
@@ -235,7 +235,7 @@ export default function CreateStudentForm({
             },
           };
           const response = await axios(config);
-          const selectedState = response?.data.filter((item) => item?.name === currentData?.bulkState)
+          const selectedState = response?.data.filter((item) => item?.name?.toLowerCase() === currentData?.bulkState?.toLowerCase())
           setValue('state', selectedState[0])
           setSelectedState(selectedState[0])
           setAllStateData(response?.data);
@@ -266,7 +266,7 @@ export default function CreateStudentForm({
             },
           };
           const response = await axios(config);
-          const selectedCity = response?.data.filter((item) => item?.name === currentData?.bulkCity)
+          const selectedCity = response?.data.filter((item) => item?.name?.toLowerCase() === currentData?.bulkCity?.toLowerCase())
           setValue('city', selectedCity[0])
           setSelectedCity(selectedCity[0])
           setAllCityData(response?.data);
@@ -465,13 +465,13 @@ export default function CreateStudentForm({
             </Grid>
             <Grid item xs={12} sm={3}>
               <Input error={errors?.studentDob?.message}
-              
+
                 value={moment(watch('studentDob')).format("YYYY-MM-DD")}
                 placeholder="dob" register={register}
                 name="studentDob"
                 type={"date"}
-                onChange={(e)=>{
-                  setValue('studentDob',e?.target?.value,{shouldValidate:true})
+                onChange={(e) => {
+                  setValue('studentDob', e?.target?.value, { shouldValidate: true })
                 }}
               // disabled={!id && !verified}
               />
