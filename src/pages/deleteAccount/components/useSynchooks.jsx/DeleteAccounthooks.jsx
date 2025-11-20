@@ -13,8 +13,8 @@ const DeleteAccounthooks = (props) => {
     const [otpVerified, setOtpVerified] = useState(false)
     const [user, setUser] = useState([])
     const [timer, setTimer] = useState(0);
-    const [requestMessage,setRequestMessage] = useState('')
-    const [requestSent,setRequestSent] =useState(false)
+    const [requestMessage, setRequestMessage] = useState('')
+    const [requestSent, setRequestSent] = useState(false)
 
     const onSubmit = (data) => {
         try {
@@ -55,9 +55,13 @@ const DeleteAccounthooks = (props) => {
                     setOtpVerified(true)
                     setTimer(0)
                 }
+            }).catch((err) => {
+                toast.error("Something went wrong");
             })
+                .finally(() => {
+                    setLoader(false); // ALWAYS stops loader
+                });
         } catch (error) {
-            console.log(error,"errrrrrrrrrrrrrrrrrr")
             setLoader(false)
         }
     };
@@ -104,7 +108,12 @@ const DeleteAccounthooks = (props) => {
                     setRequestSent(true)
                     setRequestMessage(response?.payload?.message)
                 }
+            }).catch((err) => {
+                toast.error("Something went wrong");
             })
+                .finally(() => {
+                    setLoader(false); // ALWAYS stops loader
+                });
         } catch (error) {
             setLoader(false)
         }

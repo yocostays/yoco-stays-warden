@@ -744,9 +744,8 @@ const ComplaintsTableContainer = ({
                             minWidth: "100px",
                           }}
                         >
-                          {item.floorNumber && item.roomNumber
-                            ? `${item.floorNumber} / ${item.roomNumber}`
-                            : "--"}
+                          {`${item.floorNumber} / ${item.roomNumber}`
+                            ?? "--"}
                         </TableCell>
                         <TableCell>
                           {/* Assignee Image */}
