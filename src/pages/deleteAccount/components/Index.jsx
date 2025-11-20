@@ -18,7 +18,7 @@ import { Controller, useForm } from "react-hook-form";
 import Input from "@components/customComponents/InputFields";
 import DeleteAccounthooks from "./useSynchooks.jsx/DeleteAccounthooks";
 import { MuiOtpInput } from 'mui-one-time-password-input'
-
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
 
 export default function DeleteuserAccount() {
 
@@ -60,7 +60,7 @@ export default function DeleteuserAccount() {
         <>
             <Box
                 sx={{
-                    minHeight: "100vh",
+                    height: { sm: "100vh", xs: "100%" },
                     width: "100%",
                     position: "relative",
                 }}
@@ -87,16 +87,16 @@ export default function DeleteuserAccount() {
                         </Box>
                     </Box>
                     {/* Main content */}
-                    <Box sx={{ display: "flex", height: "70vh" }}>
+                    <Box sx={{ display: { xs: "block", sm: "flex" }, height: { sm: "75vh", xs: "100%" }, }}>
                         <Box sx={{
-                            width: "60vw",
+                            width: { sm: "60vw", xs: "100vw" },
                             overflow: "auto",
                             border: "1px solid #dfdbe8",
                             borderRadius: "13px",
                         }}>
                             <Box sx={{ p: 3 }}>
                                 {/* Title */}
-                                <Typography fontSize={"16px"} fontWeight={600} gutterBottom>
+                                <Typography fontSize={"18px"} fontWeight={600} gutterBottom>
                                     Request Account Deletion
                                 </Typography>
 
@@ -189,8 +189,8 @@ export default function DeleteuserAccount() {
                         </Box>
                         <Box sx={{
                             bordeer: "1px",
-                            width: "40vw",
-                            height: "70vh"
+                            height: "75vh",
+                            width: { sm: "40vw", xs: "100vw" },
                         }}>
                             <Paper
                                 elevation={0}
@@ -199,7 +199,7 @@ export default function DeleteuserAccount() {
                                     border: "1px solid #E1D9F7",
                                     p: 4,
                                     width: "100%",
-                                    height:"70vh"
+                                    height: "75vh"
                                 }}
                             >
                                 {/* Email */}
@@ -281,7 +281,10 @@ export default function DeleteuserAccount() {
                                                                         <MuiOtpInput
                                                                             {...field}
                                                                             length={6}
-                                                                            disable={loader}
+                                                                            // disabled={loader || rest?.otpVerified}
+                                                                            TextFieldsProps={{
+                                                                                disabled: loader || rest?.otpVerified,        // <-- MUST BE HERE
+                                                                            }}
                                                                             sx={{ gap: 1 }}
                                                                             onChange={(val) => {
                                                                                 // Only digits allowed
@@ -314,8 +317,8 @@ export default function DeleteuserAccount() {
                                                                     variant="contained"
                                                                     sx={{
                                                                         borderRadius: "20px",
-                                                                        backgroundColor: "#D0D0D0",
-                                                                        color: "#555",
+                                                                        backgroundColor: "#674d9f",
+                                                                        color: "#FFFF",
                                                                         textTransform: "none",
                                                                         "&:disabled": {
                                                                             backgroundColor: "#D0D0D0",
@@ -330,18 +333,19 @@ export default function DeleteuserAccount() {
                                                                 {!rest?.otpVerified && (
                                                                     <Button
                                                                         variant="contained"
-                                                                        disabled={rest?.timer !== 0}
+                                                                        disabled={rest?.timer !== 0 || loader}
                                                                         sx={{
                                                                             borderRadius: "20px",
-                                                                            backgroundColor: "#D0D0D0",
-                                                                            color: "#555",
+                                                                            backgroundColor: "#674d9f",
+                                                                            color: "#FFFF",
                                                                             textTransform: "none",
                                                                             "&:disabled": {
                                                                                 backgroundColor: "#D0D0D0",
                                                                                 color: "#666",
                                                                             },
                                                                         }}
-                                                                    // onClick={() => rest?.setTimer()}
+                                                                        onClick={handleSubmit(onSubmit)}
+
                                                                     >
                                                                         Resend OTP
                                                                     </Button>
@@ -354,10 +358,20 @@ export default function DeleteuserAccount() {
                                                             )}
                                                         </Box>
                                                         {rest?.otpVerified && (
-                                                            <Box>
-                                                                <Typography>
-                                                                    OTP Verified
-                                                                </Typography>
+                                                            <Box
+                                                                sx={{
+                                                                    display: "flex",
+                                                                    alignItems: "center",
+                                                                    gap: 1,
+                                                                    backgroundColor: "#E8F5E9", // light green
+                                                                    color: "#2E7D32", // green text
+                                                                    padding: "8px 12px",
+                                                                    borderRadius: "8px",
+                                                                    // mt: 1
+                                                                }}
+                                                            >
+                                                                <CheckCircleOutlineIcon sx={{ fontSize: 20 }} />
+                                                                <Typography fontWeight={500}>OTP Verified</Typography>
                                                             </Box>
                                                         )}
                                                     </Box>
@@ -392,32 +406,41 @@ export default function DeleteuserAccount() {
                                             </Box>
                                         </Typography>
                                         {rest?.requestSent && (
-                                            <Typography color="text.secondary" mb={3}>
-                                                <Box
-                                                    component="span"
-                                                    sx={{
-                                                        fontSize: "16px",
-                                                        fontWeight: 500,
-                                                        display: "inline"
-                                                    }}
-                                                >
-                                                    {rest?.requestMessage}
-                                                </Box>
-                                            </Typography>
+                                            <Box sx={{ textAlign: "center", my: 3, height:"5vh" }}>
+                                                <Typography color="text.secondary" mb={3}>
+                                                    <Box
+                                                        component="span"
+
+                                                        sx={{
+                                                            fontSize: "16px",
+                                                            fontWeight: 500,
+                                                            display: "inline",
+                                                            alignItems: "center",
+                                                            gap: 1,
+                                                            backgroundColor: "#E8F5E9", // light green
+                                                            color: "#2E7D32", // green text
+                                                            padding: "8px 12px",
+                                                            borderRadius: "8px",
+                                                        }}
+                                                    >
+                                                        {rest?.requestMessage}
+                                                    </Box>
+                                                </Typography>
+                                            </Box>
 
                                         )}
 
                                         <Box textAlign="center">
                                             <Button
                                                 variant="contained"
-                                                disabled={!rest?.otpVerified || rest?.requestSent}
+                                                disabled={loader || !rest?.otpVerified || rest?.requestSent}
                                                 onClick={rest?.onSubmitRequest}
                                                 sx={{
                                                     width: 220,
                                                     height: 48,
                                                     borderRadius: "25px",
-                                                    backgroundColor: "#E0E0E0",
-                                                    color: "#9E9E9E",
+                                                    backgroundColor: "#674d9f",
+                                                    color: "#FFFF",
                                                     textTransform: "none",
                                                     fontSize: "16px",
                                                     "&:disabled": {
@@ -443,8 +466,13 @@ export default function DeleteuserAccount() {
                     <Box
                         sx={{
                             width: "100%",
-                            textAlign: "center",
                             borderTop: "1px solid #ddd",
+                            display: { xs: "block", sm: "flex" },
+                            justifyContent: "space-between", // left & right ends
+                            alignItems: "center",
+                            py: 2,
+                            px: 5,
+                            textAlign: { xs: "center", sm: "left" }
                         }}
                     >
                         <Typography variant="body2" color="text.secondary" mb={1}>
@@ -463,9 +491,6 @@ export default function DeleteuserAccount() {
                             </Link>
                         </Box>
 
-                        <Typography variant="caption" color="text.secondary">
-                            YOCO Stays © 2025
-                        </Typography>
                     </Box>
                 </Box>
 

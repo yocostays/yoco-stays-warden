@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginApi, logoutApi, refreshTokenApi, fetchOTP, resetCredentials, generateOtpAsync, verifyOtpAsync, generateOtpMail, verifyGmailOtp, userDeactivateRequest } from "./authApi"; // Ensure refreshTokenApi is imported
+import { toast } from "react-toastify";
 
 // Thunk for handling login
 export const login = createAsyncThunk(
@@ -100,6 +101,7 @@ export const sendOtpMail = createAsyncThunk(
       const response = await generateOtpMail(data);
       return response;
     } catch (error) {
+      toast.error(error?.message)
       return thunkAPI.rejectWithValue(error.message || "Otp not generated");
     }
   }
@@ -113,6 +115,7 @@ export const verifyOtpMail = createAsyncThunk(
       const response = await verifyGmailOtp(data);
       return response;
     } catch (error) {
+      toast.error(error?.message)
       return thunkAPI.rejectWithValue(error.message || "Otp not generated");
     }
   }
@@ -124,9 +127,17 @@ export const userAccDeactivateRequest = createAsyncThunk(
   async (data, thunkAPI) => {
     try {
       const response = await userDeactivateRequest(data);
-      return response;
+      // 🔥 If backend sends statusCode != 200 → treat as error
+      if (response?.statusCode !== 200) {
+        return thunkAPI.rejectWithValue(response);
+      }
+
+      return response; // SUCCESS
+      // return response;
     } catch (error) {
-      return thunkAPI.rejectWithValue(error.message || "Otp not generated");
+      toast.error(error?.message)
+      return thunkAPI.rejectWithValue(error?.response?.data || error?.message);
+      // return thunkAPI.rejectWithValue(error.message || "Otp not generated");
     }
   }
 );
