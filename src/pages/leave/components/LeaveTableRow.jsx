@@ -119,9 +119,8 @@ const LeaveTableRow = ({
               </Tooltip>
             </TableCell>
             <TableCell sx={{ minWidth: 130 }}>
-              {row?.floorNumber && row?.roomNumber
-                ? `${row.floorNumber}/${row.roomNumber}`
-                : "-"}
+              { `${row.floorNumber}/${row.roomNumber}`
+                ?? "-"}
             </TableCell>
             <TableCell>
               <Button
