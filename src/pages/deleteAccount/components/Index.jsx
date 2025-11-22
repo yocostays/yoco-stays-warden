@@ -19,6 +19,8 @@ import Input from "@components/customComponents/InputFields";
 import DeleteAccounthooks from "./useSynchooks.jsx/DeleteAccounthooks";
 import { MuiOtpInput } from 'mui-one-time-password-input'
 import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import HourglassTopIcon from '@mui/icons-material/HourglassTop';
+import CircularProgress from '@mui/material/CircularProgress';
 
 export default function DeleteuserAccount() {
 
@@ -85,8 +87,43 @@ export default function DeleteuserAccount() {
                         >
                             <img src={Logo} width={"80"} height={"80"} alt="Yoco Stays" className="logo-image" />
                         </Box>
+                        <Box sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "space-between",
+                            marginY: "auto",
+                            padding: 2
+                        }}>
+                            <Box />
+                            <Box sx={{
+                                display: "flex",
+                                justifyContent:"space-around",
+                                alignItems: "center",
+                            }}>
+                                <HourglassTopIcon height="20" sx={{fontSize: 20, color: "white" }} />
+
+                                <Box sx={{
+                                    marginY:"auto",
+                                    color: "white",
+                                    width: "40px",    
+                                }}>{rest?.sessionTimer}</Box>
+                            </Box>
+                        </Box>
+
                     </Box>
                     {/* Main content */}
+                    {rest?.sessionTimer === 0 ? <Box
+                        sx={{
+                            // width: { sm: "60vw", xs: "100vw" },
+                            overflow: "auto",
+                            border: "1px solid #dfdbe8",
+                            borderRadius: "13px",
+                            height: { sm: "74vh", xs: "100%" },
+                            display:"flex",
+                            justifyContent:"center",
+                            alignItems:"center"
+                        }}
+                    ><CircularProgress /></Box> :
                     <Box sx={{ display: { xs: "block", sm: "flex" }, height: { sm: "75vh", xs: "100%" }, }}>
                         <Box sx={{
                             width: { sm: "60vw", xs: "100vw" },
@@ -406,7 +443,7 @@ export default function DeleteuserAccount() {
                                             </Box>
                                         </Typography>
                                         {rest?.requestSent && (
-                                            <Box sx={{ textAlign: "center", my: 3, height:"5vh" }}>
+                                            <Box sx={{ textAlign: "center", my: 3, height: "5vh" }}>
                                                 <Typography color="text.secondary" mb={3}>
                                                     <Box
                                                         component="span"
@@ -461,7 +498,7 @@ export default function DeleteuserAccount() {
                             </Paper>
                         </Box>
                     </Box>
-
+}
                     {/* Footer */}
                     <Box
                         sx={{

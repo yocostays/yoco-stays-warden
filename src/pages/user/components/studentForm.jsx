@@ -509,7 +509,6 @@ export default function CreateStudentForm({
                 error={errors?.bloodGroup?.message}
               />
             </Grid>
-            {console.log(errors, "errrrrrrrrrrr")}
             <Grid item xs={12} sm={3} textAlign="end">
               <Typography variant="body1">Disabilities</Typography>
             </Grid>
