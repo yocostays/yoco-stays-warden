@@ -71,7 +71,7 @@ export default function StudentAcademicDetails({ studentDetail }) {
                 },
                 {
                   icon: <EmailIcon />,
-                  label: "College Name",
+                  label: "University Name",
                   value: studentDetail.universityId?.name,
                 },
                 {

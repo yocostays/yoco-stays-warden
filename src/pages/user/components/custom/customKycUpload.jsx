@@ -205,7 +205,7 @@ function KycUploadCard({
               color: "#ACB5BD",
             }}
             onClick={handleDeleteImage}
-            disabled={!verified}
+            // disabled={!verified}
           >
             <DeleteIcon />
           </IconButton>

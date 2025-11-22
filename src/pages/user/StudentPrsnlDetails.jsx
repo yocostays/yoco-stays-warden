@@ -232,28 +232,42 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   label: "Any Medical Issue",
                   value: studentDetail.medicalIssue,
                 },
-                {
-                  icon: (
-                    <Icon
-                      icon="hugeicons:medical-mask"
-                      width="22"
-                      height="22"
-                    />
-                  ),
-                  label: "Any Allergic problem",
-                  value: studentDetail.allergyProblem,
-                },
+                // {
+                //   icon: (
+                //     <Icon
+                //       icon="hugeicons:medical-mask"
+                //       width="22"
+                //       height="22"
+                //     />
+                //   ),
+                //   label: "Any Allergic problem",
+                //   value: studentDetail.allergyProblem,
+                // },
                 {
                   icon: (
                     <Icon icon="gis:search-country" width="23" height="23" />
                   ),
-                  label: "Nationality",
-                  value: studentDetail.country?.name,
+                  label: "Country",
+                  value: studentDetail.country?.name.toUpperCase(),
+                },
+                 {
+                  icon: (
+                    <Icon icon="gis:search-country" width="23" height="23" />
+                  ),
+                  label: "State",
+                  value: studentDetail.state?.name.toUpperCase(),
+                },
+                 {
+                  icon: (
+                    <Icon icon="gis:search-country" width="23" height="23" />
+                  ),
+                  label: "City",
+                  value: studentDetail.city?.name.toUpperCase(),
                 },
                 {
                   icon: <CategoryRoundedIcon />,
                   label: "Category",
-                  value: studentDetail.category,
+                  value: studentDetail.category=== "not selected" ? " " : studentDetail?.category,
                 },
                 {
                   icon: <WorkspacesRoundedIcon />,

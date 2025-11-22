@@ -13,6 +13,7 @@ const DeleteAccounthooks = (props) => {
     const [otpVerified, setOtpVerified] = useState(false)
     const [user, setUser] = useState([])
     const [timer, setTimer] = useState(0);
+    const [sessionTime, setSessionTime] = useState(30 * 60)
     const [requestMessage, setRequestMessage] = useState('')
     const [requestSent, setRequestSent] = useState(false)
 
@@ -87,6 +88,27 @@ const DeleteAccounthooks = (props) => {
         return () => clearInterval(interval);
     }, [timer]);
 
+    // Timer countdown
+    useEffect(() => {
+        if (sessionTime <= 0) {
+            window.location.reload();   // 🔥 Hard refresh
+            return;
+        }
+
+        const interval = setInterval(() => {
+            setSessionTime((prev) => prev - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, [sessionTime]);
+
+    const formatTime = (seconds) => {
+        const m = Math.floor(seconds / 60);
+        const s = seconds % 60;
+        return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+    };
+
+
     const onSubmitRequest = async () => {
         try {
             setLoader(true)
@@ -132,7 +154,8 @@ const DeleteAccounthooks = (props) => {
         cancelRequest,
         onSubmitRequest,
         requestMessage,
-        requestSent
+        requestSent,
+        sessionTimer: formatTime(sessionTime)
     }
 }
 
