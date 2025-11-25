@@ -431,7 +431,7 @@ export default function StudentIndex() {
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 1 }}>
               {!id && (
                 <Box>
-                  <a sx={{ height: "100%" }} href={'/bulk_upload.csv'} download>
+                  <a sx={{ height: "100%" }} href={'/bulk_upload_user.csv'} download>
                     <Button
                       size="small"
 

@@ -90,10 +90,10 @@ const ComplaintsTableContainer = ({
         { id: "name", value: "Name" },
         { id: "createddate", value: "Created Date" },
         { id: "department", value: "Complaint Category" },
-        { id: "typeofcomplaints", value: "Role Category" },
+        // { id: "typeofcomplaints", value: "Role Category" },
         { id: "complaintsreason", value: "Complaints Reason" },
         { id: "floorandroom", value: "Floor & Room" },
-        { id: "assignto", value: "Assign To" },
+        // { id: "assignto", value: "Assign To" },
         { id: "status", value: "Status" },
         { id: "action", value: "Action" },
       ];
@@ -150,11 +150,11 @@ const ComplaintsTableContainer = ({
   };
 
   const handleRemarkSubmit = () => {
-    if (isStaffAssigned === null && !isStaffAssigned) {
-      handleOpenAssignStaffDialog();
-    } else {
+    // if (isStaffAssigned === null && !isStaffAssigned) {
+    //   handleOpenAssignStaffDialog();
+    // } else {
       handleSubmit();
-    }
+    // }
   };
 
   // Handle mouse enter event to show popover

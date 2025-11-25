@@ -328,11 +328,11 @@ const ComplaintsSideDrawer = ({
   };
 
   const handleRemarkSubmit = () => {
-    if (!isStaffAssigned) {
-      handleOpenAssignStaffDialog();
-    } else {
+    // if (!isStaffAssigned) {
+    //   handleOpenAssignStaffDialog();
+    // } else {
       handleSubmit();
-    }
+    // }
   };
 
   const payload = {
