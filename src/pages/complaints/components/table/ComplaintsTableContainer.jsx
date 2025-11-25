@@ -82,7 +82,7 @@ const ComplaintsTableContainer = ({
         { id: "fixtime", value: "Fix Time" },
         { id: "typesofcomplaints", value: "Types Of Complaints" },
         { id: "complaintsreason", value: "Complaint Reason" },
-        { id: "status", value: "Status" },
+        // { id: "status", value: "Status" },
         { id: "action", value: "Action" },
       ]
       : [
@@ -94,7 +94,7 @@ const ComplaintsTableContainer = ({
         { id: "complaintsreason", value: "Complaints Reason" },
         { id: "floorandroom", value: "Floor & Room" },
         // { id: "assignto", value: "Assign To" },
-        { id: "status", value: "Status" },
+        // { id: "status", value: "Status" },
         { id: "action", value: "Action" },
       ];
   };
@@ -488,7 +488,7 @@ const ComplaintsTableContainer = ({
                     color: "#0E0031",
                   }}
                   key={index}
-                  align="left"
+                  align={item?.value === "Name" ?  "center":"left"}
                 >
                   {item.value}
                 </TableCell>
@@ -588,7 +588,7 @@ const ComplaintsTableContainer = ({
                           </Box>
                         </TableCell>
 
-                        <TableCell sx={{ minWidth: { sm: 190, xs: 150 } }}>
+                        <TableCell sx={{ minWidth: { sm: 150, xs: 150 } }}>
                           {(item.createdAt &&
                             `${dayjs(item.createdAt)
                               .utc()
@@ -597,7 +597,7 @@ const ComplaintsTableContainer = ({
                                 .format("hh:mm A")}`) ||
                             "--"}
                         </TableCell>
-                        <TableCell sx={{ minWidth: { sm: 190, xs: 150 } }}>
+                        <TableCell sx={{ minWidth: { sm: 150, xs: 150 } }}>
                           {(item.resolvedDate &&
                             `${dayjs(item.resolvedDate)
                               .utc()
@@ -634,7 +634,7 @@ const ComplaintsTableContainer = ({
                             </Typography>
                           </Tooltip>
                         </TableCell>
-                        <TableCell>
+                        {/* <TableCell>
                           <Button
                             variant="outlined"
                             sx={{
@@ -653,7 +653,7 @@ const ComplaintsTableContainer = ({
                           >
                             {capitalize(item.complainStatus) || "--"}
                           </Button>
-                        </TableCell>
+                        </TableCell> */}
                       </>
                     ) : (
                       <>
@@ -697,7 +697,7 @@ const ComplaintsTableContainer = ({
                             />
                           </Box>
                         </TableCell>
-                        <TableCell sx={{ minWidth: { sm: 190, xs: 150 } }}>
+                        <TableCell sx={{ minWidth: { sm: 150, xs: 150 } }}>
                           {(item.createdAt &&
                             `${dayjs(item.createdAt)
                               .utc()
@@ -709,9 +709,9 @@ const ComplaintsTableContainer = ({
                         <TableCell sx={{ fontSize: "16px", fontWeight: "500" }}>
                           {item.category || "--"}
                         </TableCell>
-                        <TableCell sx={{ fontSize: "16px", fontWeight: "500" }}>
+                        {/* <TableCell sx={{ fontSize: "16px", fontWeight: "500" }}>
                           {item.categoryType || "--"}
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell
                           sx={{
                             fontSize: "16px",
@@ -747,8 +747,7 @@ const ComplaintsTableContainer = ({
                           {`${item.floorNumber} / ${item.roomNumber}`
                             ?? "--"}
                         </TableCell>
-                        <TableCell>
-                          {/* Assignee Image */}
+                        {/* <TableCell>
                           <Box
                             sx={{
                               display: "flex",
@@ -766,18 +765,15 @@ const ComplaintsTableContainer = ({
                                 objectFit: "cover",
                                 marginRight: 8,
                               }}
-                            // onClick={() => setIsDialogOpen(true)}
                             />
                             <Typography>
                               {item.assignedStaff || "--"}
                             </Typography>
                           </Box>
-                          {/* </Box> */}
 
-                          {/* Dropdown Menu */}
-                        </TableCell>
+                        </TableCell> */}
 
-                        <TableCell>
+                        {/* <TableCell>
                           <Button
                             variant="outlined"
                             sx={{
@@ -796,7 +792,7 @@ const ComplaintsTableContainer = ({
                           >
                             {capitalize(item.complainStatus) || "--"}
                           </Button>
-                        </TableCell>
+                        </TableCell> */}
                       </>
                     )}
                     <TableCell>
