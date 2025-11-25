@@ -76,7 +76,7 @@ export default function StudentAcademicDetails({ studentDetail }) {
                 },
                 {
                   icon: <Iconify icon="fluent-mdl2:publish-course" width="24" height="24" />,
-                  label: "Cource Name",
+                  label: "Course Name",
                   value: studentDetail?.courseId?.name,
                 },
                 {
