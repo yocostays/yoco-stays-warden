@@ -248,26 +248,26 @@ export default function StudentPrsnDetails({ studentDetail }) {
                     <Icon icon="gis:search-country" width="23" height="23" />
                   ),
                   label: "Country",
-                  value: studentDetail.country?.name.toUpperCase(),
+                  value: studentDetail?.country?.name?.toUpperCase() || studentDetail?.bulkCountry?.toUpperCase(),
                 },
-                 {
+                {
                   icon: (
                     <Icon icon="gis:search-country" width="23" height="23" />
                   ),
                   label: "State",
-                  value: studentDetail.state?.name.toUpperCase(),
+                  value: studentDetail.state?.name?.toUpperCase() || studentDetail?.bulkState?.toUpperCase(),
                 },
-                 {
+                {
                   icon: (
                     <Icon icon="gis:search-country" width="23" height="23" />
                   ),
                   label: "City",
-                  value: studentDetail.city?.name.toUpperCase(),
+                  value: studentDetail.city?.name?.toUpperCase() || studentDetail?.bulkCity?.toUpperCase(),
                 },
                 {
                   icon: <CategoryRoundedIcon />,
                   label: "Category",
-                  value: studentDetail.category=== "not selected" ? " " : studentDetail?.category,
+                  value: studentDetail.category === "not selected" ? " " : studentDetail?.category,
                 },
                 {
                   icon: <WorkspacesRoundedIcon />,
