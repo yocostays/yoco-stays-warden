@@ -10,6 +10,7 @@ const Input = ({
     register,
     name,
     error,
+    style,
     ...rest
 }) => {
 
@@ -40,6 +41,7 @@ const Input = ({
                         : {}
                 }
                 sx={{
+                    ...style,
                     width: "100%",
                     backgroundColor: "#FFFFFF",
                     borderRadius: "5px",

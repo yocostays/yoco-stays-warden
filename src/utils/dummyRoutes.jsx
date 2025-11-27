@@ -86,7 +86,7 @@ export const permittedRoutes = [
     link: "laundry",
   },
   {
-    title: "Mess",
+    title: "Hostel Mess",
     icon: "ic_mess",
     link: "mess",
   },
