@@ -390,11 +390,17 @@ export default function CreateStudentForm({
                 value={watch('studentName')}
                 placeholder="Student Name" register={register}
                 name="studentName"
+                style={{
+                  textTransform: "uppercase",  // 🔥 SHOWS uppercase only, NO cursor jump
+                  "& input": {
+                    textTransform: "uppercase", // 🔥 applies to actual text
+                  }
+                }}
                 onChange={(e) => {
                   let value
                   value = e?.target?.value.replace(/^\s+/, "");
                   value = value.replace(/[^A-Za-z\s]/g, "");
-                  setValue('studentName', value.toUpperCase(), { shouldValidate: true })
+                  setValue('studentName', value, { shouldValidate: true })
 
                 }
                 }

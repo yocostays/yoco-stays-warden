@@ -67,7 +67,7 @@ const LeaveTableRow = ({
               <Box
                 display="flex"
                 alignItems="center"
-                onMouseEnter={(event) => handleMouseEnter(event, row._id)}
+                onMouseEnter={(event) => handleMouseEnter(event, row?._id)}
                 onMouseLeave={handleMouseLeave}
               >
                 <Avatar
@@ -101,9 +101,9 @@ const LeaveTableRow = ({
             <TableCell sx={{ minWidth: "200px" }}>
               {moment(row?.endDate).format("Do MMM YYYY | hh:mm A") || "-"}
             </TableCell>
-            <TableCell align="left">{row.days} D</TableCell>
+            <TableCell align="left">{row?.days} D</TableCell>
             <TableCell>
-              <Tooltip title={row.categoryName} arrow>
+              <Tooltip title={row?.categoryName} arrow>
                 <Typography
                   variant="body2"
                   sx={{
@@ -114,14 +114,15 @@ const LeaveTableRow = ({
                     textTransform: "capitalize",
                   }}
                 >
-                  {row.categoryName || "-"}
+                  {row?.categoryName || "-"}
                 </Typography>
               </Tooltip>
             </TableCell>
             <TableCell sx={{ minWidth: 130 }}>
-              { `${row.floorNumber}/${row.roomNumber}`
+              { `${row?.floorNumber}/${row?.roomNumber}`
                 ?? "-"}
             </TableCell>
+            {console.log(row,"rowwwwwwwwww")}
             <TableCell>
               <Button
                 variant="outlined"
