@@ -52,7 +52,8 @@ export const addStudentValidations = {
   semester: yup.object().nullable().nullable(),
 
   // Upload KYC Documents
-  aadhaar: yup.string().required("Aadhar Card is required"),
+  // Upload KYC Documents
+  aadhaar: yup.string().nullable().optional(),
   aadharNumber: yup
     .string()
     .trim()
@@ -64,7 +65,9 @@ export const addStudentValidations = {
         if (!value) return true; // allow empty
         return /^\d{12}$/.test(value); // must match 12 digits
       }
-    ),
+    )
+  ,
+
   aadhaarFile: yup.mixed().when('kyc', {
     is: 'aadhaar',
     then: (schema) => schema.required('Aadhaar file is required'),
@@ -124,7 +127,7 @@ export const addStudentValidationsUpdate = {
   floor: yup
     .array()
     .min(1, "Please select a floor") // floor array must not be empty
-    .required("Please select a floor"),
+    .required("Please select a floor").typeError('Please Select a floor.'),
 
   roomNumber: yup.object().required('Room Number is required.'),
 

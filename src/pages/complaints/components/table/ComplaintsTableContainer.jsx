@@ -79,7 +79,7 @@ const ComplaintsTableContainer = ({
         { id: "name", value: "Name" },
         { id: "createddate", value: "Created Date" },
         { id: "resolveddate", value: "Resolved Date" },
-        { id: "fixtime", value: "Fix Time" },
+        // { id: "fixtime", value: "Fix Time" },
         { id: "typesofcomplaints", value: "Types Of Complaints" },
         { id: "complaintsreason", value: "Complaint Reason" },
         // { id: "status", value: "Status" },

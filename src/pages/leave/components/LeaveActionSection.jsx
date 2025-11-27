@@ -56,7 +56,6 @@ const LeaveActionSection = ({
           onClearSelection();
         }
         // Call the leave-management API to refresh the data
-        console.log("Calling leave-management API for bulk update");
         const refreshPayload = {
           page: currentPage + 1,
           limit: currentRowsPerPage,

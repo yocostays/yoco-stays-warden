@@ -185,7 +185,7 @@ export default function StudentIndex() {
     setSelectedTab(index); // Select the clicked tab
     sectionRefs[index]?.current?.scrollIntoView({ behavior: "smooth" }); // Smoothly scroll to the selected section
   };
-  
+  console.log(errors,"error")
   const onSubmit = (values) => {
     if (openOtpModal === false || openFatherOtpModal === false) {
       const vehicles = vehicleData.map((item) => ({
@@ -196,7 +196,7 @@ export default function StudentIndex() {
       }))
 
       const payload = {
-        name: values?.studentName,
+        name: values?.studentName.toUpperCase(),
         image,
         phone: String(values?.phoneNumber),
         email: values.studentEmail,
@@ -227,14 +227,14 @@ export default function StudentIndex() {
         permanentAddress: values?.permanentAddress,
         // currentAddress: values?.currentAddress,
         familiyDetails: {
-          fatherName: values?.fatherName,
+          fatherName: values?.fatherName.toUpperCase(),
           fatherNumber: String(values?.fatherphoneNumber),
           // fatherEmail: values?.fatherEmail,
           // fatherOccuption: values?.fatherOccupation,
-          motherName: values?.motherName,
+          motherName: values?.motherName.toUpperCase(),
           motherNumber: String(values?.motherphoneNumber),
           // motherEmail: values?.motherEmail,
-          guardianName: values?.guardianName,
+          guardianName: values?.guardianName.toUpperCase(),
           // guardianContactNo: Number(values?.guardianMobileNumber),
           relationship: values?.relationship,
           occuption: values?.occupation,

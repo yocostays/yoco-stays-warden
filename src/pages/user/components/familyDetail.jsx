@@ -131,11 +131,17 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('fatherName')}
                 placeholder="Father Name" register={register}
                 name="fatherName"
+                style={{
+                  textTransform: "uppercase",  // 🔥 SHOWS uppercase only, NO cursor jump
+                  "& input": {
+                    textTransform: "uppercase", // 🔥 applies to actual text
+                  }
+                }}
                 onChange={(e) => {
                   let value
                   value = e?.target?.value.replace(/^\s+/, "");
                   value = value.replace(/[^A-Za-z\s]/g, "");
-                  setValue('fatherName', value.toUpperCase(), { shouldValidate: true })
+                  setValue('fatherName', value, { shouldValidate: true })
                 }
 
                 }
@@ -156,11 +162,17 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 value={watch('motherName')}
                 placeholder="Mother Name" register={register}
                 name="motherName"
+                style={{
+                  textTransform: "uppercase",  // 🔥 SHOWS uppercase only, NO cursor jump
+                  "& input": {
+                    textTransform: "uppercase", // 🔥 applies to actual text
+                  }
+                }}
                 onChange={(e) => {
                   let value
                   value = e?.target?.value.replace(/^\s+/, "");
                   value = value.replace(/[^A-Za-z\s]/g, "");
-                  setValue('motherName', value.toUpperCase(), { shouldValidate: true })
+                  setValue('motherName', value, { shouldValidate: true })
                 }
                 }
               />
@@ -184,7 +196,8 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                   setPhone(value.slice(0, 10));
                   setIsFathersNoVerified(false)
                 }}
-                disabled={!id && !verified} />
+              // disabled={loader}
+              />
             </Grid>
             {/* <Grid item xs={12} sm={3}>
               <LoadingButton variant="contained"
@@ -215,7 +228,8 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                   }
                   setValue("motherphoneNumber", value.slice(0, 10)); // Restrict to 10 digits
                 }}
-                disabled={!id && !isFathersNoVerified} />
+              // disabled={!id && !isFathersNoVerified}
+              />
             </Grid>
 
             {/* Guardian Name Section */}
@@ -234,11 +248,17 @@ export default function FamilyDetailsForm({ methods, verified, setIsFathersNoVer
                 placeholder="Guardian Name"
                 register={register}
                 name="guardianName"
+                style={{
+                  textTransform: "uppercase",  // 🔥 SHOWS uppercase only, NO cursor jump
+                  "& input": {
+                    textTransform: "uppercase", // 🔥 applies to actual text
+                  }
+                }}
                 onChange={(e) => {
                   let value
                   value = e?.target?.value.replace(/^\s+/, "");
                   value = value.replace(/[^A-Za-z\s]/g, "");
-                  setValue('guardianName', value.toUpperCase(), { shouldValidate: true })
+                  setValue('guardianName', value, { shouldValidate: true })
                 }
                 }
               />
