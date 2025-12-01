@@ -32,7 +32,12 @@ const DeleteAccounthooks = (props) => {
                     rest?.otpReset()
 
                 }
+            }).catch((err) => {
+                toast.error(err?.message);
             })
+                .finally(() => {
+                    setLoader(false); // ALWAYS stops loader
+                });
         } catch (error) {
             setLoader(false)
         }

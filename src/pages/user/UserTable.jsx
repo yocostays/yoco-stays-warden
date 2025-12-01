@@ -200,8 +200,8 @@ function UserTable() {
     dispatch(setStudentPagination(0))
   };
 
-  const [dranwerOpen,setDrawerOpen] = useState(false); // State to control drawer
-  const [selectedRow,setSelectedRow] = useState(null); // Store the selected row's data
+  const [dranwerOpen, setDrawerOpen] = useState(false); // State to control drawer
+  const [selectedRow, setSelectedRow] = useState(null); // Store the selected row's data
 
   const handleRowDetailsPage = (id) => {
     navigate(`/users/staff/details/${id}`);
@@ -270,6 +270,7 @@ function UserTable() {
     // { label: "Email", align: "left" },
     { label: "Contact No. ", align: "left" },
     { label: "Floor/Room", align: "left" },
+    { label: "Bed No.", align: "left" },
     { label: "Created On", align: "center" },
     { label: "Status", align: "center" },
     { label: "Action", align: "center" },
@@ -337,7 +338,7 @@ function UserTable() {
           marginTop: "20px",
         }}
       >
-        <Box sx={{ display: "flex",marginX:{xs:"auto",lg:"0"}, gap: 2, justifyContent: "center", alignItems: "center" }}>
+        <Box sx={{ display: "flex", marginX: { xs: "auto", lg: "0" }, gap: 2, justifyContent: "center", alignItems: "center" }}>
           <Box>
             <Box
               onClick={() => handleSelectOption(StaffSelection?.HOSTEL_ADMINS)}

@@ -87,6 +87,9 @@ const UserTableRow = ({
                 textAlign: "center"
               }}
             >{`${row.floorNumber || 0}/${row.roomNumber || 0}`}</TableCell>
+             <TableCell
+              align="center"
+            >{row.bedNumber || "-"}</TableCell>
             <TableCell 
            align="center"
             >
