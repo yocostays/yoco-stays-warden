@@ -608,7 +608,7 @@ const ComplaintsTableContainer = ({
                                 .format("hh:mm A")}`) ||
                             "--"}
                         </TableCell>
-                        <TableCell>{item.resolvedTime || "--"}</TableCell>
+                        {/* <TableCell>{item.resolvedTime || "--"}</TableCell> */}
                         <TableCell>{item.category || "--"}</TableCell>
                         <TableCell
                           sx={{

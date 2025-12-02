@@ -209,11 +209,12 @@ export default function CreateStudentForm({
             ...item
           }
         })
+        setAllCountryData(data);
         const selectedCountry = data.filter((item) => item?.label.toLowerCase() === currentData?.bulkCountry.toLowerCase())
         setValue('country', selectedCountry[0])
         setSelectedCountry(selectedCountry[0])
 
-        setAllCountryData(data);
+        
       } catch (error) {
         console.error("Error fetching countries:", error);
       }
