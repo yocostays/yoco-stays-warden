@@ -185,7 +185,6 @@ export default function StudentIndex() {
     setSelectedTab(index); // Select the clicked tab
     sectionRefs[index]?.current?.scrollIntoView({ behavior: "smooth" }); // Smoothly scroll to the selected section
   };
-  console.log(errors,"error")
   const onSubmit = (values) => {
     if (openOtpModal === false || openFatherOtpModal === false) {
       const vehicles = vehicleData.map((item) => ({
@@ -211,7 +210,7 @@ export default function StudentIndex() {
         country: {
           name: values?.country?.name,
           iso2: values?.country?.iso2,
-          countryId: values?.country?.id,
+          countryId: values?.country?.countryId || values?.country?.id,
         },
         state: {
           stateId: values?.state?.id,

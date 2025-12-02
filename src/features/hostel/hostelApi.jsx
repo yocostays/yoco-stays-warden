@@ -257,7 +257,6 @@ export const getFloorsRooms = createAsyncThunk(
         "/api/hostel/floors-rooms",
         data
       );
-      console.log(response,"responseeeeeeeeeeeeeeeeeeeee")
       return response?.data;
     } catch (error) {
       console.error("Error fetching Floor No.:", error);

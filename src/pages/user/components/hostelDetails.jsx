@@ -164,8 +164,9 @@ export default function HostelDetailsForm({
     if (id && floorRooms) {
       dispatch(getUsersHostelDetail({ studentId: id, type: "hostel" })).then((data) => {
         const hostel = data?.payload?.data
-        setSelectedFloor(hostel?.floorNumber)
+        setSelectedFloor(Number(hostel?.floorNumber))
         const floorList = floorRooms?.floorRooms.filter((item) => item?.floorNumber === hostel?.floorNumber)
+        
 
         const rooms = floorList[0]?.rooms.map((item) => {
           return {
@@ -194,7 +195,7 @@ export default function HostelDetailsForm({
 
     }
   }, [id, floorRooms])
-
+  
   return (
     <Box
       sx={{
@@ -276,7 +277,7 @@ export default function HostelDetailsForm({
                     Floor
                   </Typography>
                   <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-
+{console.log(floorRooms,"floor")}
                     {floorRooms?.floorRooms?.map((floor) => (
                       <Button
                         key={floor}
@@ -370,7 +371,7 @@ export default function HostelDetailsForm({
                         value: item.bedNumber
                       })) || [];
 
-                      setValue("rooms", id && Number(value?.value)===Number(roomNumber) ? bedOptions.concat(bedNumber) : bedOptions); // ✅ update beds list
+                      setValue("rooms", id && Number(value?.value) === Number(roomNumber) ? bedOptions.concat(bedNumber) : bedOptions); // ✅ update beds list
 
                     }}
                   />
