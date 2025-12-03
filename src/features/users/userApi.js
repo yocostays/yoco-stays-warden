@@ -322,3 +322,13 @@ export const checkUserName = async (data) => {
     throw error.response ? error.response.data : { message: "Network Error" };
   }
 };
+
+// Export Excell
+export const passwordSend = async (data) => {
+  try {
+    const response = await axiosInstance.post("/api/user/send-credentials", {email:data});
+    return response.data;
+  } catch (error) {
+    throw error.response ? error.response.data : { message: "Network Error" };
+  }
+};
