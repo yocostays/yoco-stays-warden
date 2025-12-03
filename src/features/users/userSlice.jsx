@@ -28,6 +28,7 @@ import {
   fetchUserIndisciplinaryDetail,
   exportUserReport,
   checkUserName,
+  passwordSend,
 } from "./userApi";
 import { StaffSelection, StudentStatusEnum } from "@components/enums/usersListEnums";
 
@@ -72,6 +73,8 @@ const initialState = {
   studentPagination: 0,
   vehicleData: []
 };
+
+
 
 // Thunk for fetching users
 export const getUsers = createAsyncThunk(
@@ -309,6 +312,15 @@ export const updateStaffDetailById = createAsyncThunk(
   }
 );
 
+export const userPasswordSend = createAsyncThunk(
+  "users/userPasswordSend",
+  async ({email}) => {
+    const data = await passwordSend(email);
+    return data;
+  }
+);
+
+
 // export const updateStaffStatusAsync = createAsyncThunk(
 //   "user/updateStaffStatusAsync",
 //   async ({ data }, { rejectWithValue }) => {
@@ -351,6 +363,7 @@ export const checkUserNameAsync = createAsyncThunk(
     return data;
   }
 );
+
 
 // ====================== END ====================================
 
@@ -814,6 +827,21 @@ const usersSlice = createSlice({
       .addCase(checkUserNameAsync.rejected, (state) => {
         state.isUserLoading = false;
         state.verifyUserName = false;
+      });
+
+       builder
+      .addCase(userPasswordSend.pending, (state) => {
+        state.error = null;
+        state.isUserLoading = true;
+        // state.verifyUserName = false;
+      })
+      .addCase(userPasswordSend.fulfilled, (state, action) => {
+        state.isUserLoading = false;
+        // state.verifyUserName = action.payload.data;
+      })
+      .addCase(userPasswordSend.rejected, (state) => {
+        state.isUserLoading = false;
+        // state.verifyUserName = false;
       });
   },
 });

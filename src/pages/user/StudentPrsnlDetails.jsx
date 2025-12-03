@@ -7,6 +7,7 @@ import {
   Tooltip,
   IconButton,
   capitalize,
+  Button,
 } from "@mui/material";
 import PhoneIcon from "@mui/icons-material/Phone";
 import EmailIcon from "@mui/icons-material/Email";
@@ -23,7 +24,11 @@ import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import PropTypes from "prop-types";
 import moment from "moment";
 import { Icon } from "@iconify/react";
-import { toast } from "react-toastify";
+import { toast } from 'react-toastify'
+import { useDispatch } from "react-redux";
+import { userPasswordSend } from "@features/users/userSlice";
+import { useState } from "react";
+import { LoadingButton } from "@mui/lab";
 
 StudentPrsnDetails.propTypes = {
   studentDetail: PropTypes.object,
@@ -31,6 +36,7 @@ StudentPrsnDetails.propTypes = {
 
 export default function StudentPrsnDetails({ studentDetail }) {
   const theme = useTheme();
+  const dispatch = useDispatch()
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const handleCopy = (textToCopy) => {
@@ -51,6 +57,34 @@ export default function StudentPrsnDetails({ studentDetail }) {
 
     toast.success(`${textToCopy} copied successfully`);
   };
+
+  const [loader, setLoader] = useState(false)
+
+  const resendPassword = () => {
+    const payload = {
+      email: studentDetail?.email
+    }
+    try {
+      setLoader(true)
+      dispatch(userPasswordSend(payload)).then((response) => {
+
+        if (response?.payload?.statusCode === 200) {
+          toast.success(response?.payload?.message);
+          toast.success(response?.payload?.data);
+          setLoader(false)
+
+        }
+      }).catch((err) => {
+        toast.error(err?.message);
+      })
+        .finally(() => {
+          setLoader(false); // ALWAYS stops loader
+        });
+    } catch (error) {
+      setLoader(false)
+    }
+
+  }
 
   return (
     <Box>
@@ -109,10 +143,11 @@ export default function StudentPrsnDetails({ studentDetail }) {
               }}
             >
               <Avatar
-                alt={studentDetail.name}
-                src={studentDetail.image || ""}
+                alt={studentDetail?.name}
+                src={studentDetail?.image || ""}
                 sx={{ width: 56, height: 56, mr: isSmallScreen ? 0 : 2 }}
               />
+
               <Box
                 sx={{
                   textAlign: isSmallScreen ? "center" : "left",
@@ -120,7 +155,7 @@ export default function StudentPrsnDetails({ studentDetail }) {
                 }}
               >
                 <Typography variant="h6" fontWeight="bold">
-                  {studentDetail.name}
+                  {studentDetail?.name}
                 </Typography>
 
                 <Typography
@@ -129,10 +164,10 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   display="flex"
                   alignItems="center"
                 >
-                  {studentDetail.uniqueId}
+                  {studentDetail?.uniqueId}
                   <Tooltip title="Copy User ID">
                     <IconButton
-                      onClick={() => handleCopy(studentDetail.uniqueId)}
+                      onClick={() => handleCopy(studentDetail?.uniqueId)}
                       size="small"
                       sx={{ marginLeft: "10px" }}
                     >
@@ -144,203 +179,231 @@ export default function StudentPrsnDetails({ studentDetail }) {
                   </Tooltip>
                 </Typography>
               </Box>
-            </Box>
-          </Box>
-          <Box
-            sx={{
-              borderRadius: 1,
-              backgroundColor: "#fff",
-              maxWidth: "600px",
-              ml: 0,
-              [theme.breakpoints.down("sm")]: {
-                maxWidth: "100%",
-                marginBottom: "15px",
-              },
-            }}
-          >
-            <Box sx={{ mt: 3 }}>
-              {[
-                {
-                  icon: <PersonIcon />,
-                  label: "Student Name",
-                  value: studentDetail.name,
-                },
-                {
-                  icon: <PhoneIcon />,
-                  label: "Phone No.",
-                  value: studentDetail.phone,
-                },
-                {
-                  icon: <Icon icon="mdi:card-account-details" width="20" height="20" />,
-                  label: "Aadhar Number",
-                  value: studentDetail?.documents?.aadhaarNumber
-                },
-                {
-                  icon: <EmailIcon />,
-                  label: "Email ID",
-                  value: studentDetail.email,
-                },
-                {
-                  icon: <CalendarMonthIcon />,
-                  label: "Date of Birth",
-                  value: studentDetail.dob
-                    ? moment.utc(studentDetail.dob).format("DD-MM-YYYY")
-                    : "",
-                },
-                {
-                  icon: (
-                    <Icon
-                      icon="fluent-mdl2:open-enrollment"
-                      width="24"
-                      height="24"
-                    />
-                  ),
-                  label: "Enroll. No.",
-                  value: studentDetail.enrollmentNumber,
-                },
-                {
-                  icon: <BloodtypeIcon />,
-                  label: "Blood Group",
-                  value: studentDetail.bloodGroup,
-                },
-                {
-                  icon: <AccessibleForwardIcon />,
-                  label: "Disabilities",
-                  value: studentDetail.divyang === true ? "Yes" : "No",
-                },
-                {
-                  icon: <WcRoundedIcon />,
-                  label: "Gender",
-                  value:
-                    (studentDetail?.gender &&
-                      capitalize(studentDetail?.gender)) ||
-                    "",
-                },
-                {
-                  icon: <FingerprintRoundedIcon />,
-                  label: "Identification Mark",
-                  value: studentDetail.identificationMark,
-                },
-                {
-                  icon: (
-                    <Icon
-                      icon="game-icons:medical-drip"
-                      width="26"
-                      height="26"
-                    />
-                  ),
-                  label: "Any Medical Issue",
-                  value: studentDetail.medicalIssue,
-                },
-                // {
-                //   icon: (
-                //     <Icon
-                //       icon="hugeicons:medical-mask"
-                //       width="22"
-                //       height="22"
-                //     />
-                //   ),
-                //   label: "Any Allergic problem",
-                //   value: studentDetail.allergyProblem,
-                // },
-                {
-                  icon: (
-                    <Icon icon="gis:search-country" width="23" height="23" />
-                  ),
-                  label: "Country",
-                  value: studentDetail?.country?.name?.toUpperCase() || studentDetail?.bulkCountry?.toUpperCase(),
-                },
-                {
-                  icon: (
-                    <Icon icon="gis:search-country" width="23" height="23" />
-                  ),
-                  label: "State",
-                  value: studentDetail.state?.name?.toUpperCase() || studentDetail?.bulkState?.toUpperCase(),
-                },
-                {
-                  icon: (
-                    <Icon icon="gis:search-country" width="23" height="23" />
-                  ),
-                  label: "City",
-                  value: studentDetail.city?.name?.toUpperCase() || studentDetail?.bulkCity?.toUpperCase(),
-                },
-                {
-                  icon: <CategoryRoundedIcon />,
-                  label: "Category",
-                  value: studentDetail.category === "not selected" ? " " : studentDetail?.category,
-                },
-                {
-                  icon: <WorkspacesRoundedIcon />,
-                  label: "Caste",
-                  value: studentDetail.cast,
-                },
-                {
-                  icon: <HomeWorkIcon />,
-                  label: "Permanent Address",
-                  value: studentDetail.permanentAddress,
-                },
-                // {
-                //   icon: <HomeWorkIcon />,
-                //   label: "Current Address",
-                //   value: studentDetail.currentAddress,
-                // },
-              ].map((item, index) => (
-                <Box
-                  key={index}
+              <Box
+                sx={{
+                  marginX:"10px",
+                  display: "flex", // Flexbox layout
+                  justifyContent: "center", // Center horizontally
+                  alignItems: "center", // Center vertically (if needed)
+                  // marginTop: "16px", // Add margin for spacing
+                }}
+              >
+                <LoadingButton
+                  variant="contained"
+                  color="primary"
+                  loading={loader}
+                  onClick={() => resendPassword()}
+                  // onClick={handleSubmit(onSubmit)}
                   sx={{
-                    display: "grid",
-                    gridTemplateColumns: isSmallScreen
-                      ? "40px auto"
-                      : "40px 200px 10px 1fr",
-                    alignItems: "center",
-                    backgroundColor: index % 2 ? "#674D9F0D" : "transparent",
-                    padding: "8px 16px",
-                    gap: "8px",
-                  }}
+                    padding: "10px 20px",
+                    borderRadius: "10px",
+                  }} // Adjust padding for better appearance
                 >
-                  <Box sx={{ textAlign: "center" }}>{item?.icon}</Box>
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      fontWeight="bold"
-                      sx={{ whiteSpace: "nowrap" }}
-                    >
-                      {item?.label}
-                    </Typography>
-                  </Box>
-                  {!isSmallScreen && (
-                    <Box sx={{ textAlign: "center" }}>
-                      <Typography variant="body2" fontWeight="bold">
-                        :
-                      </Typography>
-                    </Box>
-                  )}
-                  <Box>
-                    <Typography
-                      variant="body2"
-                      sx={{
-                        wordWrap: "break-word",
-                        whiteSpace: "normal",
-                        overflowWrap: "break-word",
-                      }}
-                    >
-                      {item.value}
-                    </Typography>
-                  </Box>
-                </Box>
-              ))}
+                  Resend Password
+                </LoadingButton>
+                {/* <Box sx={{
+                marginX: "10px"
+              }}>
+                <Button disabled={loader} >Resend Password</Button>
+              </Box> */}
+              </Box>
+              </Box>
             </Box>
             <Box
               sx={{
-                mt: 2,
-                backgroundColor: "#674D9F0D",
-                padding: "33px",
-                borderRadius: "0 0px 20px 20px",
+                borderRadius: 1,
+                backgroundColor: "#fff",
+                maxWidth: "600px",
+                ml: 0,
+                [theme.breakpoints.down("sm")]: {
+                  maxWidth: "100%",
+                  marginBottom: "15px",
+                },
               }}
-            ></Box>
+            >
+              <Box sx={{ mt: 3 }}>
+                {[
+                  {
+                    icon: <PersonIcon />,
+                    label: "Student Name",
+                    value: studentDetail?.name,
+                  },
+                  {
+                    icon: <PhoneIcon />,
+                    label: "Phone No.",
+                    value: studentDetail?.phone,
+                  },
+                  {
+                    icon: <Icon icon="mdi:card-account-details" width="20" height="20" />,
+                    label: "Aadhar Number",
+                    value: studentDetail?.documents?.aadhaarNumber
+                  },
+                  {
+                    icon: <EmailIcon />,
+                    label: "Email ID",
+                    value: studentDetail?.email,
+                  },
+                  {
+                    icon: <CalendarMonthIcon />,
+                    label: "Date of Birth",
+                    value: studentDetail?.dob
+                      ? moment.utc(studentDetail?.dob).format("DD-MM-YYYY")
+                      : "",
+                  },
+                  {
+                    icon: (
+                      <Icon
+                        icon="fluent-mdl2:open-enrollment"
+                        width="24"
+                        height="24"
+                      />
+                    ),
+                    label: "Enroll. No.",
+                    value: studentDetail?.enrollmentNumber,
+                  },
+                  {
+                    icon: <BloodtypeIcon />,
+                    label: "Blood Group",
+                    value: studentDetail?.bloodGroup,
+                  },
+                  {
+                    icon: <AccessibleForwardIcon />,
+                    label: "Disabilities",
+                    value: studentDetail.divyang === true ? "Yes" : "No",
+                  },
+                  {
+                    icon: <WcRoundedIcon />,
+                    label: "Gender",
+                    value:
+                      (studentDetail?.gender &&
+                        capitalize(studentDetail?.gender)) ||
+                      "",
+                  },
+                  {
+                    icon: <FingerprintRoundedIcon />,
+                    label: "Identification Mark",
+                    value: studentDetail?.identificationMark,
+                  },
+                  {
+                    icon: (
+                      <Icon
+                        icon="game-icons:medical-drip"
+                        width="26"
+                        height="26"
+                      />
+                    ),
+                    label: "Any Medical Issue",
+                    value: studentDetail?.medicalIssue,
+                  },
+                  // {
+                  //   icon: (
+                  //     <Icon
+                  //       icon="hugeicons:medical-mask"
+                  //       width="22"
+                  //       height="22"
+                  //     />
+                  //   ),
+                  //   label: "Any Allergic problem",
+                  //   value: studentDetail.allergyProblem,
+                  // },
+                  {
+                    icon: (
+                      <Icon icon="gis:search-country" width="23" height="23" />
+                    ),
+                    label: "Country",
+                    value: studentDetail?.country?.name?.toUpperCase() || studentDetail?.bulkCountry?.toUpperCase(),
+                  },
+                  {
+                    icon: (
+                      <Icon icon="gis:search-country" width="23" height="23" />
+                    ),
+                    label: "State",
+                    value: studentDetail.state?.name?.toUpperCase() || studentDetail?.bulkState?.toUpperCase(),
+                  },
+                  {
+                    icon: (
+                      <Icon icon="gis:search-country" width="23" height="23" />
+                    ),
+                    label: "City",
+                    value: studentDetail.city?.name?.toUpperCase() || studentDetail?.bulkCity?.toUpperCase(),
+                  },
+                  {
+                    icon: <CategoryRoundedIcon />,
+                    label: "Category",
+                    value: studentDetail.category === "not selected" ? " " : studentDetail?.category,
+                  },
+                  {
+                    icon: <WorkspacesRoundedIcon />,
+                    label: "Caste",
+                    value: studentDetail?.cast,
+                  },
+                  {
+                    icon: <HomeWorkIcon />,
+                    label: "Permanent Address",
+                    value: studentDetail?.permanentAddress,
+                  },
+                  // {
+                  //   icon: <HomeWorkIcon />,
+                  //   label: "Current Address",
+                  //   value: studentDetail.currentAddress,
+                  // },
+                ].map((item, index) => (
+                  <Box
+                    key={index}
+                    sx={{
+                      display: "grid",
+                      gridTemplateColumns: isSmallScreen
+                        ? "40px auto"
+                        : "40px 200px 10px 1fr",
+                      alignItems: "center",
+                      backgroundColor: index % 2 ? "#674D9F0D" : "transparent",
+                      padding: "8px 16px",
+                      gap: "8px",
+                    }}
+                  >
+                    <Box sx={{ textAlign: "center" }}>{item?.icon}</Box>
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        fontWeight="bold"
+                        sx={{ whiteSpace: "nowrap" }}
+                      >
+                        {item?.label}
+                      </Typography>
+                    </Box>
+                    {!isSmallScreen && (
+                      <Box sx={{ textAlign: "center" }}>
+                        <Typography variant="body2" fontWeight="bold">
+                          :
+                        </Typography>
+                      </Box>
+                    )}
+                    <Box>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          wordWrap: "break-word",
+                          whiteSpace: "normal",
+                          overflowWrap: "break-word",
+                        }}
+                      >
+                        {item.value}
+                      </Typography>
+                    </Box>
+                  </Box>
+                ))}
+              </Box>
+              <Box
+                sx={{
+                  mt: 2,
+                  backgroundColor: "#674D9F0D",
+                  padding: "33px",
+                  borderRadius: "0 0px 20px 20px",
+                }}
+              ></Box>
+            </Box>
           </Box>
         </Box>
       </Box>
-    </Box>
-  );
+      );
 }
